@@ -422,10 +422,12 @@ export default function PortfolioPageClient() {
 // Project Card Component
 function ProjectCard({ project }: { project: Project }) {
   const mainImage = project.mediaItems.find(item => item.type === 'IMAGE');
+  const mainVideo = project.mediaItems.find(item => item.type === 'VIDEO');
+  const mainMedia = mainImage || mainVideo;
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-      {/* Project Image */}
+      {/* Project Media */}
       <div className="relative h-64 overflow-hidden">
         {mainImage ? (
           <Image
@@ -434,22 +436,41 @@ function ProjectCard({ project }: { project: Project }) {
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
+        ) : mainVideo ? (
+          <video
+            src={mainVideo.src}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            muted
+            loop
+            autoPlay
+            playsInline
+          />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400">لا توجد صورة</span>
+            <span className="text-gray-400">لا توجد وسائط</span>
           </div>
         )}
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
-        {/* Featured Badge */}
-        {project.featured && (
-          <Badge className="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600">
-            <Star className="h-3 w-3 mr-1" />
-            مميز
-          </Badge>
-        )}
+        {/* Media Type Badge */}
+        <div className="absolute top-4 right-4 flex gap-2">
+          {project.featured && (
+            <Badge className="bg-yellow-500 hover:bg-yellow-600">
+              <Star className="h-3 w-3 mr-1" />
+              مميز
+            </Badge>
+          )}
+          {mainVideo && (
+            <Badge className="bg-blue-500 hover:bg-blue-600">
+              <svg className="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              </svg>
+              فيديو
+            </Badge>
+          )}
+        </div>
 
         {/* Stats */}
         <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -528,11 +549,12 @@ function ProjectCard({ project }: { project: Project }) {
 // Project List Item Component
 function ProjectListItem({ project }: { project: Project }) {
   const mainImage = project.mediaItems.find(item => item.type === 'IMAGE');
+  const mainVideo = project.mediaItems.find(item => item.type === 'VIDEO');
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       <div className="flex flex-col md:flex-row">
-        {/* Image */}
+        {/* Media */}
         <div className="relative w-full md:w-80 h-48 md:h-auto flex-shrink-0">
           {mainImage ? (
             <Image
@@ -541,18 +563,37 @@ function ProjectListItem({ project }: { project: Project }) {
               fill
               className="object-cover"
             />
+          ) : mainVideo ? (
+            <video
+              src={mainVideo.src}
+              className="w-full h-full object-cover"
+              muted
+              loop
+              autoPlay
+              playsInline
+            />
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-400">لا توجد صورة</span>
+              <span className="text-gray-400">لا توجد وسائط</span>
             </div>
           )}
           
-          {project.featured && (
-            <Badge className="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600">
-              <Star className="h-3 w-3 mr-1" />
-              مميز
-            </Badge>
-          )}
+          <div className="absolute top-4 right-4 flex gap-2">
+            {project.featured && (
+              <Badge className="bg-yellow-500 hover:bg-yellow-600">
+                <Star className="h-3 w-3 mr-1" />
+                مميز
+              </Badge>
+            )}
+            {mainVideo && (
+              <Badge className="bg-blue-500 hover:bg-blue-600">
+                <svg className="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                </svg>
+                فيديو
+              </Badge>
+            )}
+          </div>
         </div>
 
         {/* Content */}
@@ -587,7 +628,11 @@ function ProjectListItem({ project }: { project: Project }) {
               <span className="font-medium">المدة:</span> {project.projectDuration || 'غير محدد'}
             </div>
             <div>
-              <span className="font-medium">التكلفة:</span> {project.projectCost || 'حسب الطلب'}
+              <span className="font-medium">الوسائط:</span> 
+              {project.mediaItems.filter(m => m.type === 'IMAGE').length} صور
+              {project.mediaItems.filter(m => m.type === 'VIDEO').length > 0 && 
+                `, ${project.mediaItems.filter(m => m.type === 'VIDEO').length} فيديو`
+              }
             </div>
           </div>
 
