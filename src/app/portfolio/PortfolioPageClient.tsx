@@ -118,10 +118,17 @@ export default function PortfolioPageClient() {
 
       const data = await response.json();
       
+      console.log('📦 البيانات المستلمة من API:', data);
+      
       if (data.success) {
         setProjects(data.projects || []);
         setTotalProjects(data.total || 0);
         console.log('✅ تم جلب المشاريع بنجاح:', data.projects?.length || 0);
+      } else if (data.projects) {
+        // التوافق مع التنسيق القديم
+        setProjects(data.projects || []);
+        setTotalProjects(data.pagination?.total || data.projects?.length || 0);
+        console.log('✅ تم جلب المشاريع بنجاح (تنسيق قديم):', data.projects?.length || 0);
       } else {
         throw new Error(data.error || 'فشل في جلب المشاريع');
       }

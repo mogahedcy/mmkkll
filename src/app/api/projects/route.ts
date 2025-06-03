@@ -49,6 +49,14 @@ export async function GET(request: NextRequest) {
       take
     });
 
+    // تحويل البيانات لتتوافق مع التنسيق المطلوب
+    const formattedProjects = projects.map(project => ({
+      ...project,
+      views: project.views || 0,
+      likes: project.likes || 0,
+      rating: project.rating || 0
+    }));
+
     console.log('📊 المشاريع المجلبة:', {
       count: projects.length,
       projects: projects.map(p => ({
@@ -62,7 +70,9 @@ export async function GET(request: NextRequest) {
     const totalCount = await prisma.project.count({ where });
 
     return NextResponse.json({
-      projects,
+      success: true,
+      projects: formattedProjects,
+      total: totalCount,
       pagination: {
         total: totalCount,
         page: page ? Number.parseInt(page) : 1,

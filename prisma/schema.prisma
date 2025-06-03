@@ -16,14 +16,14 @@ model Project {
   description      String
   category         String
   location         String
-  completionDate   DateTime
+  completionDate   DateTime   @default(now())
   client           String?
-  featured         Boolean  @default(false)
-  views            Int      @default(0)
-  likes            Int      @default(0)
-  rating           Float    @default(5.0)
-  projectDuration  String
-  projectCost      String
+  featured         Boolean    @default(false)
+  projectDuration  String?
+  projectCost      String?
+  views            Int        @default(0)
+  likes            Int        @default(0)
+  rating           Float      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
