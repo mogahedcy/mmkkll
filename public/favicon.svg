@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="buildingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1d4ed8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#buildingGradient)" stroke="#ffffff" stroke-width="2"/>
+
+  <!-- Main Building -->
+  <rect x="25" y="35" width="18" height="45" fill="url(#accentGradient)" rx="2"/>
+
+  <!-- Second Building -->
+  <rect x="45" y="25" width="16" height="55" fill="#ffffff" rx="2"/>
+
+  <!-- Third Building -->
+  <rect x="63" y="40" width="12" height="40" fill="url(#accentGradient)" rx="1"/>
+
+  <!-- Building Details -->
+  <!-- Windows for main building -->
+  <rect x="28" y="40" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
+  <rect x="33" y="40" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
+  <rect x="28" y="47" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
+  <rect x="33" y="47" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
+  <rect x="28" y="54" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
+  <rect x="33" y="54" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
+
+  <!-- Windows for second building -->
+  <rect x="48" y="30" width="3" height="3" fill="#2563eb" rx="0.5"/>
+  <rect x="53" y="30" width="3" height="3" fill="#2563eb" rx="0.5"/>
+  <rect x="48" y="37" width="3" height="3" fill="#2563eb" rx="0.5"/>
+  <rect x="53" y="37" width="3" height="3" fill="#2563eb" rx="0.5"/>
+  <rect x="48" y="44" width="3" height="3" fill="#2563eb" rx="0.5"/>
+  <rect x="53" y="44" width="3" height="3" fill="#2563eb" rx="0.5"/>
+  <rect x="48" y="51" width="3" height="3" fill="#2563eb" rx="0.5"/>
+  <rect x="53" y="51" width="3" height="3" fill="#2563eb" rx="0.5"/>
+
+  <!-- Windows for third building -->
+  <rect x="65" y="45" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
+  <rect x="69" y="45" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
+  <rect x="65" y="51" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
+  <rect x="69" y="51" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
+
+  <!-- Company Initial "د" (Arabic letter Dal) -->
+  <text x="50" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff">د</text>
+</svg>

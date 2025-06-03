@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء أيقونات محترفين الديار</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .icon-set { margin: 20px 0; }
+        button { margin: 5px; padding: 10px; background: #2563eb; color: white; border: none; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <h1>إنشاء أيقونات محترفين الديار</h1>
+
+    <div class="icon-set">
+        <h3>أيقونة 16x16</h3>
+        <canvas id="canvas16" width="16" height="16"></canvas>
+        <button onclick="downloadIcon(16)">تحميل 16x16</button>
+    </div>
+
+    <div class="icon-set">
+        <h3>أيقونة 32x32</h3>
+        <canvas id="canvas32" width="32" height="32"></canvas>
+        <button onclick="downloadIcon(32)">تحميل 32x32</button>
+    </div>
+
+    <div class="icon-set">
+        <h3>أيقونة 180x180 (Apple)</h3>
+        <canvas id="canvas180" width="180" height="180"></canvas>
+        <button onclick="downloadIcon(180)">تحميل Apple Touch Icon</button>
+    </div>
+
+    <div class="icon-set">
+        <h3>أيقونة 192x192 (Android)</h3>
+        <canvas id="canvas192" width="192" height="192"></canvas>
+        <button onclick="downloadIcon(192)">تحميل Android 192x192</button>
+    </div>
+
+    <div class="icon-set">
+        <h3>أيقونة 512x512 (Android Large)</h3>
+        <canvas id="canvas512" width="512" height="512"></canvas>
+        <button onclick="downloadIcon(512)">تحميل Android 512x512</button>
+    </div>
+
+    <script>
+        function createIcon(size) {
+            const canvas = document.getElementById(`canvas${size}`);
+            const ctx = canvas.getContext('2d');
+
+            // خلفية دائرية بتدرج أزرق
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#2563eb');
+            gradient.addColorStop(0.5, '#1d4ed8');
+            gradient.addColorStop(1, '#1e3a8a');
+
+            // رسم الخلفية الدائرية
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 2, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // إطار أبيض
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = Math.max(1, size/32);
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 2, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            const scale = size / 100;
+
+            // المبنى الأول (برتقالي)
+            const orangeGradient = ctx.createLinearGradient(0, 0, size, size);
+            orangeGradient.addColorStop(0, '#f97316');
+            orangeGradient.addColorStop(1, '#ea580c');
+
+            ctx.fillStyle = orangeGradient;
+            ctx.fillRect(25*scale, 35*scale, 18*scale, 45*scale);
+
+            // المبنى الثاني (أبيض)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(45*scale, 25*scale, 16*scale, 55*scale);
+
+            // المبنى الثالث (برتقالي)
+            ctx.fillStyle = orangeGradient;
+            ctx.fillRect(63*scale, 40*scale, 12*scale, 40*scale);
+
+            // النوافذ
+            if (size >= 32) {
+                // نوافذ المبنى الأول
+                ctx.fillStyle = '#1e3a8a';
+                ctx.fillRect(28*scale, 40*scale, 3*scale, 3*scale);
+                ctx.fillRect(36*scale, 40*scale, 3*scale, 3*scale);
+                ctx.fillRect(28*scale, 50*scale, 3*scale, 3*scale);
+                ctx.fillRect(36*scale, 50*scale, 3*scale, 3*scale);
+
+                // نوافذ المبنى الثاني
+                ctx.fillStyle = '#2563eb';
+                ctx.fillRect(48*scale, 30*scale, 3*scale, 3*scale);
+                ctx.fillRect(56*scale, 30*scale, 3*scale, 3*scale);
+                ctx.fillRect(48*scale, 40*scale, 3*scale, 3*scale);
+                ctx.fillRect(56*scale, 40*scale, 3*scale, 3*scale);
+                ctx.fillRect(48*scale, 50*scale, 3*scale, 3*scale);
+                ctx.fillRect(56*scale, 50*scale, 3*scale, 3*scale);
+
+                // نوافذ المبنى الثالث
+                ctx.fillStyle = '#1e3a8a';
+                ctx.fillRect(66*scale, 45*scale, 2*scale, 2*scale);
+                ctx.fillRect(70*scale, 45*scale, 2*scale, 2*scale);
+                ctx.fillRect(66*scale, 55*scale, 2*scale, 2*scale);
+                ctx.fillRect(70*scale, 55*scale, 2*scale, 2*scale);
+            }
+
+            // الحرف العربي "د" (للأحجام الكبيرة فقط)
+            if (size >= 64) {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.max(12, size/8)}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('د', size/2, size/5);
+            }
+        }
+
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`canvas${size}`);
+            const link = document.createElement('a');
+
+            let filename;
+            switch(size) {
+                case 16: filename = 'favicon-16x16.png'; break;
+                case 32: filename = 'favicon-32x32.png'; break;
+                case 180: filename = 'apple-touch-icon.png'; break;
+                case 192: filename = 'android-chrome-192x192.png'; break;
+                case 512: filename = 'android-chrome-512x512.png'; break;
+            }
+
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // إنشاء جميع الأيقونات عند تحميل الصفحة
+        window.onload = function() {
+            createIcon(16);
+            createIcon(32);
+            createIcon(180);
+            createIcon(192);
+            createIcon(512);
+        };
+    </script>
+</body>
+</html>
