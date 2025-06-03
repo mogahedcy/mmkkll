@@ -170,24 +170,41 @@ export default function AddProjectPage() {
     setIsSubmitting(true);
 
     try {
+      // التحقق من البيانات الأساسية
+      if (!formData.title || !formData.description || !formData.category) {
+        alert('يرجى ملء جميع الحقول المطلوبة');
+        return;
+      }
+
       // رفع الملفات أولاً
       const uploadedMedia = [];
       for (const mediaFile of mediaFiles) {
-        const url = await uploadToCloudinary(mediaFile.file);
-        uploadedMedia.push({
-          type: mediaFile.type.toUpperCase(),
-          src: url,
-          title: mediaFile.title,
-          order: uploadedMedia.length
-        });
+        try {
+          const url = await uploadToCloudinary(mediaFile.file);
+          if (!url) {
+            throw new Error('فشل في رفع الملف');
+          }
+          uploadedMedia.push({
+            type: mediaFile.type.toUpperCase(),
+            src: url,
+            thumbnail: url, // استخدام نفس الرابط كصورة مصغرة
+            title: mediaFile.title || mediaFile.file.name,
+            description: mediaFile.description || '',
+            order: uploadedMedia.length
+          });
+        } catch (uploadError) {
+          console.error('خطأ في رفع الملف:', uploadError);
+          alert(`فشل في رفع الملف: ${mediaFile.file.name}`);
+          return;
+        }
       }
 
       // إنشاء المشروع
       const projectData = {
         ...formData,
         mediaItems: uploadedMedia,
-        tags: tags.map(tag => ({ name: tag })),
-        materials: materials.map(material => ({ name: material })),
+        tags: tags, // إرسال كـ array من strings
+        materials: materials, // إرسال كـ array من strings
         completionDate: new Date(formData.completionDate).toISOString()
       };
 
@@ -202,14 +219,16 @@ export default function AddProjectPage() {
 
       if (response.ok) {
         const result = await response.json();
+        alert('تم إضافة المشروع بنجاح! 🎉');
         router.push(`/dashboard/projects/${result.project.id}`);
       } else {
         const error = await response.json();
-        alert(`خطأ: ${error.error}`);
+        console.error('API Error:', error);
+        alert(`خطأ في إضافة المشروع: ${error.error || 'خطأ غير معروف'}`);
       }
     } catch (error) {
       console.error('Error creating project:', error);
-      alert('حدث خطأ في إنشاء المشروع');
+      alert(`حدث خطأ في إنشاء المشروع: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`);
     } finally {
       setIsSubmitting(false);
     }

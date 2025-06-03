@@ -125,22 +125,32 @@ export async function POST(request: NextRequest) {
         mediaItems: {
           create: mediaItems?.map((item: any, index: number) => {
             console.log(`📁 معالجة ملف ${index + 1}:`, item);
+            
+            // التحقق من وجود src المطلوب
+            if (!item.src) {
+              throw new Error(`الملف ${index + 1} لا يحتوي على رابط صحيح`);
+            }
+            
             return {
               type: item.type,
               src: item.src,
-              thumbnail: item.thumbnail,
-              title: item.title,
-              description: item.description,
-              duration: item.duration,
+              thumbnail: item.thumbnail || item.src,
+              title: item.title || `ملف ${index + 1}`,
+              description: item.description || '',
+              duration: item.duration || null,
               order: index
             };
           }) || []
         },
         tags: {
-          create: tags?.map((tag: string) => ({ name: tag })) || []
+          create: tags?.map((tag: any) => ({ 
+            name: typeof tag === 'string' ? tag : tag.name 
+          })) || []
         },
         materials: {
-          create: materials?.map((material: string) => ({ name: material })) || []
+          create: materials?.map((material: any) => ({ 
+            name: typeof material === 'string' ? material : material.name 
+          })) || []
         }
       },
       include: {
