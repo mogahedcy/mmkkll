@@ -126,6 +126,11 @@ export async function POST(request: NextRequest) {
             storage_type: 'cloudinary'
           };
 
+          // التحقق من صحة النتيجة
+          if (!uploadedFile.src) {
+            throw new Error('لم يتم الحصول على رابط صحيح من Cloudinary');
+          }
+
         } else {
           // رفع محلي (fallback)
           console.log('💾 رفع محلي (fallback mode)...');

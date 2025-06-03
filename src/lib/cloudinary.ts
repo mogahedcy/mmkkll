@@ -110,7 +110,19 @@ export async function uploadToCloudinary(
             console.error('❌ خطأ في رفع Cloudinary:', error);
             reject(error);
           } else if (result) {
-            console.log('✅ تم رفع الملف بنجاح:', result.secure_url);
+            console.log('✅ تم رفع الملف بنجاح:', {
+              url: result.secure_url,
+              public_id: result.public_id,
+              resource_type: result.resource_type,
+              bytes: result.bytes
+            });
+            
+            // التحقق من صحة النتيجة
+            if (!result.secure_url) {
+              reject(new Error('لم يتم إرجاع رابط آمن من Cloudinary'));
+              return;
+            }
+            
             resolve(result as CloudinaryUploadResult);
           } else {
             reject(new Error('لم يتم إرجاع نتيجة من Cloudinary'));

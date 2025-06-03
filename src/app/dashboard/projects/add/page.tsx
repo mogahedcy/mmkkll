@@ -158,11 +158,25 @@ export default function AddProjectPage() {
     });
 
     if (!response.ok) {
-      throw new Error('فشل في رفع الملف');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'فشل في رفع الملف');
     }
 
     const data = await response.json();
-    return data.url;
+    console.log('🔍 نتيجة الرفع:', data);
+    
+    // التحقق من وجود الملفات المرفوعة
+    if (!data.files || data.files.length === 0) {
+      throw new Error('لم يتم إرجاع أي ملفات من الخادم');
+    }
+
+    // إرجاع رابط الملف الأول
+    const uploadedFile = data.files[0];
+    if (!uploadedFile.src && !uploadedFile.url) {
+      throw new Error('لم يتم إرجاع رابط صحيح للملف');
+    }
+
+    return uploadedFile.src || uploadedFile.url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -178,26 +192,44 @@ export default function AddProjectPage() {
 
       // رفع الملفات أولاً
       const uploadedMedia = [];
-      for (const mediaFile of mediaFiles) {
+      let failedUploads = 0;
+      
+      for (let i = 0; i < mediaFiles.length; i++) {
+        const mediaFile = mediaFiles[i];
         try {
+          console.log(`📤 رفع الملف ${i + 1} من ${mediaFiles.length}: ${mediaFile.file.name}`);
+          
           const url = await uploadToCloudinary(mediaFile.file);
           if (!url) {
-            throw new Error('فشل في رفع الملف');
+            throw new Error('لم يتم إرجاع رابط صحيح');
           }
+          
+          console.log(`✅ تم رفع الملف بنجاح: ${mediaFile.file.name} -> ${url}`);
+          
           uploadedMedia.push({
             type: mediaFile.type.toUpperCase(),
             src: url,
-            thumbnail: url, // استخدام نفس الرابط كصورة مصغرة
+            thumbnail: url,
             title: mediaFile.title || mediaFile.file.name,
             description: mediaFile.description || '',
             order: uploadedMedia.length
           });
         } catch (uploadError) {
-          console.error('خطأ في رفع الملف:', uploadError);
-          alert(`فشل في رفع الملف: ${mediaFile.file.name}`);
+          failedUploads++;
+          console.error(`❌ خطأ في رفع الملف ${mediaFile.file.name}:`, uploadError);
+          
+          const errorMessage = uploadError instanceof Error ? uploadError.message : 'خطأ غير معروف';
+          alert(`فشل في رفع الملف: ${mediaFile.file.name}\nالخطأ: ${errorMessage}`);
           return;
         }
       }
+      
+      if (uploadedMedia.length === 0) {
+        alert('لم يتم رفع أي ملفات بنجاح. يرجى المحاولة مرة أخرى.');
+        return;
+      }
+      
+      console.log(`📊 نتيجة الرفع: ${uploadedMedia.length} ملف نجح، ${failedUploads} ملف فشل`);
 
       // إنشاء المشروع
       const projectData = {
