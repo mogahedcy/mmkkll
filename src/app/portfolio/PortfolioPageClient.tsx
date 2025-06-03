@@ -1,47 +1,29 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-  Search,
-  Filter,
-  Grid3X3,
-  List,
-  Calendar,
-  MapPin,
-  User,
-  Clock,
-  DollarSign,
-  Eye,
-  Heart,
+import { Badge } from '@/components/ui/badge';
+import AdvancedFilters from '@/components/AdvancedFilters';
+import { 
+  Search, 
+  Grid3X3, 
+  List, 
+  MapPin, 
+  Calendar, 
+  Eye, 
+  Heart, 
   Star,
-  Play,
-  Image as ImageIcon,
-  ArrowRight,
-  TrendingUp,
-  Award,
-  Users,
-  Target,
-  CheckCircle,
-  Quote,
-  Phone
+  Filter,
+  SortAsc,
+  Share2,
+  ExternalLink,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
-
-interface MediaItem {
-  id: string;
-  type: 'IMAGE' | 'VIDEO';
-  src: string;
-  thumbnail?: string;
-  title?: string;
-  description?: string;
-  duration?: string;
-  order: number;
-}
 
 interface Project {
   id: string;
@@ -57,567 +39,583 @@ interface Project {
   rating: number;
   projectDuration: string;
   projectCost: string;
+  mediaItems: Array<{
+    id: string;
+    type: 'IMAGE' | 'VIDEO';
+    src: string;
+    thumbnail?: string;
+    title?: string;
+  }>;
+  tags: Array<{ name: string }>;
+  materials: Array<{ name: string }>;
   createdAt: string;
-  mediaItems: MediaItem[];
-  tags: { id: string; name: string; }[];
-  materials: { id: string; name: string; }[];
-  _count: {
-    comments: number;
-    likes: number;
-  };
+  updatedAt: string;
 }
 
+type ViewMode = 'grid' | 'list' | 'map';
+type SortOption = 'newest' | 'oldest' | 'mostViewed' | 'featured' | 'rating';
+
 const categories = [
-  { id: 'all', name: 'جميع المشاريع', icon: '🏗️', color: 'bg-gray-500' },
-  { id: 'landscaping', name: 'تنسيق الحدائق', icon: '🌿', color: 'bg-green-500' },
-  { id: 'mazallat', name: 'المظلات', icon: '☂️', color: 'bg-blue-500' },
-  { id: 'pergolas', name: 'البرجولات', icon: '🏛️', color: 'bg-amber-500' },
-  { id: 'renovation', name: 'الترميم', icon: '🔨', color: 'bg-orange-500' },
-  { id: 'sandwich-panel', name: 'الساندوتش بانل', icon: '🏢', color: 'bg-slate-500' },
-  { id: 'sawater', name: 'السواتر', icon: '🧱', color: 'bg-red-500' },
-  { id: 'byoot-shaar', name: 'بيوت الشعر', icon: '⛺', color: 'bg-purple-500' },
-  { id: 'khayyam', name: 'الخيام', icon: '🏕️', color: 'bg-emerald-500' }
+  'الكل',
+  'مظلات',
+  'برجولات', 
+  'سواتر',
+  'ساندوتش بانل',
+  'تنسيق حدائق',
+  'خيام ملكية',
+  'بيوت شعر',
+  'ترميم'
 ];
 
-const stats = [
-  { icon: Target, value: '500+', label: 'مشروع مكتمل', color: 'text-blue-600' },
-  { icon: Users, value: '300+', label: 'عميل راضي', color: 'text-green-600' },
-  { icon: Award, value: '15+', label: 'سنة خبرة', color: 'text-purple-600' },
-  { icon: Star, value: '4.9', label: 'تقييم العملاء', color: 'text-yellow-600' }
+const sortOptions = [
+  { value: 'newest', label: 'الأحدث' },
+  { value: 'oldest', label: 'الأقدم' },
+  { value: 'mostViewed', label: 'الأكثر مشاهدة' },
+  { value: 'featured', label: 'المميز' },
+  { value: 'rating', label: 'الأعلى تقييماً' }
 ];
 
 export default function PortfolioPageClient() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showOnlyFeatured, setShowOnlyFeatured] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('الكل');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'most-viewed' | 'highest-rated'>('newest');
+  const [totalProjects, setTotalProjects] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
+  
+  const projectsPerPage = 12;
 
-  useEffect(() => {
-    fetchProjects();
-  }, [selectedCategory, showOnlyFeatured, currentPage, sortBy]);
-
-  const fetchProjects = async () => {
-    setLoading(true);
+  const fetchProjects = useCallback(async (retryAttempt = 0) => {
     try {
+      setLoading(true);
+      setError(null);
+
       const params = new URLSearchParams({
-        category: selectedCategory,
-        featured: showOnlyFeatured.toString(),
+        category: selectedCategory === 'الكل' ? 'all' : selectedCategory,
         page: currentPage.toString(),
-        limit: '12'
+        limit: projectsPerPage.toString(),
+        search: searchTerm,
+        sort: sortBy
+      });
+
+      console.log('🔍 جلب المشاريع مع المعايير:', {
+        category: selectedCategory,
+        page: currentPage,
+        search: searchTerm,
+        sort: sortBy
       });
 
       const response = await fetch(`/api/projects?${params}`);
-      const data = await response.json();
-
-      if (data.projects) {
-        setProjects(data.projects);
-        setTotalPages(data.pagination.totalPages);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setProjects(data.projects || []);
+        setTotalProjects(data.total || 0);
+        console.log('✅ تم جلب المشاريع بنجاح:', data.projects?.length || 0);
+      } else {
+        throw new Error(data.error || 'فشل في جلب المشاريع');
+      }
+
     } catch (error) {
-      console.error('خطأ في جلب المشاريع:', error);
+      console.error('❌ خطأ في جلب المشاريع:', error);
+      
+      // إعادة المحاولة تلقائياً (حتى 3 مرات)
+      if (retryAttempt < 3) {
+        console.log(`🔄 إعادة المحاولة ${retryAttempt + 1}/3...`);
+        setTimeout(() => {
+          fetchProjects(retryAttempt + 1);
+        }, 1000 * (retryAttempt + 1)); // تأخير متدرج
+        return;
+      }
+
+      setError(error instanceof Error ? error.message : 'حدث خطأ غير متوقع');
+      setProjects([]);
     } finally {
       setLoading(false);
     }
+  }, [selectedCategory, currentPage, searchTerm, sortBy]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    fetchProjects();
   };
 
-  const filteredProjects = projects.filter(project =>
-    project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.tags.some(tag => tag.name.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredAndSortedProjects = useMemo(() => {
+    if (!projects.length) return [];
 
-  const HeroSection = () => (
-    <section className="relative bg-gradient-to-br from-green-600 via-blue-600 to-purple-600 text-white overflow-hidden">
-      {/* خلفية متحركة */}
-      <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-      <div className="absolute inset-0">
-        <div className="absolute top-10 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full animate-bounce"></div>
-        <div className="absolute top-32 right-20 w-16 h-16 bg-white bg-opacity-10 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-white bg-opacity-10 rounded-full animate-bounce delay-300"></div>
-      </div>
+    let filtered = [...projects];
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-              معرض أعمالنا
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto leading-relaxed">
-              استكشف مجموعة متنوعة من مشاريعنا المميزة في مجال تنسيق الحدائق والمظلات والبرجولات
-            </p>
-          </motion.div>
+    // تطبيق الترتيب
+    switch (sortBy) {
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+      case 'oldest':
+        filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        break;
+      case 'mostViewed':
+        filtered.sort((a, b) => b.views - a.views);
+        break;
+      case 'featured':
+        filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        break;
+      case 'rating':
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+    }
 
-          {/* إحصائيات */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-12"
-          >
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-white bg-opacity-20 mb-4 ${stat.color}`}>
-                  <stat.icon className="h-8 w-8" />
-                </div>
-                <div className="text-3xl font-bold mb-2">{stat.value}</div>
-                <div className="text-blue-200">{stat.label}</div>
-              </div>
-            ))}
-          </motion.div>
+    return filtered;
+  }, [projects, sortBy]);
 
-          {/* أزرار الإجراء */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-12 flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Button
-              size="lg"
-              className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
-              asChild
-            >
-              <Link href="#projects">
-                استعرض المشاريع
-                <ArrowRight className="mr-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 text-lg font-semibold"
-              asChild
-            >
-              <Link href="/contact">
-                <Phone className="ml-2 h-5 w-5" />
-                اطلب استشارة مجانية
-              </Link>
-            </Button>
-          </motion.div>
-        </div>
-      </div>
+  const totalPages = Math.ceil(totalProjects / projectsPerPage);
 
-      {/* موجة سفلية */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 120L1440 120L1440 0C1440 0 1140 80 720 80C300 80 0 0 0 0L0 120Z" fill="white"/>
-        </svg>
-      </div>
-    </section>
-  );
-
-  const ProjectCard = ({ project }: { project: Project }) => {
-    const mainImage = project.mediaItems.find(item => item.type === 'IMAGE');
-    const mainVideo = project.mediaItems.find(item => item.type === 'VIDEO');
-    const mainMedia = mainImage || mainVideo;
-    const hasVideo = project.mediaItems.some(item => item.type === 'VIDEO');
-
+  // عرض حالة التحميل
+  if (loading && !projects.length) {
     return (
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        whileHover={{ y: -8 }}
-        className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 relative"
-      >
-        {/* صورة/فيديو المشروع */}
-        <div className="relative h-64 overflow-hidden">
-          {mainMedia ? (
-            <>
-              {mainMedia.type === 'IMAGE' ? (
-                <Image
-                  src={mainMedia.src}
-                  alt={project.title}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-              ) : (
-                <div className="relative w-full h-full bg-gray-900">
-                  <video
-                    src={mainMedia.src}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    muted
-                    playsInline
-                    preload="metadata"
-                    onError={(e) => {
-                      console.log('خطأ في تحميل فيديو Portfolio:', mainMedia.src);
-                    }}
-                    onMouseEnter={(e) => {
-                      const video = e.target as HTMLVideoElement;
-                      video.currentTime = 0;
-                      video.play().catch(console.error);
-                    }}
-                    onMouseLeave={(e) => {
-                      const video = e.target as HTMLVideoElement;
-                      video.pause();
-                      video.currentTime = 0;
-                    }}
-                  >
-                    متصفحك لا يدعم تشغيل الفيديو
-                  </video>
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center pointer-events-none group-hover:bg-opacity-10 transition-all duration-300">
-                    <div className="bg-white bg-opacity-90 rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
-                      <Play className="h-10 w-10 text-gray-800" />
-                    </div>
-                  </div>
-                  {/* مؤشر الفيديو */}
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-red-500 text-white text-xs">
-                      فيديو
-                    </Badge>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-              <ImageIcon className="w-16 h-16 text-gray-400" />
-            </div>
-          )}
-
-          {/* شارات علوية */}
-          <div className="absolute top-4 left-4 flex gap-2">
-            {project.featured && (
-              <Badge className="bg-yellow-500 text-white shadow-lg">
-                <Star className="h-3 w-3 mr-1 fill-current" />
-                مميز
-              </Badge>
-            )}
-            {hasVideo && (
-              <Badge className="bg-red-500 text-white shadow-lg">
-                <Play className="h-3 w-3 mr-1 fill-current" />
-                فيديو
-              </Badge>
-            )}
-          </div>
-
-          {/* فئة المشروع */}
-          <div className="absolute top-4 right-4">
-            <Badge className={`${categories.find(c => c.id === project.category)?.color} text-white shadow-lg`}>
-              {categories.find(c => c.id === project.category)?.icon} {categories.find(c => c.id === project.category)?.name}
-            </Badge>
-          </div>
-
-          {/* معلومات سريعة */}
-          <div className="absolute bottom-4 left-4 flex gap-2">
-            <Badge variant="secondary" className="bg-black bg-opacity-70 text-white">
-              <Eye className="h-3 w-3 mr-1" />
-              {project.views}
-            </Badge>
-            <Badge variant="secondary" className="bg-black bg-opacity-70 text-white">
-              <Heart className="h-3 w-3 mr-1" />
-              {project.likes}
-            </Badge>
-          </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">جاري تحميل المشاريع...</h3>
+          <p className="text-gray-600">يرجى الانتظار قليلاً</p>
         </div>
-
-        {/* محتوى البطاقة */}
-        <div className="p-6">
-          <div className="mb-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-              {project.title}
-            </h3>
-            <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed">
-              {project.description}
-            </p>
-          </div>
-
-          {/* تفاصيل المشروع */}
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center text-sm text-gray-500">
-              <MapPin className="h-4 w-4 mr-2 text-blue-500" />
-              <span>{project.location}</span>
-            </div>
-
-            <div className="flex items-center text-sm text-gray-500">
-              <Calendar className="h-4 w-4 mr-2 text-green-500" />
-              <span>{new Date(project.completionDate).toLocaleDateString('ar-SA')}</span>
-            </div>
-
-            {project.client && (
-              <div className="flex items-center text-sm text-gray-500">
-                <User className="h-4 w-4 mr-2 text-purple-500" />
-                <span>{project.client}</span>
-              </div>
-            )}
-
-            {project.projectDuration && (
-              <div className="flex items-center text-sm text-gray-500">
-                <Clock className="h-4 w-4 mr-2 text-orange-500" />
-                <span>{project.projectDuration}</span>
-              </div>
-            )}
-          </div>
-
-          {/* تقييم المشروع */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-4 w-4 ${i < Math.floor(project.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                />
-              ))}
-              <span className="text-sm text-gray-600 mr-2">({project.rating.toFixed(1)})</span>
-            </div>
-            <div className="text-sm text-gray-500">
-              {project._count.comments} تعليق
-            </div>
-          </div>
-
-          {/* الكلمات المفتاحية */}
-          {project.tags && project.tags.length > 0 && (
-            <div className="mb-4">
-              <div className="flex flex-wrap gap-1">
-                {project.tags.slice(0, 3).map((tag) => (
-                  <Badge key={tag.id} variant="outline" className="text-xs">
-                    {tag.name}
-                  </Badge>
-                ))}
-                {project.tags.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{project.tags.length - 3}
-                  </Badge>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* زر التفاصيل */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Button
-              className="w-full group-hover:bg-blue-600 transition-all duration-300 relative overflow-hidden"
-              asChild
-            >
-              <Link href={`/portfolio/${project.id}`}>
-                <span className="relative z-10">عرض التفاصيل</span>
-                <ArrowRight className="mr-2 h-4 w-4 relative z-10 group-hover:translate-x-1 transition-transform" />
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  initial={false}
-                />
-              </Link>
-            </Button>
-          </motion.div>
-        </div>
-      </motion.div>
+      </div>
     );
-  };
+  }
+
+  // عرض حالة الخطأ
+  if (error && !projects.length) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto">
+          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">حدث خطأ في تحميل المشاريع</h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <div className="space-y-3">
+            <Button onClick={handleRetry} className="w-full">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              إعادة المحاولة
+            </Button>
+            <Button variant="outline" onClick={() => window.location.reload()} className="w-full">
+              تحديث الصفحة
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* قسم البطل */}
-      <HeroSection />
+    <div className="min-h-screen bg-gray-50" dir="rtl">
+      {/* Header */}
+      <section className="bg-gradient-to-br from-primary via-primary/90 to-accent py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            معرض أعمالنا المتميزة
+          </h1>
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            استكشف مجموعة من أروع المشاريع التي نفذناها بأعلى معايير الجودة والإتقان
+          </p>
+          
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto relative">
+            <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="ابحث في المشاريع..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pr-12 py-4 text-lg bg-white/95 backdrop-blur border-0 shadow-lg"
+            />
+          </div>
+        </div>
+      </section>
 
-      {/* قسم المشاريع */}
-      <section id="projects" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Controls */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+          {/* Categories */}
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setCurrentPage(1);
+                }}
+                className="transition-all duration-200"
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
 
-          {/* فلاتر البحث */}
-          <div className="mb-12">
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-              <div className="flex flex-col lg:flex-row gap-6">
+          {/* View Options */}
+          <div className="flex items-center gap-4">
+            {/* Sort */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+            >
+              {sortOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
 
-                {/* شريط البحث */}
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                    <Input
-                      type="text"
-                      placeholder="ابحث في المشاريع..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pr-12 pl-4 py-3 text-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
+            {/* View Mode */}
+            <div className="flex border border-gray-300 rounded-md overflow-hidden">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+                className="rounded-none"
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+                className="rounded-none"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
 
-                {/* إعدادات العرض */}
-                <div className="flex gap-4">
-                  <Button
-                    variant={viewMode === 'grid' ? 'default' : 'outline'}
-                    size="lg"
-                    onClick={() => setViewMode('grid')}
-                    className="px-6"
-                  >
-                    <Grid3X3 className="h-5 w-5" />
-                  </Button>
-                  <Button
-                    variant={viewMode === 'list' ? 'default' : 'outline'}
-                    size="lg"
-                    onClick={() => setViewMode('list')}
-                    className="px-6"
-                  >
-                    <List className="h-5 w-5" />
-                  </Button>
-                </div>
+            {/* Filters */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              الفلاتر
+            </Button>
+          </div>
+        </div>
+
+        {/* Results Info */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="text-sm text-gray-600">
+            عرض {projects.length} من أصل {totalProjects} مشروع
+            {searchTerm && (
+              <span className="font-medium"> • البحث عن: "{searchTerm}"</span>
+            )}
+          </div>
+          
+          {loading && (
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+              جاري التحديث...
+            </div>
+          )}
+        </div>
+
+        {/* Advanced Filters */}
+        {showFilters && (
+          <div className="mb-8">
+            <AdvancedFilters onFiltersChange={() => {}} />
+          </div>
+        )}
+
+        {/* Projects Grid/List */}
+        {projects.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-gray-400 mb-4">
+              <Search className="h-16 w-16 mx-auto" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">لا توجد مشاريع</h3>
+            <p className="text-gray-600 mb-6">
+              {searchTerm 
+                ? `لم نجد أي مشاريع تطابق البحث "${searchTerm}"`
+                : 'لا توجد مشاريع في هذه الفئة حالياً'
+              }
+            </p>
+            {searchTerm && (
+              <Button onClick={() => setSearchTerm('')} variant="outline">
+                مسح البحث
+              </Button>
+            )}
+          </div>
+        ) : (
+          <>
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredAndSortedProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
               </div>
+            ) : (
+              <div className="space-y-6">
+                {filteredAndSortedProjects.map((project) => (
+                  <ProjectListItem key={project.id} project={project} />
+                ))}
+              </div>
+            )}
 
-              {/* فلاتر الفئات */}
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">الفئات</h3>
-                <div className="flex flex-wrap gap-3">
-                  {categories.map((category) => (
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-12">
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  السابق
+                </Button>
+                
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <Button
-                      key={category.id}
-                      variant={selectedCategory === category.id ? 'default' : 'outline'}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className={`${selectedCategory === category.id ? category.color : ''} transition-all duration-200`}
+                      key={page}
+                      variant={currentPage === page ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className="min-w-[40px]"
                     >
-                      <span className="ml-2">{category.icon}</span>
-                      {category.name}
+                      {page}
                     </Button>
                   ))}
                 </div>
-              </div>
 
-              {/* فلاتر إضافية */}
-              <div className="mt-6 flex flex-wrap gap-4">
                 <Button
-                  variant={showOnlyFeatured ? 'default' : 'outline'}
-                  onClick={() => setShowOnlyFeatured(!showOnlyFeatured)}
-                  className="flex items-center gap-2"
+                  variant="outline"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
                 >
-                  <Star className="h-4 w-4" />
-                  المشاريع المميزة فقط
+                  التالي
                 </Button>
-
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-blue-500"
-                >
-                  <option value="newest">الأحدث</option>
-                  <option value="oldest">الأقدم</option>
-                  <option value="most-viewed">الأكثر مشاهدة</option>
-                  <option value="highest-rated">الأعلى تقييماً</option>
-                </select>
               </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Project Card Component
+function ProjectCard({ project }: { project: Project }) {
+  const mainImage = project.mediaItems.find(item => item.type === 'IMAGE');
+
+  return (
+    <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+      {/* Project Image */}
+      <div className="relative h-64 overflow-hidden">
+        {mainImage ? (
+          <Image
+            src={mainImage.src}
+            alt={project.title}
+            fill
+            className="object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-400">لا توجد صورة</span>
+          </div>
+        )}
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        {/* Featured Badge */}
+        {project.featured && (
+          <Badge className="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600">
+            <Star className="h-3 w-3 mr-1" />
+            مميز
+          </Badge>
+        )}
+
+        {/* Stats */}
+        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="flex items-center gap-4 text-sm">
+            <span className="flex items-center gap-1">
+              <Eye className="h-4 w-4" />
+              {project.views}
+            </span>
+            <span className="flex items-center gap-1">
+              <Heart className="h-4 w-4" />
+              {project.likes}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Project Info */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-2">
+          <Badge variant="secondary" className="text-xs">
+            {project.category}
+          </Badge>
+          <div className="flex items-center gap-1 text-sm text-yellow-500">
+            <Star className="h-4 w-4 fill-current" />
+            <span>{project.rating}</span>
+          </div>
+        </div>
+
+        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+          {project.title}
+        </h3>
+
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+          {project.description}
+        </p>
+
+        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+          <span className="flex items-center gap-1">
+            <MapPin className="h-4 w-4" />
+            {project.location}
+          </span>
+          <span className="flex items-center gap-1">
+            <Calendar className="h-4 w-4" />
+            {new Date(project.completionDate).toLocaleDateString('ar-SA')}
+          </span>
+        </div>
+
+        {/* Tags */}
+        {project.tags && project.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-4">
+            {project.tags.slice(0, 3).map((tag) => (
+              <span key={tag.name} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                {tag.name}
+              </span>
+            ))}
+            {project.tags.length > 3 && (
+              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                +{project.tags.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Action Button */}
+        <Link href={`/portfolio/${project.id}`}>
+          <Button className="w-full group-hover:bg-primary/90">
+            <ExternalLink className="h-4 w-4 mr-2" />
+            مشاهدة التفاصيل
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// Project List Item Component
+function ProjectListItem({ project }: { project: Project }) {
+  const mainImage = project.mediaItems.find(item => item.type === 'IMAGE');
+
+  return (
+    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+      <div className="flex flex-col md:flex-row">
+        {/* Image */}
+        <div className="relative w-full md:w-80 h-48 md:h-auto flex-shrink-0">
+          {mainImage ? (
+            <Image
+              src={mainImage.src}
+              alt={project.title}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400">لا توجد صورة</span>
+            </div>
+          )}
+          
+          {project.featured && (
+            <Badge className="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600">
+              <Star className="h-3 w-3 mr-1" />
+              مميز
+            </Badge>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 p-6">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Badge variant="secondary">{project.category}</Badge>
+                <div className="flex items-center gap-1 text-sm text-yellow-500">
+                  <Star className="h-4 w-4 fill-current" />
+                  <span>{project.rating}</span>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                {project.title}
+              </h3>
             </div>
           </div>
 
-          {/* عرض المشاريع */}
-          {loading ? (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {[...Array(6)].map((_, index) => (
-                <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 animate-pulse">
-                  <div className="h-64 bg-gray-200"></div>
-                  <div className="p-6 space-y-4">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                    <div className="space-y-2">
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-6 bg-gray-200 rounded w-16"></div>
-                      <div className="h-6 bg-gray-200 rounded w-16"></div>
-                    </div>
-                    <div className="h-10 bg-gray-200 rounded"></div>
-                  </div>
-                </div>
+          <p className="text-gray-600 mb-4 line-clamp-2">
+            {project.description}
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm text-gray-600">
+            <div>
+              <span className="font-medium">الموقع:</span> {project.location}
+            </div>
+            <div>
+              <span className="font-medium">التاريخ:</span> {new Date(project.completionDate).toLocaleDateString('ar-SA')}
+            </div>
+            <div>
+              <span className="font-medium">المدة:</span> {project.projectDuration || 'غير محدد'}
+            </div>
+            <div>
+              <span className="font-medium">التكلفة:</span> {project.projectCost || 'حسب الطلب'}
+            </div>
+          </div>
+
+          {/* Tags */}
+          {project.tags && project.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {project.tags.slice(0, 5).map((tag) => (
+                <span key={tag.name} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                  {tag.name}
+                </span>
               ))}
             </div>
-          ) : filteredProjects.length > 0 ? (
-            <>
-              {/* نتائج البحث */}
-              <div className="mb-8 text-center">
-                <p className="text-lg text-gray-600">
-                  تم العثور على <span className="font-bold text-blue-600">{filteredProjects.length}</span> مشروع
-                  {selectedCategory !== 'all' && (
-                    <span> في فئة <span className="font-bold">{categories.find(c => c.id === selectedCategory)?.name}</span></span>
-                  )}
-                </p>
-              </div>
-
-              {/* شبكة المشاريع */}
-              <div className={`grid gap-8 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                <AnimatePresence>
-                  {filteredProjects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))}
-                </AnimatePresence>
-              </div>
-            </>
-          ) : (
-            <div className="text-center py-20">
-              <div className="text-gray-400 mb-6">
-                <Search className="h-24 w-24 mx-auto" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">لا توجد مشاريع</h3>
-              <p className="text-gray-600 mb-8">
-                {searchTerm ? 'لا توجد نتائج للبحث المحدد' : 'لم يتم العثور على مشاريع في هذه الفئة'}
-              </p>
-              <Button
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('all');
-                  setShowOnlyFeatured(false);
-                }}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                عرض جميع المشاريع
-              </Button>
-            </div>
           )}
-        </div>
-      </section>
 
-      {/* قسم الدعوة للعمل */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              هل أعجبك عملنا؟
-            </h2>
-            <p className="text-xl mb-8 text-blue-100">
-              دعنا نحول رؤيتك إلى واقع. احصل على استشارة مجانية اليوم!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
-                asChild
-              >
-                <Link href="/contact">
-                  تواصل معنا الآن
-                  <Phone className="mr-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold"
-                asChild
-              >
-                <Link href="/quote">
-                  احصل على عرض سعر
-                  <Quote className="mr-2 h-5 w-5" />
-                </Link>
-              </Button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6 text-sm text-gray-500">
+              <span className="flex items-center gap-1">
+                <Eye className="h-4 w-4" />
+                {project.views} مشاهدة
+              </span>
+              <span className="flex items-center gap-1">
+                <Heart className="h-4 w-4" />
+                {project.likes} إعجاب
+              </span>
             </div>
-          </motion.div>
+
+            <Link href={`/portfolio/${project.id}`}>
+              <Button>
+                <ExternalLink className="h-4 w-4 mr-2" />
+                مشاهدة التفاصيل
+              </Button>
+            </Link>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
