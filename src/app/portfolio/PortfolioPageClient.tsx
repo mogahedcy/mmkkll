@@ -437,14 +437,28 @@ function ProjectCard({ project }: { project: Project }) {
             className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : mainVideo ? (
-          <video
-            src={mainVideo.src}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            muted
-            loop
-            autoPlay
-            playsInline
-          />
+          <div className="relative w-full h-full">
+            <video
+              src={mainVideo.src}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              muted
+              loop
+              playsInline
+              poster={mainVideo.thumbnail || undefined}
+              onMouseEnter={(e) => {
+                const video = e.target as HTMLVideoElement;
+                video.play().catch(() => {});
+              }}
+              onMouseLeave={(e) => {
+                const video = e.target as HTMLVideoElement;
+                video.pause();
+                video.currentTime = 0;
+              }}
+            />
+            <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs">
+              فيديو
+            </div>
+          </div>
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
             <span className="text-gray-400">لا توجد وسائط</span>
@@ -564,14 +578,28 @@ function ProjectListItem({ project }: { project: Project }) {
               className="object-cover"
             />
           ) : mainVideo ? (
-            <video
-              src={mainVideo.src}
-              className="w-full h-full object-cover"
-              muted
-              loop
-              autoPlay
-              playsInline
-            />
+            <div className="relative w-full h-full">
+              <video
+                src={mainVideo.src}
+                className="w-full h-full object-cover"
+                muted
+                loop
+                playsInline
+                poster={mainVideo.thumbnail || undefined}
+                onMouseEnter={(e) => {
+                  const video = e.target as HTMLVideoElement;
+                  video.play().catch(() => {});
+                }}
+                onMouseLeave={(e) => {
+                  const video = e.target as HTMLVideoElement;
+                  video.pause();
+                  video.currentTime = 0;
+                }}
+              />
+              <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs">
+                فيديو
+              </div>
+            </div>
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
               <span className="text-gray-400">لا توجد وسائط</span>

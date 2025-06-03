@@ -91,6 +91,10 @@ export default function ProjectDetailsClient({ project }: Props) {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
 
+  const handleVideoPlay = () => setIsVideoPlaying(true);
+  const handleVideoPause = () => setIsVideoPlaying(false);
+  const toggleVideoMute = () => setIsVideoMuted(!isVideoMuted);
+
   const category = categories.find(c => c.id === project.category);
   const currentMedia = project.mediaItems[selectedMediaIndex];
 
@@ -176,20 +180,40 @@ export default function ProjectDetailsClient({ project }: Props) {
                           <video
                             src={currentMedia.src}
                             className="w-full h-full object-cover"
-                            controls={false}
+                            controls
                             muted={isVideoMuted}
                             playsInline
-                            onClick={() => setIsLightboxOpen(true)}
+                            poster={currentMedia.thumbnail || undefined}
+                            onPlay={handleVideoPlay}
+                            onPause={handleVideoPause}
                           />
-                          <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                          
+                          {/* أزرار تحكم مخصصة */}
+                          <div className="absolute bottom-4 left-4 flex gap-2">
                             <Button
-                              size="lg"
-                              className="bg-white bg-opacity-90 text-gray-900 hover:bg-opacity-100"
+                              size="sm"
+                              variant="secondary"
+                              className="bg-black bg-opacity-60 text-white hover:bg-opacity-80"
+                              onClick={toggleVideoMute}
+                            >
+                              {isVideoMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="bg-black bg-opacity-60 text-white hover:bg-opacity-80"
                               onClick={() => setIsLightboxOpen(true)}
                             >
-                              <Play className="h-8 w-8" />
+                              <Maximize className="h-4 w-4" />
                             </Button>
                           </div>
+                          {!isVideoPlaying && (
+                            <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center pointer-events-none">
+                              <div className="bg-white bg-opacity-90 text-gray-900 rounded-full p-4">
+                                <Play className="h-8 w-8" />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </>
@@ -246,8 +270,17 @@ export default function ProjectDetailsClient({ project }: Props) {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                          <Play className="h-6 w-6 text-gray-500" />
+                        <div className="relative w-full h-full bg-gray-200 flex items-center justify-center">
+                          <video
+                            src={media.src}
+                            className="w-full h-full object-cover"
+                            muted
+                            playsInline
+                            poster={media.thumbnail || undefined}
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                            <Play className="h-4 w-4 text-white" />
+                          </div>
                         </div>
                       )}
                     </button>
@@ -474,7 +507,11 @@ export default function ProjectDetailsClient({ project }: Props) {
                   className="max-w-full max-h-[90vh] object-contain"
                   controls
                   autoPlay
+                  muted={false}
+                  playsInline
                   onClick={(e) => e.stopPropagation()}
+                  onPlay={() => setIsVideoPlaying(true)}
+                  onPause={() => setIsVideoPlaying(false)}
                 />
               )}
 
