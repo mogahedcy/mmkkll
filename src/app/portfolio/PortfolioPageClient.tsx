@@ -444,19 +444,41 @@ function ProjectCard({ project }: { project: Project }) {
               muted
               loop
               playsInline
+              preload="metadata"
               poster={mainVideo.thumbnail || undefined}
               onMouseEnter={(e) => {
                 const video = e.target as HTMLVideoElement;
-                video.play().catch(() => {});
+                video.play().catch((error) => {
+                  console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
+                });
               }}
               onMouseLeave={(e) => {
                 const video = e.target as HTMLVideoElement;
                 video.pause();
                 video.currentTime = 0;
               }}
-            />
-            <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs">
+              onError={(e) => {
+                console.error('خطأ في تحميل فيديو المعاينة:', e);
+              }}
+            >
+              <source src={mainVideo.src} type="video/mp4" />
+            </video>
+            
+            {/* شارة الفيديو مع أيقونة تشغيل */}
+            <div className="absolute top-2 right-2 bg-red-500 bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              </svg>
               فيديو
+            </div>
+            
+            {/* أيقونة تشغيل في المنتصف */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                </svg>
+              </div>
             </div>
           </div>
         ) : (
@@ -585,18 +607,31 @@ function ProjectListItem({ project }: { project: Project }) {
                 muted
                 loop
                 playsInline
+                preload="metadata"
                 poster={mainVideo.thumbnail || undefined}
                 onMouseEnter={(e) => {
                   const video = e.target as HTMLVideoElement;
-                  video.play().catch(() => {});
+                  video.play().catch((error) => {
+                    console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
+                  });
                 }}
                 onMouseLeave={(e) => {
                   const video = e.target as HTMLVideoElement;
                   video.pause();
                   video.currentTime = 0;
                 }}
-              />
-              <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs">
+                onError={(e) => {
+                  console.error('خطأ في تحميل فيديو المعاينة:', e);
+                }}
+              >
+                <source src={mainVideo.src} type="video/mp4" />
+              </video>
+              
+              {/* شارة الفيديو */}
+              <div className="absolute top-2 right-2 bg-red-500 bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                </svg>
                 فيديو
               </div>
             </div>

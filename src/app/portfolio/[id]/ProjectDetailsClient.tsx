@@ -90,13 +90,40 @@ export default function ProjectDetailsClient({ project }: Props) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [videoLoading, setVideoLoading] = useState(false);
 
   const handleVideoPlay = () => setIsVideoPlaying(true);
   const handleVideoPause = () => setIsVideoPlaying(false);
   const toggleVideoMute = () => setIsVideoMuted(!isVideoMuted);
 
   const category = categories.find(c => c.id === project.category);
-  const currentMedia = project.mediaItems[selectedMediaIndex];
+  const currentMedia = project.mediaItems?.[currentMediaIndex] || project.mediaItems?.[0];
+
+  // دالة للتحقق من نوع الفيديو
+  const getVideoType = (src: string): string => {
+    const extension = src.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'mp4':
+        return 'video/mp4';
+      case 'webm':
+        return 'video/webm';
+      case 'ogg':
+        return 'video/ogg';
+      case 'mov':
+        return 'video/quicktime';
+      default:
+        return 'video/mp4';
+    }
+  };
+
+  // دالة لمعالجة أخطاء الفيديو
+  const handleVideoError = (error: any) => {
+    console.error('خطأ في تشغيل الفيديو:', error);
+    setVideoError('لا يمكن تشغيل هذا الفيديو. يرجى المحاولة لاحقاً.');
+    setVideoLoading(false);
+  };
 
   const handlePrevMedia = () => {
     setSelectedMediaIndex((prev) =>
@@ -177,17 +204,63 @@ export default function ProjectDetailsClient({ project }: Props) {
                         />
                       ) : (
                         <div className="relative w-full h-full">
-                          <video
-                            src={currentMedia.src}
-                            className="w-full h-full object-cover"
-                            controls
-                            muted={isVideoMuted}
-                            playsInline
-                            poster={currentMedia.thumbnail || undefined}
-                            onPlay={handleVideoPlay}
-                            onPause={handleVideoPause}
-                          />
-                          
+                          {videoError ? (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                              <div className="text-center">
+                                <div className="text-red-500 mb-2">
+                                  <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                </div>
+                                <p className="text-gray-600 text-sm">{videoError}</p>
+                                <button
+                                  onClick={() => {
+                                    setVideoError(null);
+                                    setVideoLoading(true);
+                                  }}
+                                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors"
+                                >
+                                  إعادة المحاولة
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <video
+                                key={`${currentMedia.src}-${currentMediaIndex}`}
+                                controls
+                                preload="metadata"
+                                className="w-full h-full object-cover"
+                                poster={currentMedia.thumbnail || undefined}
+                                onLoadStart={() => {
+                                  setVideoLoading(true);
+                                  setVideoError(null);
+                                }}
+                                onCanPlay={() => {
+                                  setVideoLoading(false);
+                                  console.log('✅ الفيديو جاهز للتشغيل');
+                                }}
+                                onError={(e) => handleVideoError(e)}
+                                onLoadedData={() => {
+                                  setVideoLoading(false);
+                                }}
+                              >
+                                <source src={currentMedia.src} type={getVideoType(currentMedia.src)} />
+                                متصفحك لا يدعم عرض الفيديو
+                              </video>
+
+                              {/* مؤشر التحميل */}
+                              {videoLoading && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                  <div className="text-center text-white">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-2"></div>
+                                    <p className="text-sm">جاري تحميل الفيديو...</p>
+                                  </div>
+                                </div>
+                              )}
+                            </>
+                          )}
+
                           {/* أزرار تحكم مخصصة */}
                           <div className="absolute bottom-4 left-4 flex gap-2">
                             <Button
@@ -271,13 +344,26 @@ export default function ProjectDetailsClient({ project }: Props) {
                         />
                       ) : (
                         <div className="relative w-full h-full bg-gray-200 flex items-center justify-center">
-                          <video
-                            src={media.src}
-                            className="w-full h-full object-cover"
-                            muted
-                            playsInline
-                            poster={media.thumbnail || undefined}
-                          />
+                          {media.thumbnail ? (
+                            <Image
+                              src={media.thumbnail}
+                              alt={`معاينة فيديو ${index + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <video
+                              src={media.src}
+                              className="w-full h-full object-cover"
+                              muted
+                              preload="metadata"
+                              onLoadedMetadata={(e) => {
+                                // إنشاء معاينة تلقائية من الفيديو
+                                const video = e.target as HTMLVideoElement;
+                                video.currentTime = 1; // الذهاب للثانية الأولى
+                              }}
+                            />
+                          )}
                           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                             <Play className="h-4 w-4 text-white" />
                           </div>
