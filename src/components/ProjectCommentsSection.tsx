@@ -102,8 +102,6 @@ export default function ProjectCommentsSection({
           email: newComment.email,
           message: newComment.message,
           rating: newComment.rating
-        }),t.message,
-          rating: newComment.rating
         }),
       });
 
