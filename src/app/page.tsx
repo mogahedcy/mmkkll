@@ -1,6 +1,5 @@
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
-import LatestProjectsSection from '@/components/LatestProjectsSection';
 import ServicesSection from '@/components/ServicesSection';
 import WhyChooseUsSection from '@/components/WhyChooseUsSection';
 import PortfolioSection from '@/components/PortfolioSection';
@@ -26,9 +25,6 @@ export default function HomePage() {
 
         {/* Portfolio - Social Proof */}
         <PortfolioSection />
-        
-        {/* Latest Projects Section */}
-        <LatestProjectsSection />
 
         {/* Why Choose Us - Trust Building */}
         <WhyChooseUsSection />
