@@ -333,8 +333,8 @@ export default function PortfolioSection() {
 
                   {/* Enhanced Project CTA */}
                   <Button asChild variant="outline" className="w-full group-hover:bg-accent group-hover:text-accent-foreground group-hover:border-accent transition-all duration-500 py-3">
-                    <Link href={`/services/${project.service}`} className="flex items-center justify-center space-x-2 space-x-reverse font-medium">
-                      <span>اطلب خدمة مماثلة</span>
+                    <Link href={`/portfolio/${project.id}`} className="flex items-center justify-center space-x-2 space-x-reverse font-medium">
+                      <span>عرض تفاصيل المشروع</span>
                       <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
                     </Link>
                   </Button>
@@ -355,8 +355,8 @@ export default function PortfolioSection() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="text-lg px-8 py-6 h-auto shadow-lg">
-              <Link href="https://wa.me/+966553719009" className="flex items-center space-x-3 space-x-reverse">
-                <span>احصل على عرض سعر مجاني</span>
+              <Link href="/portfolio" className="flex items-center space-x-3 space-x-reverse">
+                <span>اضغط هنا لمشاهدة جميع الأعمال</span>
                 <ArrowLeft className="w-5 h-5" />
               </Link>
             </Button>
