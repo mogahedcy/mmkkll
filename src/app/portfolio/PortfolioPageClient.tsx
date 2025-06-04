@@ -56,6 +56,7 @@ type SortOption = 'newest' | 'oldest' | 'mostViewed' | 'featured' | 'rating';
 const categories = [
   'الكل',
   'مظلات',
+  'برجولات',
   'سواتر',
   'ساندوتش بانل',
   'تنسيق حدائق',

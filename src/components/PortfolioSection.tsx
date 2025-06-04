@@ -10,6 +10,7 @@ import { ArrowLeft, Car, TreePine, Shield, Home, Wrench, Flower, MapPin, Calenda
 // تعريف أنواع الخدمات مع الأيقونات المناسبة - متوافق مع صفحة البورتفوليو
 const serviceCategories = [
   { id: 'مظلات', name: 'مظلات', icon: Car },
+  { id: 'برجولات', name: 'برجولات', icon: TreePine },
   { id: 'سواتر', name: 'سواتر', icon: Shield },
   { id: 'ساندوتش بانل', name: 'ساندوتش بانل', icon: Home },
   { id: 'تنسيق حدائق', name: 'تنسيق حدائق', icon: Flower },
@@ -132,7 +133,7 @@ export default function PortfolioSection() {
           </h2>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-12 leading-relaxed">
             استكشف أحدث مشاريعنا المتميزة في جدة والمناطق المحيطة. نعرض لك أحدث عمل في كل خدمة من خدماتنا المتخصصة
-            في المظلات، السواتر، الساندوتش بانل، تنسيق الحدائق، الخيام الملكية، بيوت الشعر،
+            في المظلات، البرجولات، السواتر، الساندوتش بانل، تنسيق الحدائق، الخيام الملكية، بيوت الشعر،
             والترميم بأعلى معايير الجودة والحرفية
           </p>
 
@@ -143,7 +144,7 @@ export default function PortfolioSection() {
               <div className="text-sm text-muted-foreground font-medium">مشروع ناجح</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-              <div className="text-4xl font-bold text-accent mb-2">7</div>
+              <div className="text-4xl font-bold text-accent mb-2">8</div>
               <div className="text-sm text-muted-foreground font-medium">خدمات متخصصة</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg text-center">
