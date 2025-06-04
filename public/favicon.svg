@@ -1,53 +1,79 @@
+
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
+    <!-- تدرج أزرق متطور للخلفية -->
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- تدرج ذهبي للمباني -->
     <linearGradient id="buildingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#1d4ed8;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
     </linearGradient>
-    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
-    </linearGradient>
+    
+    <!-- تأثير ظل للعمق -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="1" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
   </defs>
 
-  <!-- Background Circle -->
-  <circle cx="50" cy="50" r="48" fill="url(#buildingGradient)" stroke="#ffffff" stroke-width="2"/>
+  <!-- خلفية دائرية متدرجة -->
+  <circle cx="50" cy="50" r="47" fill="url(#backgroundGradient)" stroke="#ffffff" stroke-width="3" filter="url(#shadow)"/>
+  
+  <!-- المبنى الرئيسي الأول -->
+  <rect x="20" y="30" width="20" height="50" fill="url(#buildingGradient)" rx="3" ry="3" filter="url(#shadow)"/>
+  
+  <!-- المبنى الأوسط (الأطول) -->
+  <rect x="42" y="20" width="18" height="60" fill="#ffffff" rx="2" ry="2" filter="url(#shadow)"/>
+  
+  <!-- المبنى الثالث -->
+  <rect x="62" y="35" width="16" height="45" fill="url(#buildingGradient)" rx="2" ry="2" filter="url(#shadow)"/>
+  
+  <!-- نوافذ المبنى الأول -->
+  <rect x="24" y="35" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <rect x="29" y="35" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <rect x="24" y="43" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <rect x="29" y="43" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <rect x="24" y="51" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <rect x="29" y="51" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <rect x="24" y="59" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <rect x="29" y="59" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  
+  <!-- نوافذ المبنى الأوسط -->
+  <rect x="45" y="25" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="50" y="25" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="55" y="25" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="45" y="33" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="50" y="33" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="55" y="33" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="45" y="41" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="50" y="41" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="55" y="41" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="45" y="49" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="50" y="49" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="55" y="49" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="45" y="57" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="50" y="57" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <rect x="55" y="57" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  
+  <!-- نوافذ المبنى الثالث -->
+  <rect x="65" y="40" width="3" height="3" fill="#1e40af" rx="0.5"/>
+  <rect x="70" y="40" width="3" height="3" fill="#1e40af" rx="0.5"/>
+  <rect x="65" y="47" width="3" height="3" fill="#1e40af" rx="0.5"/>
+  <rect x="70" y="47" width="3" height="3" fill="#1e40af" rx="0.5"/>
+  <rect x="65" y="54" width="3" height="3" fill="#1e40af" rx="0.5"/>
+  <rect x="70" y="54" width="3" height="3" fill="#1e40af" rx="0.5"/>
+  <rect x="65" y="61" width="3" height="3" fill="#1e40af" rx="0.5"/>
+  <rect x="70" y="61" width="3" height="3" fill="#1e40af" rx="0.5"/>
 
-  <!-- Main Building -->
-  <rect x="25" y="35" width="18" height="45" fill="url(#accentGradient)" rx="2"/>
-
-  <!-- Second Building -->
-  <rect x="45" y="25" width="16" height="55" fill="#ffffff" rx="2"/>
-
-  <!-- Third Building -->
-  <rect x="63" y="40" width="12" height="40" fill="url(#accentGradient)" rx="1"/>
-
-  <!-- Building Details -->
-  <!-- Windows for main building -->
-  <rect x="28" y="40" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
-  <rect x="33" y="40" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
-  <rect x="28" y="47" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
-  <rect x="33" y="47" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
-  <rect x="28" y="54" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
-  <rect x="33" y="54" width="3" height="3" fill="#1e3a8a" rx="0.5"/>
-
-  <!-- Windows for second building -->
-  <rect x="48" y="30" width="3" height="3" fill="#2563eb" rx="0.5"/>
-  <rect x="53" y="30" width="3" height="3" fill="#2563eb" rx="0.5"/>
-  <rect x="48" y="37" width="3" height="3" fill="#2563eb" rx="0.5"/>
-  <rect x="53" y="37" width="3" height="3" fill="#2563eb" rx="0.5"/>
-  <rect x="48" y="44" width="3" height="3" fill="#2563eb" rx="0.5"/>
-  <rect x="53" y="44" width="3" height="3" fill="#2563eb" rx="0.5"/>
-  <rect x="48" y="51" width="3" height="3" fill="#2563eb" rx="0.5"/>
-  <rect x="53" y="51" width="3" height="3" fill="#2563eb" rx="0.5"/>
-
-  <!-- Windows for third building -->
-  <rect x="65" y="45" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
-  <rect x="69" y="45" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
-  <rect x="65" y="51" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
-  <rect x="69" y="51" width="2.5" height="2.5" fill="#1e3a8a" rx="0.5"/>
-
-  <!-- Company Initial "د" (Arabic letter Dal) -->
-  <text x="50" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff">د</text>
+  <!-- حرف "د" مع خط أنيق -->
+  <text x="50" y="16" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff" filter="url(#shadow)">د</text>
+  
+  <!-- خط تحت الحرف للزينة -->
+  <line x1="42" y1="18" x2="58" y2="18" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
 </svg>
