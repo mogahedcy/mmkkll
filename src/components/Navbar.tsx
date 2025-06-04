@@ -305,6 +305,19 @@ export default function Navbar() {
                 )}
               </div>
 
+              <Link
+                href="/portfolio"
+                className="px-4 py-2 rounded-lg text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 font-medium flex items-center space-x-2 space-x-reverse group"
+              >
+                <span>معرض الأعمال</span>
+              </Link>
+              <Link
+                href="/portfolio/reviews"
+                className="px-4 py-2 rounded-lg text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 font-medium flex items-center space-x-2 space-x-reverse group"
+              >
+                <span>تقييمات العملاء</span>
+              </Link>
+
               {mainNavItems.slice(2).map((item) => (
                 <Link
                   key={item.href}

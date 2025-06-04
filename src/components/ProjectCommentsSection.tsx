@@ -57,6 +57,8 @@ export default function ProjectCommentsSection({
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'rating'>('newest');
+  const [filterByRating, setFilterByRating] = useState<number | null>(null);
 
   // جلب التعليقات عند تحميل المكون
   useEffect(() => {
@@ -152,6 +154,42 @@ export default function ProjectCommentsSection({
       distribution[comment.rating as keyof typeof distribution]++;
     });
     return distribution;
+  };
+
+  const handleLikeComment = async (commentId: string) => {
+    try {
+      // هنا يمكن إضافة API للإعجاب بالتعليق
+      console.log('إعجاب بالتعليق:', commentId);
+    } catch (error) {
+      console.error('خطأ في الإعجاب بالتعليق:', error);
+    }
+  };
+
+  const handleReportComment = async (commentId: string) => {
+    try {
+      // هنا يمكن إضافة API للإبلاغ عن التعليق
+      console.log('إبلاغ عن التعليق:', commentId);
+      setError('تم إرسال البلاغ بنجاح');
+      setTimeout(() => setError(null), 3000);
+    } catch (error) {
+      console.error('خطأ في الإبلاغ عن التعليق:', error);
+    }
+  };
+
+  const handleSortComments = (sortBy: 'newest' | 'oldest' | 'rating') => {
+    let sortedComments = [...comments];
+    switch (sortBy) {
+      case 'newest':
+        sortedComments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+      case 'oldest':
+        sortedComments.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        break;
+      case 'rating':
+        sortedComments.sort((a, b) => b.rating - a.rating);
+        break;
+    }
+    setComments(sortedComments);
   };
 
   const renderStars = (rating: number, interactive = false, size = 'w-5 h-5') => {
@@ -358,9 +396,51 @@ export default function ProjectCommentsSection({
 
       {/* قائمة التعليقات */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">
-          التعليقات ({comments.length})
-        </h3>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-900">
+            التعليقات ({comments.length})
+          </h3>
+          
+          {/* أدوات التصفية والترتيب */}
+          {comments.length > 0 && (
+            <div className="flex items-center gap-4">
+              {/* ترتيب التعليقات */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">ترتيب:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => {
+                    const newSortBy = e.target.value as 'newest' | 'oldest' | 'rating';
+                    setSortBy(newSortBy);
+                    handleSortComments(newSortBy);
+                  }}
+                  className="text-sm border border-gray-300 rounded px-2 py-1"
+                >
+                  <option value="newest">الأحدث</option>
+                  <option value="oldest">الأقدم</option>
+                  <option value="rating">التقييم</option>
+                </select>
+              </div>
+
+              {/* تصفية حسب التقييم */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">تصفية:</span>
+                <select
+                  value={filterByRating || ''}
+                  onChange={(e) => setFilterByRating(e.target.value ? parseInt(e.target.value) : null)}
+                  className="text-sm border border-gray-300 rounded px-2 py-1"
+                >
+                  <option value="">جميع التقييمات</option>
+                  <option value="5">5 نجوم</option>
+                  <option value="4">4 نجوم</option>
+                  <option value="3">3 نجوم</option>
+                  <option value="2">2 نجمة</option>
+                  <option value="1">نجمة واحدة</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
 
         {loading ? (
           <div className="text-center py-8">
@@ -379,7 +459,9 @@ export default function ProjectCommentsSection({
           </div>
         ) : (
           <div className="space-y-6">
-            {comments.map((comment) => (
+            {comments
+              .filter(comment => filterByRating ? comment.rating === filterByRating : true)
+              .map((comment) => (
               <motion.div
                 key={comment.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -417,9 +499,16 @@ export default function ProjectCommentsSection({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="text-red-600">
+                      <DropdownMenuItem 
+                        className="text-red-600 cursor-pointer"
+                        onClick={() => handleReportComment(comment.id)}
+                      >
                         <Flag className="w-4 h-4 ml-2" />
                         الإبلاغ عن التعليق
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <MessageCircle className="w-4 h-4 ml-2" />
+                        الرد على التعليق
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -432,10 +521,28 @@ export default function ProjectCommentsSection({
 
                 {/* أزرار التفاعل */}
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
-                  <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-600">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-500 hover:text-blue-600 transition-colors"
+                    onClick={() => handleLikeComment(comment.id)}
+                  >
                     <ThumbsUp className="w-4 h-4 ml-1" />
                     مفيد
                   </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-500 hover:text-green-600 transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 ml-1" />
+                    رد
+                  </Button>
+                  
+                  <div className="flex items-center text-sm text-gray-500">
+                    <span>تقييم مفيد؟</span>
+                  </div>
                 </div>
               </motion.div>
             ))}
