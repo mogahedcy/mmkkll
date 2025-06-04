@@ -1,23 +1,58 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
 
-// نموذج التحقق من بيانات التعليق
-const CommentSchema = z.object({
-  name: z.string().min(2, 'الاسم يجب أن يكون على الأقل حرفين').max(100, 'الاسم طويل جداً'),
-  email: z.string().email('البريد الإلكتروني غير صحيح').optional().or(z.literal('')),
-  message: z.string().min(10, 'التعليق يجب أن يكون على الأقل 10 أحرف').max(1000, 'التعليق طويل جداً'),
-  rating: z.number().min(1, 'التقييم يجب أن يكون بين 1 و 5').max(5, 'التقييم يجب أن يكون بين 1 و 5')
-});
+// نموذج التحقق من بيانات التعليق - بدون zod مؤقتاً
+interface CommentData {
+  name: string;
+  email?: string;
+  message: string;
+  rating: number;
+}
+
+// دالة التحقق من صحة البيانات
+function validateComment(data: any): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!data.name || typeof data.name !== 'string') {
+    errors.push('الاسم مطلوب');
+  } else if (data.name.trim().length < 2) {
+    errors.push('الاسم يجب أن يكون على الأقل حرفين');
+  } else if (data.name.trim().length > 100) {
+    errors.push('الاسم طويل جداً');
+  }
+
+  if (data.email && typeof data.email === 'string' && data.email.trim()) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      errors.push('البريد الإلكتروني غير صحيح');
+    }
+  }
+
+  if (!data.message || typeof data.message !== 'string') {
+    errors.push('التعليق مطلوب');
+  } else if (data.message.trim().length < 10) {
+    errors.push('التعليق يجب أن يكون على الأقل 10 أحرف');
+  } else if (data.message.trim().length > 1000) {
+    errors.push('التعليق طويل جداً');
+  }
+
+  if (!data.rating || typeof data.rating !== 'number') {
+    errors.push('التقييم مطلوب');
+  } else if (data.rating < 1 || data.rating > 5) {
+    errors.push('التقييم يجب أن يكون بين 1 و 5');
+  }
+
+  return { valid: errors.length === 0, errors };
+}
 
 // GET - جلب التعليقات
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const projectId = params.id;
+    const { id: projectId } = await params;
 
     // التحقق من وجود المشروع
     const project = await prisma.project.findUnique({
@@ -48,7 +83,8 @@ export async function GET(
       success: true,
       comments: comments.map(comment => ({
         ...comment,
-        createdAt: comment.createdAt.toISOString()
+        createdAt: comment.createdAt.toISOString(),
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.name)}&background=059669&color=fff`
       }))
     });
 
@@ -64,25 +100,25 @@ export async function GET(
 // POST - إضافة تعليق جديد
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const projectId = params.id;
+    const { id: projectId } = await params;
     const body = await request.json();
 
     // التحقق من صحة البيانات
-    const validationResult = CommentSchema.safeParse(body);
-    if (!validationResult.success) {
+    const validation = validateComment(body);
+    if (!validation.valid) {
       return NextResponse.json(
         { 
           error: 'بيانات غير صحيحة',
-          details: validationResult.error.errors.map(err => err.message)
+          details: validation.errors
         },
         { status: 400 }
       );
     }
 
-    const { name, email, message, rating } = validationResult.data;
+    const { name, email, message, rating } = body;
 
     // التحقق من وجود المشروع
     const project = await prisma.project.findUnique({
@@ -151,7 +187,8 @@ export async function POST(
       message: 'تم إضافة التعليق بنجاح',
       comment: {
         ...newComment,
-        createdAt: newComment.createdAt.toISOString()
+        createdAt: newComment.createdAt.toISOString(),
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newComment.name)}&background=059669&color=fff`
       }
     }, { status: 201 });
 
