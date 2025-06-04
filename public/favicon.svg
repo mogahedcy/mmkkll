@@ -1,69 +1,88 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
-    <!-- تدرج أخضر للخلفية متماشي مع رؤية 2030 -->
-    <linearGradient id="saudiGreen" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#00543a;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#166534;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#15803d;stop-opacity:1" />
-    </linearGradient>
-    
-    <!-- تدرج ذهبي للتفاصيل -->
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- تدرج ذهبي للعناصر الرئيسية -->
+    <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
       <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
     </linearGradient>
     
-    <!-- تدرج أبيض للنصوص -->
-    <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f3f4f6;stop-opacity:1" />
+    <!-- تدرج أخضر سعودي للخلفية -->
+    <linearGradient id="saudiGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#166534;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#15803d;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- تدرج فضي للمباني -->
+    <linearGradient id="silverBuilding" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3f4f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d1d5db;stop-opacity:1" />
     </linearGradient>
     
     <!-- ظل للعمق -->
     <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000000" flood-opacity="0.4"/>
+      <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.3"/>
     </filter>
     
     <!-- ظل للنصوص -->
     <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.6"/>
+      <feDropShadow dx="0.5" dy="1" stdDeviation="0.8" flood-color="#000000" flood-opacity="0.5"/>
     </filter>
   </defs>
 
-  <!-- خلفية دائرية خضراء -->
-  <circle cx="50" cy="50" r="47" fill="url(#saudiGreen)" stroke="#ffffff" stroke-width="3" filter="url(#shadow)"/>
+  <!-- الخلفية الدائرية -->
+  <circle cx="50" cy="50" r="47" fill="url(#saudiGreen)" stroke="url(#goldMain)" stroke-width="2" filter="url(#shadow)"/>
   
-  <!-- شعار المباني والمظلات -->
-  <!-- مبنى رئيسي -->
-  <rect x="30" y="35" width="12" height="35" fill="url(#goldGradient)" rx="2" filter="url(#shadow)"/>
-  <rect x="58" y="40" width="12" height="30" fill="url(#goldGradient)" rx="2" filter="url(#shadow)"/>
+  <!-- برج المملكة (المركز) -->
+  <rect x="47" y="18" width="6" height="25" fill="url(#goldMain)" filter="url(#shadow)"/>
+  <polygon points="47,18 50,12 53,18" fill="url(#goldMain)" filter="url(#shadow)"/>
+  <!-- الفتحة المميزة لبرج المملكة -->
+  <ellipse cx="50" cy="25" rx="2" ry="4" fill="url(#saudiGreen)"/>
   
-  <!-- مظلة علوية -->
-  <ellipse cx="50" cy="25" rx="25" ry="6" fill="url(#whiteGradient)" filter="url(#shadow)"/>
-  <line x1="25" y1="25" x2="75" y2="25" stroke="#d97706" stroke-width="2"/>
+  <!-- المباني الجانبية -->
+  <!-- مبنى يسار -->
+  <rect x="35" y="25" width="8" height="18" fill="url(#silverBuilding)" filter="url(#shadow)"/>
+  <rect x="36" y="26" width="2" height="2" fill="url(#goldMain)"/>
+  <rect x="39" y="26" width="2" height="2" fill="url(#goldMain)"/>
+  <rect x="36" y="30" width="2" height="2" fill="url(#goldMain)"/>
+  <rect x="39" y="30" width="2" height="2" fill="url(#goldMain)"/>
   
-  <!-- نوافذ المباني -->
-  <rect x="32" y="40" width="3" height="3" fill="#166534" rx="0.5"/>
-  <rect x="37" y="40" width="3" height="3" fill="#166534" rx="0.5"/>
-  <rect x="32" y="47" width="3" height="3" fill="#166534" rx="0.5"/>
-  <rect x="37" y="47" width="3" height="3" fill="#166534" rx="0.5"/>
+  <!-- مبنى يمين -->
+  <rect x="57" y="28" width="8" height="15" fill="url(#silverBuilding)" filter="url(#shadow)"/>
+  <rect x="58" y="30" width="2" height="2" fill="url(#goldMain)"/>
+  <rect x="61" y="30" width="2" height="2" fill="url(#goldMain)"/>
+  <rect x="58" y="34" width="2" height="2" fill="url(#goldMain)"/>
+  <rect x="61" y="34" width="2" height="2" fill="url(#goldMain)"/>
   
-  <rect x="60" y="45" width="3" height="3" fill="#166534" rx="0.5"/>
-  <rect x="65" y="45" width="3" height="3" fill="#166534" rx="0.5"/>
-  <rect x="60" y="52" width="3" height="3" fill="#166534" rx="0.5"/>
-  <rect x="65" y="52" width="3" height="3" fill="#166534" rx="0.5"/>
+  <!-- المظلة الرئيسية (مستوحاة من الكعبة والمظلات) -->
+  <rect x="38" y="43" width="24" height="12" fill="url(#silverBuilding)" stroke="url(#goldMain)" stroke-width="1" filter="url(#shadow)"/>
   
-  <!-- اسم المؤسسة -->
-  <text x="50" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="url(#whiteGradient)" filter="url(#textShadow)">الديار</text>
+  <!-- المظلة العلوية بشكل مقوس -->
+  <path d="M 35 43 Q 50 38 65 43 L 62 43 Q 50 40 38 43 Z" fill="url(#goldMain)" filter="url(#shadow)"/>
   
-  <!-- رقم 2030 -->
-  <text x="50" y="85" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)" filter="url(#textShadow)">2030</text>
+  <!-- التفاصيل الزخرفية للمظلة -->
+  <line x1="40" y1="43" x2="40" y2="55" stroke="url(#goldMain)" stroke-width="0.5"/>
+  <line x1="44" y1="43" x2="44" y2="55" stroke="url(#goldMain)" stroke-width="0.5"/>
+  <line x1="50" y1="43" x2="50" y2="55" stroke="url(#goldMain)" stroke-width="0.5"/>
+  <line x1="56" y1="43" x2="56" y2="55" stroke="url(#goldMain)" stroke-width="0.5"/>
+  <line x1="60" y1="43" x2="60" y2="55" stroke="url(#goldMain)" stroke-width="0.5"/>
+  
+  <!-- النخلة -->
+  <line x1="70" y1="40" x2="70" y2="48" stroke="#8b5a2b" stroke-width="1"/>
+  <path d="M 70 40 L 67 37 L 69 39 L 70 40 L 71 39 L 73 37" fill="#15803d" stroke="none"/>
+  <path d="M 70 40 L 68 38 L 70 39 L 72 38" fill="#15803d" stroke="none"/>
+  
+  <!-- النص العربي المبسط -->
+  <text x="50" y="68" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="url(#goldMain)" filter="url(#textShadow)">الديار</text>
+  <text x="50" y="78" font-family="Arial, sans-serif" font-size="6" font-weight="normal" text-anchor="middle" fill="#ffffff" filter="url(#textShadow)">الخليجية</text>
+  
+  <!-- رمز 2030 -->
+  <text x="50" y="88" font-family="Arial, sans-serif" font-size="7" font-weight="bold" text-anchor="middle" fill="url(#goldMain)" filter="url(#textShadow)">2030</text>
   
   <!-- خط زخرفي سعودي -->
-  <path d="M 25 75 Q 50 72 75 75" stroke="url(#goldGradient)" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M 25 82 Q 50 80 75 82" stroke="url(#goldMain)" stroke-width="1" fill="none" stroke-linecap="round"/>
   
-  <!-- نجمة صغيرة ترمز للتميز -->
-  <polygon points="50,78 48,82 44,82 47,85 46,89 50,87 54,89 53,85 56,82 52,82" fill="url(#goldGradient)" filter="url(#shadow)"/>
+  <!-- نجمة الرؤية -->
+  <polygon points="50,85 49,87 47,87 48.5,88.5 48,90 50,89 52,90 51.5,88.5 53,87 51,87" fill="url(#goldMain)" filter="url(#shadow)"/>
 </svg>
