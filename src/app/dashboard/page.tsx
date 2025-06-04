@@ -73,27 +73,32 @@ export default function DashboardPage() {
     try {
       setIsLoading(true);
 
-      // جلب إحصائيات المشاريع
-      const projectsResponse = await fetch('/api/projects?limit=100');
+      // جلب جميع المشاريع لحساب الإحصائيات الحقيقية
+      const projectsResponse = await fetch('/api/projects?limit=1000');
 
       if (projectsResponse.ok) {
         const projectsData = await projectsResponse.json();
         const projects = projectsData.projects || [];
 
+        // حساب الإحصائيات الحقيقية
         const totalViews = projects.reduce((sum: number, project: any) => sum + (project.views || 0), 0);
         const totalLikes = projects.reduce((sum: number, project: any) => sum + (project.likes || 0), 0);
+        const totalComments = projects.reduce((sum: number, project: any) => sum + (project._count?.comments || 0), 0);
 
         setStats({
           totalProjects: projects.length,
           totalViews,
           totalLikes,
-          totalComments: 0, // سيتم تحديثه لاحقاً
-          recentActivity: projects.slice(0, 5).map((project: any) => ({
-            id: project.id,
-            type: 'project',
-            description: `تم عرض مشروع "${project.title}"`,
-            date: new Date(project.updatedAt).toLocaleDateString('ar-SA')
-          }))
+          totalComments,
+          recentActivity: projects
+            .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 5)
+            .map((project: any) => ({
+              id: project.id,
+              type: 'project',
+              description: `مشروع "${project.title}" - ${project.category}`,
+              date: new Date(project.createdAt).toLocaleDateString('ar-SA')
+            }))
         });
       }
     } catch (error) {
@@ -232,12 +237,12 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">النشاط الحالي</CardTitle>
+                <CardTitle className="text-sm font-medium">إجمالي التعليقات</CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-purple-600">نشط</div>
-                <p className="text-xs text-muted-foreground">الموقع يعمل بشكل طبيعي</p>
+                <div className="text-2xl font-bold text-purple-600">{stats.totalComments}</div>
+                <p className="text-xs text-muted-foreground">تعليق من العملاء</p>
               </CardContent>
             </Card>
           </div>

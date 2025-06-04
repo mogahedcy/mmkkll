@@ -478,9 +478,9 @@ export default function ProjectsPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="text-2xl font-bold text-orange-600">
-                {filteredProjects.length}
+                {projects.reduce((sum, p) => sum + (p.views || 0), 0)}
               </div>
-              <p className="text-sm text-gray-600">نتائج البحث</p>
+              <p className="text-sm text-gray-600">إجمالي المشاهدات</p>
             </CardContent>
           </Card>
         </div>
