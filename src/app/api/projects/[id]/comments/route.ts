@@ -14,33 +14,43 @@ interface CommentData {
 function validateComment(data: any): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
-  if (!data.name || typeof data.name !== 'string') {
-    errors.push('الاسم مطلوب');
-  } else if (data.name.trim().length < 2) {
-    errors.push('الاسم يجب أن يكون على الأقل حرفين');
-  } else if (data.name.trim().length > 100) {
-    errors.push('الاسم طويل جداً');
+  // التحقق من الاسم
+  if (!data.name || typeof data.name !== 'string' || !data.name.trim()) {
+    errors.push('الاسم مطلوب ولا يمكن أن يكون فارغاً');
+  } else {
+    const nameLength = data.name.trim().length;
+    if (nameLength < 2) {
+      errors.push('الاسم يجب أن يكون على الأقل حرفين');
+    } else if (nameLength > 50) {
+      errors.push('الاسم يجب أن يكون أقل من 50 حرف');
+    }
   }
 
+  // التحقق من البريد الإلكتروني (اختياري)
   if (data.email && typeof data.email === 'string' && data.email.trim()) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
+    if (!emailRegex.test(data.email.trim())) {
       errors.push('البريد الإلكتروني غير صحيح');
     }
   }
 
-  if (!data.message || typeof data.message !== 'string') {
-    errors.push('التعليق مطلوب');
-  } else if (data.message.trim().length < 10) {
-    errors.push('التعليق يجب أن يكون على الأقل 10 أحرف');
-  } else if (data.message.trim().length > 1000) {
-    errors.push('التعليق طويل جداً');
+  // التحقق من التعليق
+  if (!data.message || typeof data.message !== 'string' || !data.message.trim()) {
+    errors.push('التعليق مطلوب ولا يمكن أن يكون فارغاً');
+  } else {
+    const messageLength = data.message.trim().length;
+    if (messageLength < 5) {
+      errors.push('التعليق يجب أن يكون على الأقل 5 أحرف');
+    } else if (messageLength > 500) {
+      errors.push('التعليق يجب أن يكون أقل من 500 حرف');
+    }
   }
 
-  if (!data.rating || typeof data.rating !== 'number') {
+  // التحقق من التقييم
+  if (data.rating === null || data.rating === undefined || typeof data.rating !== 'number') {
     errors.push('التقييم مطلوب');
-  } else if (data.rating < 1 || data.rating > 5) {
-    errors.push('التقييم يجب أن يكون بين 1 و 5');
+  } else if (!Number.isInteger(data.rating) || data.rating < 1 || data.rating > 5) {
+    errors.push('التقييم يجب أن يكون رقم صحيح بين 1 و 5');
   }
 
   return { valid: errors.length === 0, errors };
