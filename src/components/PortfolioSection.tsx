@@ -197,18 +197,90 @@ export default function PortfolioSection() {
 
               return (
                 <div key={project.id} className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
-                  {/* Project Image */}
+                  {/* Project Media */}
                   <div className="relative h-64 overflow-hidden">
                     {mainMedia ? (
-                      <Image
-                        src={mainMedia.src}
-                        alt={project.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=600&h=400&fit=crop';
-                        }}
-                      />
+                      <>
+                        {mainMedia.type === 'IMAGE' ? (
+                          <Image
+                            src={mainMedia.src}
+                            alt={project.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=600&h=400&fit=crop';
+                            }}
+                          />
+                        ) : mainMedia.type === 'VIDEO' ? (
+                          <div className="relative w-full h-full bg-gray-900">
+                            {/* صورة مصغرة كخلفية */}
+                            {mainMedia.thumbnail && (
+                              <Image
+                                src={mainMedia.thumbnail}
+                                alt={`معاينة ${project.title}`}
+                                fill
+                                className="object-cover"
+                                priority={false}
+                              />
+                            )}
+
+                            {/* الفيديو */}
+                            <video
+                              key={`portfolio-video-${project.id}`}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              muted
+                              loop
+                              playsInline
+                              autoPlay
+                              preload="metadata"
+                              poster={mainMedia.thumbnail || undefined}
+                              onError={(e) => {
+                                console.error('خطأ في تحميل الفيديو:', mainMedia.src);
+                                const videoElement = e.target as HTMLVideoElement;
+                                videoElement.style.display = 'none';
+                              }}
+                              onLoadedData={(e) => {
+                                console.log('تم تحميل الفيديو بنجاح:', project.title);
+                                const video = e.target as HTMLVideoElement;
+                                video.play().catch((error) => {
+                                  console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
+                                });
+                              }}
+                            >
+                              <source src={mainMedia.src} type="video/mp4" />
+                              <source src={mainMedia.src} type="video/webm" />
+                              متصفحك لا يدعم عرض الفيديو
+                            </video>
+
+                            {/* شارة الفيديو */}
+                            <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg z-10">
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                              </svg>
+                              فيديو
+                            </div>
+
+                            {/* أيقونة تشغيل مع تأثير hover */}
+                            <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                              <div className="bg-black/40 backdrop-blur-sm rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
+                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <Image
+                            src={mainMedia.src}
+                            alt={project.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=600&h=400&fit=crop';
+                            }}
+                          />
+                        )}
+                      </>
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                         <IconComponent className="w-16 h-16 text-gray-400" />
@@ -217,14 +289,14 @@ export default function PortfolioSection() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
                     {/* Category Badge */}
-                    <div className="absolute top-4 right-4 bg-accent text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                    <div className="absolute top-4 left-4 bg-accent text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
                       {project.category}
                     </div>
 
                     {/* Featured Badge */}
                     {project.featured && (
-                      <div className="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                        مميز
+                      <div className="absolute bottom-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
+                        ⭐ مميز
                       </div>
                     )}
 
