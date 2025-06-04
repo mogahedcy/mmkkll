@@ -1,71 +1,69 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
-    <!-- تدرج أزرق للخلفية -->
-    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#2563eb;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    <!-- تدرج أخضر للخلفية متماشي مع رؤية 2030 -->
+    <linearGradient id="saudiGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00543a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#166534;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#15803d;stop-opacity:1" />
     </linearGradient>
     
-    <!-- تدرج ذهبي لهيكل المظلة -->
-    <linearGradient id="canopyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- تدرج ذهبي للتفاصيل -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
       <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
     </linearGradient>
     
-    <!-- تدرج أخضر لألوان السعودية -->
-    <linearGradient id="saudiGreen" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#166534;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#15803d;stop-opacity:1" />
+    <!-- تدرج أبيض للنصوص -->
+    <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f3f4f6;stop-opacity:1" />
     </linearGradient>
     
     <!-- ظل للعمق -->
     <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000000" flood-opacity="0.4"/>
     </filter>
+    
+    <!-- ظل للنصوص -->
+    <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
   </defs>
 
-  <!-- خلفية دائرية -->
-  <circle cx="50" cy="50" r="47" fill="url(#backgroundGradient)" stroke="#ffffff" stroke-width="3" filter="url(#shadow)"/>
+  <!-- خلفية دائرية خضراء -->
+  <circle cx="50" cy="50" r="47" fill="url(#saudiGreen)" stroke="#ffffff" stroke-width="3" filter="url(#shadow)"/>
   
-  <!-- مظلة السيارة الرئيسية -->
-  <!-- هيكل المظلة العلوي -->
-  <ellipse cx="50" cy="25" rx="35" ry="8" fill="url(#canopyGradient)" filter="url(#shadow)"/>
+  <!-- شعار المباني والمظلات -->
+  <!-- مبنى رئيسي -->
+  <rect x="30" y="35" width="12" height="35" fill="url(#goldGradient)" rx="2" filter="url(#shadow)"/>
+  <rect x="58" y="40" width="12" height="30" fill="url(#goldGradient)" rx="2" filter="url(#shadow)"/>
   
-  <!-- أعمدة المظلة -->
-  <rect x="20" y="25" width="3" height="40" fill="#6b7280" filter="url(#shadow)"/>
-  <rect x="77" y="25" width="3" height="40" fill="#6b7280" filter="url(#shadow)"/>
-  <rect x="25" y="25" width="3" height="35" fill="#6b7280" filter="url(#shadow)"/>
-  <rect x="72" y="25" width="3" height="35" fill="#6b7280" filter="url(#shadow)"/>
+  <!-- مظلة علوية -->
+  <ellipse cx="50" cy="25" rx="25" ry="6" fill="url(#whiteGradient)" filter="url(#shadow)"/>
+  <line x1="25" y1="25" x2="75" y2="25" stroke="#d97706" stroke-width="2"/>
   
-  <!-- السيارة تحت المظلة -->
-  <!-- جسم السيارة -->
-  <ellipse cx="50" cy="70" rx="18" ry="8" fill="#374151" filter="url(#shadow)"/>
-  <rect x="32" y="65" width="36" height="10" fill="#374151" rx="3" ry="3"/>
+  <!-- نوافذ المباني -->
+  <rect x="32" y="40" width="3" height="3" fill="#166534" rx="0.5"/>
+  <rect x="37" y="40" width="3" height="3" fill="#166534" rx="0.5"/>
+  <rect x="32" y="47" width="3" height="3" fill="#166534" rx="0.5"/>
+  <rect x="37" y="47" width="3" height="3" fill="#166534" rx="0.5"/>
   
-  <!-- نوافذ السيارة -->
-  <rect x="36" y="67" width="8" height="6" fill="#60a5fa" rx="1"/>
-  <rect x="56" y="67" width="8" height="6" fill="#60a5fa" rx="1"/>
+  <rect x="60" y="45" width="3" height="3" fill="#166534" rx="0.5"/>
+  <rect x="65" y="45" width="3" height="3" fill="#166534" rx="0.5"/>
+  <rect x="60" y="52" width="3" height="3" fill="#166534" rx="0.5"/>
+  <rect x="65" y="52" width="3" height="3" fill="#166534" rx="0.5"/>
   
-  <!-- عجلات السيارة -->
-  <circle cx="40" cy="75" r="3" fill="#1f2937"/>
-  <circle cx="60" cy="75" r="3" fill="#1f2937"/>
-  <circle cx="40" cy="75" r="2" fill="#6b7280"/>
-  <circle cx="60" cy="75" r="2" fill="#6b7280"/>
+  <!-- اسم المؤسسة -->
+  <text x="50" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="url(#whiteGradient)" filter="url(#textShadow)">الديار</text>
   
-  <!-- تفاصيل إضافية للمظلة -->
-  <!-- خطوط هيكلية -->
-  <line x1="15" y1="25" x2="85" y2="25" stroke="#d97706" stroke-width="2"/>
-  <line x1="15" y1="28" x2="85" y2="28" stroke="#f59e0b" stroke-width="1"/>
+  <!-- رقم 2030 -->
+  <text x="50" y="85" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)" filter="url(#textShadow)">2030</text>
   
-  <!-- تفاصيل ديكورية سعودية -->
-  <polygon points="50,15 48,20 52,20" fill="url(#saudiGreen)"/>
+  <!-- خط زخرفي سعودي -->
+  <path d="M 25 75 Q 50 72 75 75" stroke="url(#goldGradient)" stroke-width="2" fill="none" stroke-linecap="round"/>
   
-  <!-- النص التعريفي -->
-  <text x="50" y="10" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff" filter="url(#shadow)">د</text>
-  
-  <!-- خط زخرفي -->
-  <path d="M 30 85 Q 50 82 70 85" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- نجمة صغيرة ترمز للتميز -->
+  <polygon points="50,78 48,82 44,82 47,85 46,89 50,87 54,89 53,85 56,82 52,82" fill="url(#goldGradient)" filter="url(#shadow)"/>
 </svg>
