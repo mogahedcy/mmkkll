@@ -459,29 +459,21 @@ function ProjectCard({ project }: { project: Project }) {
               muted
               loop
               playsInline
+              autoPlay
               preload="metadata"
               poster={mainVideo.thumbnail || undefined}
-              onMouseEnter={(e) => {
-                const video = e.target as HTMLVideoElement;
-                if (video.readyState >= 3) {
-                  video.play().catch((error) => {
-                    console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
-                  });
-                }
-              }}
-              onMouseLeave={(e) => {
-                const video = e.target as HTMLVideoElement;
-                video.pause();
-                video.currentTime = 0;
-              }}
               onError={(e) => {
                 console.error('خطأ في تحميل الفيديو:', mainVideo.src);
                 // إخفاء الفيديو عند حدوث خطأ
                 const videoElement = e.target as HTMLVideoElement;
                 videoElement.style.display = 'none';
               }}
-              onLoadedData={() => {
+              onLoadedData={(e) => {
                 console.log('تم تحميل الفيديو بنجاح:', project.title);
+                const video = e.target as HTMLVideoElement;
+                video.play().catch((error) => {
+                  console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
+                });
               }}
             >
               <source src={mainVideo.src} type="video/mp4" />
@@ -652,28 +644,20 @@ function ProjectListItem({ project }: { project: Project }) {
                 muted
                 loop
                 playsInline
+                autoPlay
                 preload="metadata"
                 poster={mainVideo.thumbnail || undefined}
-                onMouseEnter={(e) => {
-                  const video = e.target as HTMLVideoElement;
-                  if (video.readyState >= 3) {
-                    video.play().catch((error) => {
-                      console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
-                    });
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  const video = e.target as HTMLVideoElement;
-                  video.pause();
-                  video.currentTime = 0;
-                }}
                 onError={(e) => {
                   console.error('خطأ في تحميل الفيديو:', mainVideo.src);
                   const videoElement = e.target as HTMLVideoElement;
                   videoElement.style.display = 'none';
                 }}
-                onLoadedData={() => {
+                onLoadedData={(e) => {
                   console.log('تم تحميل الفيديو في القائمة بنجاح:', project.title);
+                  const video = e.target as HTMLVideoElement;
+                  video.play().catch((error) => {
+                    console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
+                  });
                 }}
               >
                 <source src={mainVideo.src} type="video/mp4" />
