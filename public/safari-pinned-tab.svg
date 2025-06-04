@@ -1,29 +1,27 @@
 
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Monochrome background -->
-  <rect width="32" height="32" fill="#0C5F3C"/>
+  <!-- Black background for Safari -->
+  <rect width="32" height="32" fill="#000000"/>
   
-  <!-- Simplified architectural structure for Safari -->
+  <!-- Main logo elements in white for Safari -->
   <g transform="translate(16,16)" fill="#FFFFFF">
-    <!-- Main building structure -->
-    <rect x="-7" y="-3" width="14" height="10" rx="1"/>
     
-    <!-- Central tower -->
-    <rect x="-3" y="-8" width="6" height="5" rx="1"/>
+    <!-- Kaaba structure -->
+    <rect x="-4" y="0" width="8" height="6" stroke="#FFFFFF" stroke-width="0.3"/>
+    
+    <!-- Golden tent structure -->
+    <path d="M-6,0 L-3,-3 L0,-2 L3,-3 L6,0 L0,2 Z"/>
     
     <!-- Side buildings -->
-    <rect x="-11" y="-1" width="3" height="7" rx="0.5"/>
-    <rect x="8" y="0" width="3" height="6" rx="0.5"/>
+    <rect x="-8" y="-2" width="2" height="10"/>
+    <rect x="6" y="-1" width="1.5" height="8"/>
+    <rect x="8" y="0" width="1" height="7"/>
     
-    <!-- Decorative elements -->
-    <circle cx="-9" cy="-6" r="1"/>
-    <circle cx="9" cy="-5" r="0.8"/>
+    <!-- Palm tree -->
+    <rect x="10" y="4" width="0.4" height="3"/>
+    <path d="M10.2,4 L9,2 M10.2,4 L11.5,2"/>
     
-    <!-- Arabic text -->
-    <text x="0" y="-10" font-family="Arial, sans-serif" font-size="3.5" font-weight="bold" text-anchor="middle">الديار</text>
+    <!-- Company name -->
+    <text x="0" y="12" font-family="Arial, sans-serif" font-size="2" font-weight="bold" text-anchor="middle">الديار العالمية</text>
   </g>
-  
-  <!-- Vision 2030 indicator -->
-  <circle cx="26" cy="6" r="3" fill="#FFFFFF"/>
-  <text x="26" y="7.5" font-family="Arial, sans-serif" font-size="2.2" font-weight="bold" text-anchor="middle" fill="#0C5F3C">2030</text>
 </svg>
