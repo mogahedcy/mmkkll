@@ -1,7 +1,4 @@
-The code is modified to update the service categories in the PortfolioSection component.
-```
 
-```replit_final_file
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -56,7 +53,7 @@ export default function PortfolioSection() {
       try {
         setLoading(true);
 
-        // جلب أحدث 8 مشاريع أولاً
+        // جلب أحدث 50 مشروع أولاً
         const allProjectsResponse = await fetch(`/api/projects?limit=50&sort=newest`);
         const allProjectsData = await allProjectsResponse.json();
 
@@ -135,8 +132,8 @@ export default function PortfolioSection() {
           </h2>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-12 leading-relaxed">
             استكشف أحدث مشاريعنا المتميزة في جدة والمناطق المحيطة. نعرض لك أحدث عمل في كل خدمة من خدماتنا المتخصصة
-            في المظلات، البرجولات، الساندوتش بانل، الترميم، السواتر، تنسيق الحدائق، بيوت الشعر التراثية،
-            والخيام الملكية بأعلى معايير الجودة والحرفية
+            في المظلات، السواتر، الساندوتش بانل، تنسيق الحدائق، الخيام الملكية، بيوت الشعر،
+            والترميم بأعلى معايير الجودة والحرفية
           </p>
 
           {/* Enhanced Statistics */}
@@ -146,7 +143,7 @@ export default function PortfolioSection() {
               <div className="text-sm text-muted-foreground font-medium">مشروع ناجح</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-              <div className="text-4xl font-bold text-accent mb-2">8</div>
+              <div className="text-4xl font-bold text-accent mb-2">7</div>
               <div className="text-sm text-muted-foreground font-medium">خدمات متخصصة</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg text-center">
