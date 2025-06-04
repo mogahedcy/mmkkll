@@ -1,79 +1,71 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
-    <!-- تدرج أزرق متطور للخلفية -->
+    <!-- تدرج أزرق للخلفية -->
     <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
-      <stop offset="30%" style="stop-color:#2563eb;stop-opacity:1" />
-      <stop offset="70%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2563eb;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
     </linearGradient>
     
-    <!-- تدرج ذهبي للمباني -->
-    <linearGradient id="buildingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- تدرج ذهبي لهيكل المظلة -->
+    <linearGradient id="canopyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
       <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
     </linearGradient>
     
-    <!-- تأثير ظل للعمق -->
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="2" dy="2" stdDeviation="1" flood-color="#000000" flood-opacity="0.3"/>
+    <!-- تدرج أخضر لألوان السعودية -->
+    <linearGradient id="saudiGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#166534;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#15803d;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- ظل للعمق -->
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000000" flood-opacity="0.4"/>
     </filter>
   </defs>
 
-  <!-- خلفية دائرية متدرجة -->
+  <!-- خلفية دائرية -->
   <circle cx="50" cy="50" r="47" fill="url(#backgroundGradient)" stroke="#ffffff" stroke-width="3" filter="url(#shadow)"/>
   
-  <!-- المبنى الرئيسي الأول -->
-  <rect x="20" y="30" width="20" height="50" fill="url(#buildingGradient)" rx="3" ry="3" filter="url(#shadow)"/>
+  <!-- مظلة السيارة الرئيسية -->
+  <!-- هيكل المظلة العلوي -->
+  <ellipse cx="50" cy="25" rx="35" ry="8" fill="url(#canopyGradient)" filter="url(#shadow)"/>
   
-  <!-- المبنى الأوسط (الأطول) -->
-  <rect x="42" y="20" width="18" height="60" fill="#ffffff" rx="2" ry="2" filter="url(#shadow)"/>
+  <!-- أعمدة المظلة -->
+  <rect x="20" y="25" width="3" height="40" fill="#6b7280" filter="url(#shadow)"/>
+  <rect x="77" y="25" width="3" height="40" fill="#6b7280" filter="url(#shadow)"/>
+  <rect x="25" y="25" width="3" height="35" fill="#6b7280" filter="url(#shadow)"/>
+  <rect x="72" y="25" width="3" height="35" fill="#6b7280" filter="url(#shadow)"/>
   
-  <!-- المبنى الثالث -->
-  <rect x="62" y="35" width="16" height="45" fill="url(#buildingGradient)" rx="2" ry="2" filter="url(#shadow)"/>
+  <!-- السيارة تحت المظلة -->
+  <!-- جسم السيارة -->
+  <ellipse cx="50" cy="70" rx="18" ry="8" fill="#374151" filter="url(#shadow)"/>
+  <rect x="32" y="65" width="36" height="10" fill="#374151" rx="3" ry="3"/>
   
-  <!-- نوافذ المبنى الأول -->
-  <rect x="24" y="35" width="3" height="4" fill="#1e40af" rx="0.5"/>
-  <rect x="29" y="35" width="3" height="4" fill="#1e40af" rx="0.5"/>
-  <rect x="24" y="43" width="3" height="4" fill="#1e40af" rx="0.5"/>
-  <rect x="29" y="43" width="3" height="4" fill="#1e40af" rx="0.5"/>
-  <rect x="24" y="51" width="3" height="4" fill="#1e40af" rx="0.5"/>
-  <rect x="29" y="51" width="3" height="4" fill="#1e40af" rx="0.5"/>
-  <rect x="24" y="59" width="3" height="4" fill="#1e40af" rx="0.5"/>
-  <rect x="29" y="59" width="3" height="4" fill="#1e40af" rx="0.5"/>
+  <!-- نوافذ السيارة -->
+  <rect x="36" y="67" width="8" height="6" fill="#60a5fa" rx="1"/>
+  <rect x="56" y="67" width="8" height="6" fill="#60a5fa" rx="1"/>
   
-  <!-- نوافذ المبنى الأوسط -->
-  <rect x="45" y="25" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="50" y="25" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="55" y="25" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="45" y="33" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="50" y="33" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="55" y="33" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="45" y="41" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="50" y="41" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="55" y="41" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="45" y="49" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="50" y="49" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="55" y="49" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="45" y="57" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="50" y="57" width="3" height="4" fill="#2563eb" rx="0.5"/>
-  <rect x="55" y="57" width="3" height="4" fill="#2563eb" rx="0.5"/>
+  <!-- عجلات السيارة -->
+  <circle cx="40" cy="75" r="3" fill="#1f2937"/>
+  <circle cx="60" cy="75" r="3" fill="#1f2937"/>
+  <circle cx="40" cy="75" r="2" fill="#6b7280"/>
+  <circle cx="60" cy="75" r="2" fill="#6b7280"/>
   
-  <!-- نوافذ المبنى الثالث -->
-  <rect x="65" y="40" width="3" height="3" fill="#1e40af" rx="0.5"/>
-  <rect x="70" y="40" width="3" height="3" fill="#1e40af" rx="0.5"/>
-  <rect x="65" y="47" width="3" height="3" fill="#1e40af" rx="0.5"/>
-  <rect x="70" y="47" width="3" height="3" fill="#1e40af" rx="0.5"/>
-  <rect x="65" y="54" width="3" height="3" fill="#1e40af" rx="0.5"/>
-  <rect x="70" y="54" width="3" height="3" fill="#1e40af" rx="0.5"/>
-  <rect x="65" y="61" width="3" height="3" fill="#1e40af" rx="0.5"/>
-  <rect x="70" y="61" width="3" height="3" fill="#1e40af" rx="0.5"/>
-
-  <!-- حرف "د" مع خط أنيق -->
-  <text x="50" y="16" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff" filter="url(#shadow)">د</text>
+  <!-- تفاصيل إضافية للمظلة -->
+  <!-- خطوط هيكلية -->
+  <line x1="15" y1="25" x2="85" y2="25" stroke="#d97706" stroke-width="2"/>
+  <line x1="15" y1="28" x2="85" y2="28" stroke="#f59e0b" stroke-width="1"/>
   
-  <!-- خط تحت الحرف للزينة -->
-  <line x1="42" y1="18" x2="58" y2="18" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
+  <!-- تفاصيل ديكورية سعودية -->
+  <polygon points="50,15 48,20 52,20" fill="url(#saudiGreen)"/>
+  
+  <!-- النص التعريفي -->
+  <text x="50" y="10" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff" filter="url(#shadow)">د</text>
+  
+  <!-- خط زخرفي -->
+  <path d="M 30 85 Q 50 82 70 85" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round"/>
 </svg>
