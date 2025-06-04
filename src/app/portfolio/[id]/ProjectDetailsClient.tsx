@@ -34,6 +34,7 @@ import {
   CheckCircle,
   Tag
 } from 'lucide-react';
+import ProjectCommentsSection from '@/components/ProjectCommentsSection';
 
 interface MediaItem {
   id: string;
@@ -555,6 +556,16 @@ export default function ProjectDetailsClient({ project }: Props) {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* قسم التعليقات والتقييمات */}
+      <section className="py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ProjectCommentsSection 
+            projectId={project.id}
+            projectTitle={project.title}
+          />
         </div>
       </section>
 

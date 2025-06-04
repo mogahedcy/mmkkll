@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -8,21 +7,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import AdvancedFilters from '@/components/AdvancedFilters';
-import { 
-  Search, 
-  Grid3X3, 
-  List, 
-  MapPin, 
-  Calendar, 
-  Eye, 
-  Heart, 
-  Star,
+import {
+  Search,
   Filter,
-  SortAsc,
-  Share2,
+  Grid3X3,
+  List,
+  Calendar,
+  MapPin,
+  Eye,
+  Heart,
+  MessageCircle,
   ExternalLink,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Star
 } from 'lucide-react';
 
 interface Project {
@@ -58,7 +56,7 @@ type SortOption = 'newest' | 'oldest' | 'mostViewed' | 'featured' | 'rating';
 const categories = [
   'الكل',
   'مظلات',
-  'برجولات', 
+  'برجولات',
   'سواتر',
   'ساندوتش بانل',
   'تنسيق حدائق',
@@ -87,7 +85,7 @@ export default function PortfolioPageClient() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProjects, setTotalProjects] = useState(0);
   const [retryCount, setRetryCount] = useState(0);
-  
+
   const projectsPerPage = 12;
 
   const fetchProjects = useCallback(async (retryAttempt = 0) => {
@@ -111,15 +109,15 @@ export default function PortfolioPageClient() {
       });
 
       const response = await fetch(`/api/projects?${params}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      
+
       console.log('📦 البيانات المستلمة من API:', data);
-      
+
       if (data.success) {
         setProjects(data.projects || []);
         setTotalProjects(data.total || 0);
@@ -135,7 +133,7 @@ export default function PortfolioPageClient() {
 
     } catch (error) {
       console.error('❌ خطأ في جلب المشاريع:', error);
-      
+
       // إعادة المحاولة تلقائياً (حتى 3 مرات)
       if (retryAttempt < 3) {
         console.log(`🔄 إعادة المحاولة ${retryAttempt + 1}/3...`);
@@ -236,7 +234,7 @@ export default function PortfolioPageClient() {
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             استكشف مجموعة من أروع المشاريع التي نفذناها بأعلى معايير الجودة والإتقان
           </p>
-          
+
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto relative">
             <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -327,7 +325,7 @@ export default function PortfolioPageClient() {
               <span className="font-medium"> • البحث عن: "{searchTerm}"</span>
             )}
           </div>
-          
+
           {loading && (
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
@@ -351,7 +349,7 @@ export default function PortfolioPageClient() {
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">لا توجد مشاريع</h3>
             <p className="text-gray-600 mb-6">
-              {searchTerm 
+              {searchTerm
                 ? `لم نجد أي مشاريع تطابق البحث "${searchTerm}"`
                 : 'لا توجد مشاريع في هذه الفئة حالياً'
               }
@@ -388,7 +386,7 @@ export default function PortfolioPageClient() {
                 >
                   السابق
                 </Button>
-                
+
                 <div className="flex items-center gap-2">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <Button
@@ -451,7 +449,7 @@ function ProjectCard({ project }: { project: Project }) {
                 priority={false}
               />
             )}
-            
+
             {/* الفيديو */}
             <video
               key={`video-${project.id}`}
@@ -480,7 +478,7 @@ function ProjectCard({ project }: { project: Project }) {
               <source src={mainVideo.src} type="video/webm" />
               متصفحك لا يدعم عرض الفيديو
             </video>
-            
+
             {/* شارة الفيديو */}
             <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -488,7 +486,7 @@ function ProjectCard({ project }: { project: Project }) {
               </svg>
               فيديو
             </div>
-            
+
             {/* أيقونة تشغيل مع تأثير hover */}
             <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
               <div className="bg-black/40 backdrop-blur-sm rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
@@ -508,10 +506,10 @@ function ProjectCard({ project }: { project: Project }) {
             </div>
           </div>
         )}
-        
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
+
         {/* Media Type Badge */}
         <div className="absolute top-4 right-4 flex gap-2">
           {project.featured && (
@@ -636,7 +634,7 @@ function ProjectListItem({ project }: { project: Project }) {
                   priority={false}
                 />
               )}
-              
+
               {/* الفيديو */}
               <video
                 key={`list-video-${project.id}`}
@@ -664,7 +662,7 @@ function ProjectListItem({ project }: { project: Project }) {
                 <source src={mainVideo.src} type="video/webm" />
                 متصفحك لا يدعم عرض الفيديو
               </video>
-              
+
               {/* شارة الفيديو */}
               <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -672,7 +670,7 @@ function ProjectListItem({ project }: { project: Project }) {
                 </svg>
                 فيديو
               </div>
-              
+
               {/* أيقونة تشغيل */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="bg-black/40 backdrop-blur-sm rounded-full p-3">
@@ -692,7 +690,7 @@ function ProjectListItem({ project }: { project: Project }) {
               </div>
             </div>
           )}
-          
+
           <div className="absolute top-4 right-4 flex gap-2">
             {project.featured && (
               <Badge className="bg-yellow-500 hover:bg-yellow-600">
@@ -743,9 +741,9 @@ function ProjectListItem({ project }: { project: Project }) {
               <span className="font-medium">المدة:</span> {project.projectDuration || 'غير محدد'}
             </div>
             <div>
-              <span className="font-medium">الوسائط:</span> 
+              <span className="font-medium">الوسائط:</span>
               {project.mediaItems.filter(m => m.type === 'IMAGE').length} صور
-              {project.mediaItems.filter(m => m.type === 'VIDEO').length > 0 && 
+              {project.mediaItems.filter(m => m.type === 'VIDEO').length > 0 &&
                 `, ${project.mediaItems.filter(m => m.type === 'VIDEO').length} فيديو`
               }
             </div>
@@ -764,11 +762,11 @@ function ProjectListItem({ project }: { project: Project }) {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6 text-sm text-gray-500">
-              <span className="flex items-center gap-1">
+              <span className="flex items-center">
                 <Eye className="h-4 w-4" />
                 {project.views} مشاهدة
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center">
                 <Heart className="h-4 w-4" />
                 {project.likes} إعجاب
               </span>
