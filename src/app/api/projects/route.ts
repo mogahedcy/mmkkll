@@ -135,12 +135,12 @@ export async function POST(request: NextRequest) {
         mediaItems: {
           create: mediaItems?.map((item: any, index: number) => {
             console.log(`📁 معالجة ملف ${index + 1}:`, item);
-            
+
             // التحقق من وجود src المطلوب
             if (!item.src) {
               throw new Error(`الملف ${index + 1} لا يحتوي على رابط صحيح`);
             }
-            
+
             return {
               type: item.type,
               src: item.src,
@@ -176,6 +176,15 @@ export async function POST(request: NextRequest) {
       mediaCount: project.mediaItems.length,
       mediaItems: project.mediaItems
     });
+
+    // إشعار جوجل بالمحتوى الجديد
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/sitemap/refresh`, {
+        method: 'POST'
+      });
+    } catch (error) {
+      console.warn('تعذر إشعار جوجل بالمحتوى الجديد:', error);
+    }
 
     return NextResponse.json({
       success: true,

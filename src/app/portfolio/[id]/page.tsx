@@ -72,13 +72,54 @@ export default async function ProjectDetailsPage({ params }: Props) {
     notFound();
   }
 
+  // إعداد structured data
+  const images = project.mediaItems?.filter((item: any) => item.type === 'IMAGE') || [];
+  const videos = project.mediaItems?.filter((item: any) => item.type === 'VIDEO') || [];
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": project.title,
+    "description": project.description,
+    "creator": {
+      "@type": "Organization",
+      "name": "محترفين الديار العالمية",
+      "url": "https://aldeyarksa.tech"
+    },
+    "dateCreated": project.createdAt,
+    "dateModified": project.updatedAt,
+    "locationCreated": {
+      "@type": "Place",
+      "name": project.location
+    },
+    "category": project.category,
+    "image": images.map((item: any) => ({
+      "@type": "ImageObject",
+      "url": item.src,
+      "caption": item.title || project.title,
+      "encodingFormat": "image/jpeg"
+    })),
+    "video": videos.map((item: any) => ({
+      "@type": "VideoObject",
+      "name": item.title || project.title,
+      "description": item.description || project.description,
+      "contentUrl": item.src,
+      "encodingFormat": "video/mp4",
+      "uploadDate": project.createdAt
+    }))
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
       <Navbar />
-      <main className="flex-1">
-        <ProjectDetailsClient project={project} />
-      </main>
+      <ProjectDetailsClient project={project} />
       <Footer />
-    </div>
+    </>
   );
 }
