@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured');
     const limit = searchParams.get('limit');
     const page = searchParams.get('page');
+    const sort = searchParams.get('sort'); // newest, oldest, featured, popular
 
     const skip = page ? (Number.parseInt(page) - 1) * (limit ? Number.parseInt(limit) : 12) : 0;
     const take = limit ? Number.parseInt(limit) : 12;
@@ -25,7 +26,26 @@ export async function GET(request: NextRequest) {
       where.featured = true;
     }
 
-    console.log('🔍 جلب المشاريع مع المعايير:', { where, skip, take });
+    // تحديد ترتيب المشاريع
+    let orderBy: any[] = [];
+    switch (sort) {
+      case 'newest':
+        orderBy = [{ createdAt: 'desc' }];
+        break;
+      case 'oldest':
+        orderBy = [{ createdAt: 'asc' }];
+        break;
+      case 'featured':
+        orderBy = [{ featured: 'desc' }, { createdAt: 'desc' }];
+        break;
+      case 'popular':
+        orderBy = [{ views: 'desc' }, { likes: 'desc' }, { createdAt: 'desc' }];
+        break;
+      default:
+        orderBy = [{ featured: 'desc' }, { createdAt: 'desc' }];
+    }
+
+    console.log('🔍 جلب المشاريع مع المعايير:', { where, skip, take, sort, orderBy });
 
     const projects = await prisma.project.findMany({
       where,
@@ -41,10 +61,7 @@ export async function GET(request: NextRequest) {
           }
         }
       },
-      orderBy: [
-        { featured: 'desc' },
-        { createdAt: 'desc' }
-      ],
+      orderBy,
       skip,
       take
     });

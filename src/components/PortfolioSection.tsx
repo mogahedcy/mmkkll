@@ -53,19 +53,43 @@ export default function PortfolioSection() {
       try {
         setLoading(true);
 
-        // جلب أحدث مشروع لكل فئة
-        const projectPromises = serviceCategories.map(async (category) => {
-          const response = await fetch(`/api/projects?category=${encodeURIComponent(category.id)}&limit=1&sort=newest`);
-          const data = await response.json();
-          return data.projects && data.projects.length > 0 ? data.projects[0] : null;
-        });
+        // جلب أحدث 8 مشاريع أولاً
+        const allProjectsResponse = await fetch(`/api/projects?limit=50&sort=newest`);
+        const allProjectsData = await allProjectsResponse.json();
+        
+        if (allProjectsData.success && allProjectsData.projects) {
+          // تجميع المشاريع حسب الفئة وأخذ أحدث مشروع لكل فئة
+          const projectsByCategory = new Map();
+          
+          allProjectsData.projects.forEach((project: Project) => {
+            if (!projectsByCategory.has(project.category)) {
+              projectsByCategory.set(project.category, project);
+            }
+          });
 
-        const latestProjects = await Promise.all(projectPromises);
-        const validProjects = latestProjects.filter(project => project !== null);
+          // تحويل إلى مصفوفة وترتيب حسب تاريخ الإنشاء
+          const latestProjects = Array.from(projectsByCategory.values())
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 8); // أخذ أحدث 8 مشاريع فقط
 
-        setProjects(validProjects);
+          setProjects(latestProjects);
+          console.log('✅ تم جلب أحدث المشاريع:', latestProjects.length);
+        } else {
+          // الطريقة البديلة إذا فشلت الطريقة الأولى
+          const projectPromises = serviceCategories.map(async (category) => {
+            const response = await fetch(`/api/projects?category=${encodeURIComponent(category.id)}&limit=1&sort=newest`);
+            const data = await response.json();
+            return data.success && data.projects && data.projects.length > 0 ? data.projects[0] : null;
+          });
+
+          const latestProjects = await Promise.all(projectPromises);
+          const validProjects = latestProjects.filter(project => project !== null);
+
+          setProjects(validProjects);
+        }
       } catch (error) {
         console.error('خطأ في جلب المشاريع:', error);
+        setProjects([]);
       } finally {
         setLoading(false);
       }

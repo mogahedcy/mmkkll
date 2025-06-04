@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
+import LatestProjectsSection from '@/components/LatestProjectsSection';
 import ServicesSection from '@/components/ServicesSection';
 import WhyChooseUsSection from '@/components/WhyChooseUsSection';
 import PortfolioSection from '@/components/PortfolioSection';
@@ -23,11 +24,14 @@ export default function HomePage() {
         {/* Services Overview - What We Offer */}
         <ServicesSection />
 
-        {/* Why Choose Us - Trust Building */}
-        <WhyChooseUsSection />
-
         {/* Portfolio - Social Proof */}
         <PortfolioSection />
+        
+        {/* Latest Projects Section */}
+        <LatestProjectsSection />
+
+        {/* Why Choose Us - Trust Building */}
+        <WhyChooseUsSection />
 
         {/* Testimonials - Customer Voice */}
         <TestimonialsSection />
