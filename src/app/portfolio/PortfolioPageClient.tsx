@@ -428,19 +428,34 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
       {/* Project Media */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-64 overflow-hidden bg-gray-100">
         {mainImage ? (
           <Image
             src={mainImage.src}
             alt={project.title}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-500"
+            onError={(e) => {
+              console.error('خطأ في تحميل الصورة:', mainImage.src);
+            }}
           />
         ) : mainVideo ? (
-          <div className="relative w-full h-full">
+          <div className="relative w-full h-full bg-gray-900">
+            {/* صورة مصغرة كخلفية */}
+            {mainVideo.thumbnail && (
+              <Image
+                src={mainVideo.thumbnail}
+                alt={`معاينة ${project.title}`}
+                fill
+                className="object-cover"
+                priority={false}
+              />
+            )}
+            
+            {/* الفيديو */}
             <video
-              src={mainVideo.src}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              key={`video-${project.id}`}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               muted
               loop
               playsInline
@@ -448,9 +463,11 @@ function ProjectCard({ project }: { project: Project }) {
               poster={mainVideo.thumbnail || undefined}
               onMouseEnter={(e) => {
                 const video = e.target as HTMLVideoElement;
-                video.play().catch((error) => {
-                  console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
-                });
+                if (video.readyState >= 3) {
+                  video.play().catch((error) => {
+                    console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
+                  });
+                }
               }}
               onMouseLeave={(e) => {
                 const video = e.target as HTMLVideoElement;
@@ -458,24 +475,32 @@ function ProjectCard({ project }: { project: Project }) {
                 video.currentTime = 0;
               }}
               onError={(e) => {
-                console.error('خطأ في تحميل فيديو المعاينة:', e);
+                console.error('خطأ في تحميل الفيديو:', mainVideo.src);
+                // إخفاء الفيديو عند حدوث خطأ
+                const videoElement = e.target as HTMLVideoElement;
+                videoElement.style.display = 'none';
+              }}
+              onLoadedData={() => {
+                console.log('تم تحميل الفيديو بنجاح:', project.title);
               }}
             >
               <source src={mainVideo.src} type="video/mp4" />
+              <source src={mainVideo.src} type="video/webm" />
+              متصفحك لا يدعم عرض الفيديو
             </video>
             
-            {/* شارة الفيديو مع أيقونة تشغيل */}
-            <div className="absolute top-2 right-2 bg-red-500 bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1">
+            {/* شارة الفيديو */}
+            <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
               </svg>
               فيديو
             </div>
             
-            {/* أيقونة تشغيل في المنتصف */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+            {/* أيقونة تشغيل مع تأثير hover */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <div className="bg-black/40 backdrop-blur-sm rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -483,7 +508,12 @@ function ProjectCard({ project }: { project: Project }) {
           </div>
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400">لا توجد وسائط</span>
+            <div className="text-center text-gray-400">
+              <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span className="text-sm">لا توجد وسائط</span>
+            </div>
           </div>
         )}
         
@@ -591,18 +621,33 @@ function ProjectListItem({ project }: { project: Project }) {
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       <div className="flex flex-col md:flex-row">
         {/* Media */}
-        <div className="relative w-full md:w-80 h-48 md:h-auto flex-shrink-0">
+        <div className="relative w-full md:w-80 h-48 md:h-auto flex-shrink-0 bg-gray-100">
           {mainImage ? (
             <Image
               src={mainImage.src}
               alt={project.title}
               fill
               className="object-cover"
+              onError={(e) => {
+                console.error('خطأ في تحميل الصورة:', mainImage.src);
+              }}
             />
           ) : mainVideo ? (
-            <div className="relative w-full h-full">
+            <div className="relative w-full h-full bg-gray-900">
+              {/* صورة مصغرة كخلفية */}
+              {mainVideo.thumbnail && (
+                <Image
+                  src={mainVideo.thumbnail}
+                  alt={`معاينة ${project.title}`}
+                  fill
+                  className="object-cover"
+                  priority={false}
+                />
+              )}
+              
+              {/* الفيديو */}
               <video
-                src={mainVideo.src}
+                key={`list-video-${project.id}`}
                 className="w-full h-full object-cover"
                 muted
                 loop
@@ -611,9 +656,11 @@ function ProjectListItem({ project }: { project: Project }) {
                 poster={mainVideo.thumbnail || undefined}
                 onMouseEnter={(e) => {
                   const video = e.target as HTMLVideoElement;
-                  video.play().catch((error) => {
-                    console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
-                  });
+                  if (video.readyState >= 3) {
+                    video.play().catch((error) => {
+                      console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
+                    });
+                  }
                 }}
                 onMouseLeave={(e) => {
                   const video = e.target as HTMLVideoElement;
@@ -621,23 +668,44 @@ function ProjectListItem({ project }: { project: Project }) {
                   video.currentTime = 0;
                 }}
                 onError={(e) => {
-                  console.error('خطأ في تحميل فيديو المعاينة:', e);
+                  console.error('خطأ في تحميل الفيديو:', mainVideo.src);
+                  const videoElement = e.target as HTMLVideoElement;
+                  videoElement.style.display = 'none';
+                }}
+                onLoadedData={() => {
+                  console.log('تم تحميل الفيديو في القائمة بنجاح:', project.title);
                 }}
               >
                 <source src={mainVideo.src} type="video/mp4" />
+                <source src={mainVideo.src} type="video/webm" />
+                متصفحك لا يدعم عرض الفيديو
               </video>
               
               {/* شارة الفيديو */}
-              <div className="absolute top-2 right-2 bg-red-500 bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1">
+              <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                 </svg>
                 فيديو
               </div>
+              
+              {/* أيقونة تشغيل */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="bg-black/40 backdrop-blur-sm rounded-full p-3">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-400">لا توجد وسائط</span>
+              <div className="text-center text-gray-400">
+                <svg className="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-xs">لا توجد وسائط</span>
+              </div>
             </div>
           )}
           
