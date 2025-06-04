@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -82,7 +81,7 @@ export default function ProjectCommentsSection({
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newComment.name.trim() || !newComment.message.trim()) {
       setError('يرجى ملء جميع الحقول المطلوبة');
       return;
@@ -107,15 +106,15 @@ export default function ProjectCommentsSection({
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // إضافة التعليق الجديد للقائمة
         const commentWithAvatar = {
           ...data.comment,
           avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newComment.name)}&background=059669&color=fff`
         };
-        
+
         setComments(prev => [commentWithAvatar, ...prev]);
-        
+
         // إعادة تعيين النموذج
         setNewComment({
           name: '',
@@ -123,7 +122,7 @@ export default function ProjectCommentsSection({
           message: '',
           rating: 5
         });
-        
+
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 3000);
       } else {
@@ -400,7 +399,7 @@ export default function ProjectCommentsSection({
           <h3 className="text-lg font-semibold text-gray-900">
             التعليقات ({comments.length})
           </h3>
-          
+
           {/* أدوات التصفية والترتيب */}
           {comments.length > 0 && (
             <div className="flex items-center gap-4">
@@ -530,7 +529,7 @@ export default function ProjectCommentsSection({
                     <ThumbsUp className="w-4 h-4 ml-1" />
                     مفيد
                   </Button>
-                  
+
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -539,7 +538,7 @@ export default function ProjectCommentsSection({
                     <MessageCircle className="w-4 h-4 ml-1" />
                     رد
                   </Button>
-                  
+
                   <div className="flex items-center text-sm text-gray-500">
                     <span>تقييم مفيد؟</span>
                   </div>
