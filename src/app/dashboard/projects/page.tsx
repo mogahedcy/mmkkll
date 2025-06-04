@@ -164,8 +164,27 @@ export default function ProjectsPage() {
   };
 
   const getCategoryName = (categoryId: string) => {
-    const category = categories.find(cat => cat.id === categoryId);
-    return category ? category.name : categoryId;
+    const categoryMap: { [key: string]: string } = {
+      'mazallat': 'مظلات',
+      'sawater': 'سواتر',
+      'sandwich-panel': 'ساندوتش بانل',
+      'landscaping': 'تنسيق حدائق',
+      'khayyam': 'خيام ملكية',
+      'byoot-shaar': 'بيوت شعر',
+      'renovation': 'ترميم',
+      // إضافة أسماء بديلة للتوافق
+      'المظلات': 'مظلات',
+      'السواتر': 'سواتر',
+      'الساندوتش بانل': 'ساندوتش بانل',
+      'تنسيق الحدائق': 'تنسيق حدائق',
+      'الخيام': 'خيام ملكية',
+      'بيوت الشعر': 'بيوت شعر',
+      'الترميم': 'ترميم',
+      'pergolas': 'برجولات',
+      'البرجولات': 'برجولات'
+    };
+
+    return categoryMap[categoryId] || categoryId;
   };
 
   const ProjectCard = ({ project }: { project: Project }) => {

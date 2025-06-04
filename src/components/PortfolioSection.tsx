@@ -1,3 +1,7 @@
+The code is modified to update the service categories in the PortfolioSection component.
+```
+
+```replit_final_file
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,13 +13,12 @@ import { ArrowLeft, Car, TreePine, Shield, Home, Wrench, Flower, MapPin, Calenda
 // تعريف أنواع الخدمات مع الأيقونات المناسبة - متوافق مع صفحة البورتفوليو
 const serviceCategories = [
   { id: 'مظلات', name: 'مظلات', icon: Car },
-  { id: 'برجولات', name: 'برجولات', icon: TreePine },
-  { id: 'ساندوتش بانل', name: 'ساندوتش بانل', icon: Home },
-  { id: 'ترميم', name: 'ترميم', icon: Wrench },
   { id: 'سواتر', name: 'سواتر', icon: Shield },
+  { id: 'ساندوتش بانل', name: 'ساندوتش بانل', icon: Home },
   { id: 'تنسيق حدائق', name: 'تنسيق حدائق', icon: Flower },
+  { id: 'خيام ملكية', name: 'خيام ملكية', icon: Home },
   { id: 'بيوت شعر', name: 'بيوت شعر', icon: Home },
-  { id: 'خيام ملكية', name: 'خيام ملكية', icon: Home }
+  { id: 'ترميم', name: 'ترميم', icon: Wrench }
 ];
 
 interface MediaItem {
@@ -56,11 +59,11 @@ export default function PortfolioSection() {
         // جلب أحدث 8 مشاريع أولاً
         const allProjectsResponse = await fetch(`/api/projects?limit=50&sort=newest`);
         const allProjectsData = await allProjectsResponse.json();
-        
+
         if (allProjectsData.success && allProjectsData.projects) {
           // تجميع المشاريع حسب الفئة وأخذ أحدث مشروع لكل فئة
           const projectsByCategory = new Map();
-          
+
           allProjectsData.projects.forEach((project: Project) => {
             if (!projectsByCategory.has(project.category)) {
               projectsByCategory.set(project.category, project);
