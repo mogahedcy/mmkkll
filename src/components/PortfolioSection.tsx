@@ -6,15 +6,15 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Car, TreePine, Shield, Home, Wrench, Flower, MapPin, Calendar, Eye, Loader2 } from 'lucide-react';
 
-// تعريف أنواع الخدمات مع الأيقونات المناسبة
+// تعريف أنواع الخدمات مع الأيقونات المناسبة - متوافق مع صفحة البورتفوليو
 const serviceCategories = [
-  { id: 'مظلات سيارات', name: 'مظلات سيارات', icon: Car },
-  { id: 'برجولات حدائق', name: 'برجولات حدائق', icon: TreePine },
+  { id: 'مظلات', name: 'مظلات', icon: Car },
+  { id: 'برجولات', name: 'برجولات', icon: TreePine },
   { id: 'ساندوتش بانل', name: 'ساندوتش بانل', icon: Home },
-  { id: 'ترميم ملحقات', name: 'ترميم ملحقات', icon: Wrench },
-  { id: 'سواتر خصوصية', name: 'سواتر خصوصية', icon: Shield },
+  { id: 'ترميم', name: 'ترميم', icon: Wrench },
+  { id: 'سواتر', name: 'سواتر', icon: Shield },
   { id: 'تنسيق حدائق', name: 'تنسيق حدائق', icon: Flower },
-  { id: 'بيوت شعر تراثية', name: 'بيوت شعر تراثية', icon: Home },
+  { id: 'بيوت شعر', name: 'بيوت شعر', icon: Home },
   { id: 'خيام ملكية', name: 'خيام ملكية', icon: Home }
 ];
 
@@ -193,7 +193,9 @@ export default function PortfolioSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {filteredProjects.map((project) => {
               const IconComponent = getProjectIcon(project.category);
-              const mainMedia = project.mediaItems && project.mediaItems.length > 0 ? project.mediaItems[0] : null;
+              const mainImage = project.mediaItems?.find(item => item.type === 'IMAGE');
+              const mainVideo = project.mediaItems?.find(item => item.type === 'VIDEO');
+              const mainMedia = mainImage || mainVideo;
 
               return (
                 <div key={project.id} className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
@@ -270,15 +272,14 @@ export default function PortfolioSection() {
                             </div>
                           </div>
                         ) : (
-                          <Image
-                            src={mainMedia.src}
-                            alt={project.title}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-700"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=600&h=400&fit=crop';
-                            }}
-                          />
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <div className="text-center text-gray-400">
+                              <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z" />
+                              </svg>
+                              <span className="text-sm">لا توجد وسائط</span>
+                            </div>
+                          </div>
                         )}
                       </>
                     ) : (
