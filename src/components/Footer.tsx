@@ -459,6 +459,25 @@ export default function Footer() {
               </Link>
             </div>
           </div>
+
+          {/* Developer Info */}
+          <div className="border-t border-white/5 mt-6 pt-6">
+            <div className="text-center">
+              <p className="text-sm text-gray-400 mb-2">
+                تطوير وإدارة الموقع من قبل المهندس
+              </p>
+              <div className="flex items-center justify-center space-x-4 space-x-reverse">
+                <span className="text-accent font-medium">Mujahed Ahmed Alhemiry</span>
+                <Link
+                  href="tel:+967773505749"
+                  className="flex items-center space-x-2 space-x-reverse text-gray-400 hover:text-accent transition-colors"
+                >
+                  <Phone className="w-4 h-4" />
+                  <span>967773505749+</span>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
