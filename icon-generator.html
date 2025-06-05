@@ -1,17 +1,20 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>إنشاء أيقونات محترفين الديار</title>
+    <title>إنشاء أيقونات خيام محترفين الديار</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
+        body { font-family: Arial, sans-serif; padding: 20px; direction: rtl; }
         canvas { border: 1px solid #ccc; margin: 10px; }
         .icon-set { margin: 20px 0; }
-        button { margin: 5px; padding: 10px; background: #2563eb; color: white; border: none; cursor: pointer; }
+        button { margin: 5px; padding: 10px; background: #2563eb; color: white; border: none; cursor: pointer; border-radius: 5px; }
         button:hover { background: #1d4ed8; }
+        h1 { color: #d97706; text-align: center; }
+        h3 { color: #1e3a8a; }
     </style>
 </head>
 <body>
-    <h1>إنشاء أيقونات محترفين الديار</h1>
+    <h1>🏕️ إنشاء أيقونات خيام محترفين الديار</h1>
 
     <div class="icon-set">
         <h3>أيقونة 16x16</h3>
@@ -44,7 +47,7 @@
     </div>
 
     <script>
-        function createIcon(size) {
+        function createTentIcon(size) {
             const canvas = document.getElementById(`canvas${size}`);
             const ctx = canvas.getContext('2d');
 
@@ -68,56 +71,95 @@
             ctx.stroke();
 
             const scale = size / 100;
+            const centerX = size / 2;
+            const centerY = size / 2;
 
-            // المبنى الأول (برتقالي)
-            const orangeGradient = ctx.createLinearGradient(0, 0, size, size);
-            orangeGradient.addColorStop(0, '#f97316');
-            orangeGradient.addColorStop(1, '#ea580c');
+            // رسم الخيمة الرئيسية
+            const tentGradient = ctx.createLinearGradient(0, 0, size, size);
+            tentGradient.addColorStop(0, '#f59e0b');
+            tentGradient.addColorStop(1, '#d97706');
 
-            ctx.fillStyle = orangeGradient;
-            ctx.fillRect(25*scale, 35*scale, 18*scale, 45*scale);
+            // جسم الخيمة
+            ctx.fillStyle = tentGradient;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 35*scale, centerY + 20*scale); // النقطة اليسرى
+            ctx.lineTo(centerX, centerY - 30*scale); // القمة
+            ctx.lineTo(centerX + 35*scale, centerY + 20*scale); // النقطة اليمنى
+            ctx.lineTo(centerX + 25*scale, centerY + 35*scale); // أسفل يمين
+            ctx.lineTo(centerX - 25*scale, centerY + 35*scale); // أسفل يسار
+            ctx.closePath();
+            ctx.fill();
 
-            // المبنى الثاني (أبيض)
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(45*scale, 25*scale, 16*scale, 55*scale);
+            // الجزء الأمامي من الخيمة
+            const frontGradient = ctx.createLinearGradient(0, 0, size, size);
+            frontGradient.addColorStop(0, '#3b82f6');
+            frontGradient.addColorStop(1, '#1e3a8a');
 
-            // المبنى الثالث (برتقالي)
-            ctx.fillStyle = orangeGradient;
-            ctx.fillRect(63*scale, 40*scale, 12*scale, 40*scale);
+            ctx.fillStyle = frontGradient;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 20*scale, centerY + 20*scale);
+            ctx.lineTo(centerX, centerY - 15*scale);
+            ctx.lineTo(centerX + 20*scale, centerY + 20*scale);
+            ctx.lineTo(centerX + 15*scale, centerY + 30*scale);
+            ctx.lineTo(centerX - 15*scale, centerY + 30*scale);
+            ctx.closePath();
+            ctx.fill();
 
-            // النوافذ
+            // خط التفصيل الأبيض
             if (size >= 32) {
-                // نوافذ المبنى الأول
-                ctx.fillStyle = '#1e3a8a';
-                ctx.fillRect(28*scale, 40*scale, 3*scale, 3*scale);
-                ctx.fillRect(36*scale, 40*scale, 3*scale, 3*scale);
-                ctx.fillRect(28*scale, 50*scale, 3*scale, 3*scale);
-                ctx.fillRect(36*scale, 50*scale, 3*scale, 3*scale);
-
-                // نوافذ المبنى الثاني
-                ctx.fillStyle = '#2563eb';
-                ctx.fillRect(48*scale, 30*scale, 3*scale, 3*scale);
-                ctx.fillRect(56*scale, 30*scale, 3*scale, 3*scale);
-                ctx.fillRect(48*scale, 40*scale, 3*scale, 3*scale);
-                ctx.fillRect(56*scale, 40*scale, 3*scale, 3*scale);
-                ctx.fillRect(48*scale, 50*scale, 3*scale, 3*scale);
-                ctx.fillRect(56*scale, 50*scale, 3*scale, 3*scale);
-
-                // نوافذ المبنى الثالث
-                ctx.fillStyle = '#1e3a8a';
-                ctx.fillRect(66*scale, 45*scale, 2*scale, 2*scale);
-                ctx.fillRect(70*scale, 45*scale, 2*scale, 2*scale);
-                ctx.fillRect(66*scale, 55*scale, 2*scale, 2*scale);
-                ctx.fillRect(70*scale, 55*scale, 2*scale, 2*scale);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = Math.max(1, size/50);
+                ctx.beginPath();
+                ctx.moveTo(centerX - 15*scale, centerY + 20*scale);
+                ctx.lineTo(centerX, centerY - 10*scale);
+                ctx.lineTo(centerX + 15*scale, centerY + 20*scale);
+                ctx.stroke();
             }
 
-            // الحرف العربي "د" (للأحجام الكبيرة فقط)
+            // مدخل الخيمة
+            ctx.fillStyle = '#1e3a8a';
+            ctx.beginPath();
+            ctx.moveTo(centerX - 8*scale, centerY + 20*scale);
+            ctx.quadraticCurveTo(centerX, centerY + 10*scale, centerX + 8*scale, centerY + 20*scale);
+            ctx.lineTo(centerX + 8*scale, centerY + 35*scale);
+            ctx.lineTo(centerX - 8*scale, centerY + 35*scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // أعمدة الخيمة
+            if (size >= 32) {
+                ctx.fillStyle = '#8b5cf6';
+                // العمود الأيسر
+                ctx.fillRect(centerX - 30*scale, centerY + 20*scale, 2*scale, 15*scale);
+                // العمود الأيمن
+                ctx.fillRect(centerX + 28*scale, centerY + 20*scale, 2*scale, 15*scale);
+                // العمود الأوسط
+                ctx.fillRect(centerX - 1*scale, centerY - 30*scale, 2*scale, 15*scale);
+            }
+
+            // النجمة في الوسط
             if (size >= 64) {
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `bold ${Math.max(12, size/8)}px Arial`;
+                ctx.beginPath();
+                const starRadius = 5*scale;
+                for (let i = 0; i < 5; i++) {
+                    const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                    const x = centerX + Math.cos(angle) * starRadius;
+                    const y = centerY + Math.sin(angle) * starRadius;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // الحرف العربي "د" في الأعلى
+            if (size >= 64) {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.max(8, size/8)}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('د', size/2, size/5);
+                ctx.fillText('د', centerX, centerY - 40*scale);
             }
         }
 
@@ -141,11 +183,11 @@
 
         // إنشاء جميع الأيقونات عند تحميل الصفحة
         window.onload = function() {
-            createIcon(16);
-            createIcon(32);
-            createIcon(180);
-            createIcon(192);
-            createIcon(512);
+            createTentIcon(16);
+            createTentIcon(32);
+            createTentIcon(180);
+            createTentIcon(192);
+            createTentIcon(512);
         };
     </script>
 </body>
