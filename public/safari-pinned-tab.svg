@@ -1,69 +1,28 @@
-
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <!-- خلفية سوداء للسفاري -->
   <rect width="512" height="512" fill="#000000"/>
-  
-  <!-- العناصر الرئيسية باللون الأبيض -->
+
+  <!-- العناصر باللون الأبيض -->
   <g transform="translate(256,256)" fill="#FFFFFF">
-    
-    <!-- الخيمة الملكية المبسطة -->
-    <g transform="translate(0,-50)">
-      <!-- القاعدة -->
-      <rect x="-90" y="45" width="180" height="70" stroke="#FFFFFF" stroke-width="4" fill="none"/>
-      
-      <!-- النوافذ -->
-      <rect x="-70" y="55" width="20" height="30"/>
-      <rect x="-35" y="55" width="20" height="30"/>
-      <rect x="0" y="55" width="20" height="30"/>
-      <rect x="35" y="55" width="20" height="30"/>
-      
-      <!-- الخطوط الزخرفية -->
-      <rect x="-85" y="65" width="170" height="3"/>
-      <rect x="-85" y="80" width="170" height="3"/>
-      
-      <!-- الخيمة العلوية -->
-      <path d="M-110,45 L-60,-25 L0,-40 L60,-25 L110,45 L0,60 Z"/>
-      
-      <!-- الهلال -->
-      <circle cx="0" cy="-55" r="14"/>
-      <circle cx="5" cy="-55" r="10" fill="#000000"/>
-      <circle cx="0" cy="-55" r="4"/>
-    </g>
 
-    <!-- المباني المبسطة -->
-    <g transform="translate(0,-25)">
-      <!-- الأبراج -->
-      <rect x="-170" y="-70" width="35" height="140"/>
-      <rect x="-70" y="-50" width="25" height="120"/>
-      <rect x="-35" y="-40" width="20" height="110"/>
-      <rect x="135" y="-55" width="30" height="125"/>
-    </g>
+    <!-- قاعدة المظلة -->
+    <rect x="-3" y="60" width="6" height="80"/>
 
-    <!-- النخلة المبسطة -->
-    <g transform="translate(190,25)">
-      <rect x="-6" y="0" width="12" height="90"/>
-      <path d="M0,0 L-35,-25 M0,0 L35,-25 M0,0 L-20,-30 M0,0 L20,-30 M0,0 L-45,-15 M0,0 L45,-15"/>
-      <ellipse cx="-25" cy="-8" rx="3" ry="6"/>
-      <ellipse cx="25" cy="-8" rx="3" ry="6"/>
-    </g>
-    
+    <!-- المظلة -->
+    <path d="M-100,60 Q-50,30 0,35 Q50,30 100,60 L70,75 Q35,60 0,60 Q-35,60 -70,75 Z"/>
+
+    <!-- المباني -->
+    <rect x="-120" y="-30" width="15" height="70"/>
+    <rect x="-50" y="-50" width="12" height="90"/>
+    <rect x="80" y="-40" width="14" height="80"/>
+
+    <!-- شعار مبسط -->
+    <circle cx="0" cy="-60" r="18"/>
+    <text x="0" y="-50" font-family="Arial" font-size="18" font-weight="bold" 
+          text-anchor="middle" fill="#000000">د</text>
+
     <!-- النص -->
-    <text x="0" y="150" font-family="Arial, serif" font-size="34" font-weight="bold" 
-          text-anchor="middle">الديار العالمية</text>
-    
-    <text x="0" y="180" font-family="Arial, serif" font-size="17" 
-          text-anchor="middle">للمظلات والسواتر والخيام الملكية</text>
-    
-    <!-- رقم الهاتف -->
-    <text x="0" y="210" font-family="Arial, monospace" font-size="22" font-weight="bold" 
-          text-anchor="middle">0553719009</text>
-
-    <!-- عناصر زخرفية -->
-    <g opacity="0.7">
-      <circle cx="-180" cy="-100" r="6"/>
-      <circle cx="180" cy="-100" r="6"/>
-      <circle cx="-150" cy="160" r="5"/>
-      <circle cx="150" cy="160" r="5"/>
-    </g>
+    <text x="0" y="170" font-family="Arial" font-size="32" font-weight="bold" 
+          text-anchor="middle">الديار</text>
   </g>
 </svg>
