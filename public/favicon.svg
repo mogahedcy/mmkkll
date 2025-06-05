@@ -1,41 +1,47 @@
 
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- تدرجات ذهبية محسنة -->
-    <linearGradient id="goldPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFE082;stop-opacity:1" />
-      <stop offset="25%" style="stop-color:#FFD54F;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
-      <stop offset="75%" style="stop-color:#FF8F00;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#E65100;stop-opacity:1" />
+    <!-- تدرجات خضراء احترافية -->
+    <linearGradient id="greenPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8F5E8;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#A5D6A7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#66BB6A;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
     </linearGradient>
     
-    <linearGradient id="goldSecondary" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFF8E1;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#FFECB3;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#FFE082;stop-opacity:1" />
+    <linearGradient id="greenSecondary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F1F8E9;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#C8E6C9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#81C784;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="greenAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#43A047;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#388E3C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1B5E20;stop-opacity:1" />
     </linearGradient>
     
     <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FF8F00;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#E65100;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#BF360C;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8F00;stop-opacity:1" />
     </linearGradient>
     
     <!-- خلفية متدرجة عصرية -->
     <radialGradient id="modernBackground" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" style="stop-color:#FAFAFA;stop-opacity:1" />
-      <stop offset="70%" style="stop-color:#F5F5F5;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#EEEEEE;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#F8F9FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E8F5E8;stop-opacity:1" />
     </radialGradient>
     
     <!-- تأثيرات الظل المحسنة -->
     <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#E65100" flood-opacity="0.25"/>
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#2E7D32" flood-opacity="0.3"/>
     </filter>
     
     <filter id="glowEffect" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
       <feMerge> 
         <feMergeNode in="coloredBlur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -43,145 +49,191 @@
     </filter>
     
     <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feFlood flood-color="#FFE082" flood-opacity="0.3"/>
+      <feFlood flood-color="#A5D6A7" flood-opacity="0.4"/>
       <feComposite in2="SourceGraphic" operator="multiply"/>
     </filter>
+
+    <!-- نمط للخطوط المتقطعة -->
+    <pattern id="geometricPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1" fill="url(#greenAccent)" opacity="0.3"/>
+    </pattern>
   </defs>
 
   <!-- الخلفية الرئيسية -->
-  <rect width="512" height="512" fill="url(#modernBackground)" rx="20"/>
+  <rect width="512" height="512" fill="url(#modernBackground)" rx="24"/>
 
-  <!-- الإطار الخارجي الذهبي -->
-  <rect x="20" y="20" width="472" height="472" fill="none" 
-        stroke="url(#goldPrimary)" stroke-width="8" rx="30" filter="url(#glowEffect)"/>
+  <!-- الإطار الخارجي الأخضر -->
+  <rect x="16" y="16" width="480" height="480" fill="none" 
+        stroke="url(#greenPrimary)" stroke-width="6" rx="32" filter="url(#glowEffect)"/>
+
+  <!-- نمط الخلفية الهندسي -->
+  <rect x="20" y="20" width="472" height="472" fill="url(#geometricPattern)" rx="30" opacity="0.15"/>
 
   <!-- المجموعة المركزية -->
   <g transform="translate(256,256)">
     
-    <!-- الشكل المركزي - الخيمة الملكية المطورة -->
-    <g transform="translate(0,-40)" filter="url(#dropShadow)">
+    <!-- الشكل المركزي - الخيمة الملكية المطورة بالأخضر -->
+    <g transform="translate(0,-50)" filter="url(#dropShadow)">
       <!-- القاعدة الأساسية -->
-      <rect x="-80" y="40" width="160" height="60" fill="url(#goldSecondary)" 
-            stroke="url(#goldPrimary)" stroke-width="3" rx="8"/>
+      <rect x="-90" y="45" width="180" height="70" fill="url(#greenSecondary)" 
+            stroke="url(#greenPrimary)" stroke-width="4" rx="10"/>
       
       <!-- النوافذ الزخرفية -->
-      <rect x="-60" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
-      <rect x="-25" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
-      <rect x="10" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
-      <rect x="45" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
+      <rect x="-70" y="55" width="22" height="35" fill="url(#greenAccent)" rx="5"/>
+      <rect x="-30" y="55" width="22" height="35" fill="url(#greenAccent)" rx="5"/>
+      <rect x="10" y="55" width="22" height="35" fill="url(#greenAccent)" rx="5"/>
+      <rect x="50" y="55" width="22" height="35" fill="url(#greenAccent)" rx="5"/>
       
       <!-- الخطوط الزخرفية الأفقية -->
-      <rect x="-75" y="60" width="150" height="3" fill="url(#goldPrimary)"/>
-      <rect x="-75" y="75" width="150" height="3" fill="url(#goldPrimary)"/>
+      <rect x="-85" y="65" width="170" height="4" fill="url(#greenPrimary)" rx="2"/>
+      <rect x="-85" y="80" width="170" height="4" fill="url(#greenPrimary)" rx="2"/>
+      <rect x="-85" y="95" width="170" height="4" fill="url(#greenPrimary)" rx="2"/>
       
       <!-- الخيمة العلوية -->
-      <path d="M-100,40 L-50,-20 L0,-35 L50,-20 L100,40 L0,55 Z" 
-            fill="url(#goldPrimary)" stroke="url(#goldAccent)" stroke-width="2"/>
+      <path d="M-110,45 L-60,-25 L0,-40 L60,-25 L110,45 L0,60 Z" 
+            fill="url(#greenPrimary)" stroke="url(#greenAccent)" stroke-width="3"/>
       
       <!-- الخطوط الداخلية للخيمة -->
-      <path d="M-80,25 Q-40,0 0,10 Q40,0 80,25" 
-            stroke="url(#goldAccent)" stroke-width="2" fill="none"/>
-      <path d="M-60,35 Q-30,15 0,20 Q30,15 60,35" 
-            stroke="url(#goldAccent)" stroke-width="1.5" fill="none"/>
+      <path d="M-90,30 Q-50,5 0,15 Q50,5 90,30" 
+            stroke="url(#greenAccent)" stroke-width="3" fill="none"/>
+      <path d="M-70,40 Q-35,20 0,25 Q35,20 70,40" 
+            stroke="url(#greenSecondary)" stroke-width="2" fill="none"/>
+      
+      <!-- الزخارف الداخلية -->
+      <circle cx="-40" cy="10" r="4" fill="url(#goldAccent)"/>
+      <circle cx="40" cy="10" r="4" fill="url(#goldAccent)"/>
+      <circle cx="0" cy="5" r="6" fill="url(#goldAccent)"/>
       
       <!-- الهلال المطور -->
-      <g transform="translate(0,-50)">
-        <circle cx="0" cy="0" r="12" fill="url(#goldPrimary)" filter="url(#glowEffect)"/>
-        <circle cx="4" cy="0" r="9" fill="url(#modernBackground)"/>
-        <circle cx="0" cy="0" r="3" fill="url(#goldAccent)"/>
+      <g transform="translate(0,-55)">
+        <circle cx="0" cy="0" r="14" fill="url(#goldAccent)" filter="url(#glowEffect)"/>
+        <circle cx="5" cy="0" r="10" fill="url(#modernBackground)"/>
+        <circle cx="0" cy="0" r="4" fill="url(#greenAccent)"/>
+        <path d="M-8,-8 Q0,-12 8,-8 Q0,0 -8,-8" fill="url(#goldAccent)"/>
       </g>
     </g>
 
     <!-- المباني الحديثة في الخلفية -->
-    <g transform="translate(0,-20)" opacity="0.8">
+    <g transform="translate(0,-25)" opacity="0.85">
       <!-- البرج الأيسر -->
-      <rect x="-160" y="-60" width="35" height="120" fill="url(#goldSecondary)" rx="4"/>
-      <rect x="-155" y="-50" width="6" height="8" fill="url(#goldAccent)"/>
-      <rect x="-145" y="-50" width="6" height="8" fill="url(#goldAccent)"/>
-      <rect x="-135" y="-50" width="6" height="8" fill="url(#goldAccent)"/>
+      <rect x="-170" y="-70" width="40" height="140" fill="url(#greenSecondary)" rx="6"/>
+      <rect x="-165" y="-60" width="8" height="10" fill="url(#greenAccent)" rx="2"/>
+      <rect x="-152" y="-60" width="8" height="10" fill="url(#greenAccent)" rx="2"/>
+      <rect x="-139" y="-60" width="8" height="10" fill="url(#greenAccent)" rx="2"/>
       
       <!-- الأبراج الوسطى -->
-      <rect x="-60" y="-40" width="25" height="100" fill="url(#goldPrimary)" rx="3"/>
-      <rect x="-30" y="-30" width="20" height="90" fill="url(#goldSecondary)" rx="2"/>
-      <rect x="-5" y="-35" width="18" height="95" fill="url(#goldAccent)" rx="2"/>
+      <rect x="-70" y="-50" width="30" height="120" fill="url(#greenPrimary)" rx="5"/>
+      <rect x="-35" y="-40" width="25" height="110" fill="url(#greenSecondary)" rx="4"/>
+      <rect x="-5" y="-45" width="22" height="115" fill="url(#greenAccent)" rx="3"/>
       
       <!-- البرج الأيمن -->
-      <rect x="125" y="-45" width="30" height="105" fill="url(#goldPrimary)" rx="4"/>
-      <rect x="130" y="-35" width="5" height="6" fill="url(#goldSecondary)"/>
-      <rect x="140" y="-35" width="5" height="6" fill="url(#goldSecondary)"/>
-      <rect x="150" y="-35" width="5" height="6" fill="url(#goldSecondary)"/>
+      <rect x="135" y="-55" width="35" height="125" fill="url(#greenPrimary)" rx="6"/>
+      <rect x="140" y="-45" width="6" height="8" fill="url(#greenSecondary)" rx="1"/>
+      <rect x="150" y="-45" width="6" height="8" fill="url(#greenSecondary)" rx="1"/>
+      <rect x="160" y="-45" width="6" height="8" fill="url(#greenSecondary)" rx="1"/>
+      
+      <!-- تفاصيل إضافية للمباني -->
+      <rect x="-68" y="-30" width="26" height="3" fill="url(#goldAccent)"/>
+      <rect x="137" y="-35" width="31" height="3" fill="url(#goldAccent)"/>
     </g>
 
     <!-- النخلة المطورة -->
-    <g transform="translate(180,20)" filter="url(#dropShadow)">
+    <g transform="translate(190,25)" filter="url(#dropShadow)">
       <!-- جذع النخلة -->
-      <rect x="-6" y="0" width="12" height="80" fill="#8D6E63" rx="3"/>
-      <rect x="-4" y="10" width="8" height="4" fill="#6D4C41"/>
-      <rect x="-4" y="25" width="8" height="4" fill="#6D4C41"/>
-      <rect x="-4" y="40" width="8" height="4" fill="#6D4C41"/>
+      <rect x="-8" y="0" width="16" height="90" fill="#8D6E63" rx="4"/>
+      <rect x="-6" y="15" width="12" height="5" fill="#6D4C41" rx="2"/>
+      <rect x="-6" y="35" width="12" height="5" fill="#6D4C41" rx="2"/>
+      <rect x="-6" y="55" width="12" height="5" fill="#6D4C41" rx="2"/>
       
-      <!-- أوراق النخيل المطورة -->
-      <path d="M0,0 Q-35,-25 -50,-20 Q-35,-10 -5,5" fill="url(#goldPrimary)"/>
-      <path d="M0,0 Q35,-25 50,-20 Q35,-10 5,5" fill="url(#goldPrimary)"/>
-      <path d="M0,0 Q-20,-30 -30,-35 Q-20,-20 0,0" fill="url(#goldSecondary)"/>
-      <path d="M0,0 Q20,-30 30,-35 Q20,-20 0,0" fill="url(#goldSecondary)"/>
-      <path d="M0,0 Q-45,-15 -55,-10 Q-30,10 0,15" fill="url(#goldAccent)"/>
-      <path d="M0,0 Q45,-15 55,-10 Q30,10 0,15" fill="url(#goldAccent)"/>
+      <!-- أوراق النخيل المطورة بالأخضر -->
+      <path d="M0,0 Q-40,-30 -55,-25 Q-40,-15 -8,8" fill="url(#greenPrimary)"/>
+      <path d="M0,0 Q40,-30 55,-25 Q40,-15 8,8" fill="url(#greenPrimary)"/>
+      <path d="M0,0 Q-25,-35 -35,-40 Q-25,-25 0,0" fill="url(#greenSecondary)"/>
+      <path d="M0,0 Q25,-35 35,-40 Q25,-25 0,0" fill="url(#greenSecondary)"/>
+      <path d="M0,0 Q-50,-20 -60,-15 Q-35,15 0,20" fill="url(#greenAccent)"/>
+      <path d="M0,0 Q50,-20 60,-15 Q35,15 0,20" fill="url(#greenAccent)"/>
       
       <!-- التمر -->
-      <ellipse cx="-25" cy="-5" rx="3" ry="6" fill="#8D6E63"/>
-      <ellipse cx="25" cy="-5" rx="3" ry="6" fill="#8D6E63"/>
+      <ellipse cx="-30" cy="-8" rx="4" ry="8" fill="#8D6E63"/>
+      <ellipse cx="30" cy="-8" rx="4" ry="8" fill="#8D6E63"/>
+      <ellipse cx="-15" cy="-12" rx="3" ry="6" fill="#6D4C41"/>
+      <ellipse cx="15" cy="-12" rx="3" ry="6" fill="#6D4C41"/>
     </g>
 
     <!-- النص الرئيسي المطور -->
-    <text x="0" y="140" font-family="Arial, Amiri, serif" font-size="36" font-weight="bold" 
-          text-anchor="middle" fill="url(#goldPrimary)" filter="url(#glowEffect)">
+    <text x="0" y="150" font-family="Arial, Amiri, serif" font-size="38" font-weight="bold" 
+          text-anchor="middle" fill="url(#greenPrimary)" filter="url(#glowEffect)">
       الديار العالمية
     </text>
     
     <!-- النص الفرعي -->
-    <text x="0" y="170" font-family="Arial, Amiri, serif" font-size="18" font-weight="600" 
-          text-anchor="middle" fill="url(#goldAccent)">
+    <text x="0" y="180" font-family="Arial, Amiri, serif" font-size="19" font-weight="600" 
+          text-anchor="middle" fill="url(#greenAccent)">
       للمظلات والسواتر والخيام الملكية
     </text>
 
     <!-- معلومات الاتصال -->
-    <g transform="translate(0,200)">
+    <g transform="translate(0,210)">
       <!-- أيقونة واتساب محسنة -->
-      <circle cx="-100" cy="0" r="18" fill="#25D366" filter="url(#dropShadow)"/>
-      <path d="M-107,-7 Q-100,-12 -93,-7 Q-86,-2 -93,3 Q-100,8 -107,3 Q-114,-2 -107,-7" 
-            fill="white" stroke="white" stroke-width="1"/>
+      <circle cx="-110" cy="0" r="20" fill="#25D366" filter="url(#dropShadow)"/>
+      <path d="M-118,-8 Q-110,-14 -102,-8 Q-94,-2 -102,4 Q-110,10 -118,4 Q-126,-2 -118,-8" 
+            fill="white" stroke="white" stroke-width="1.5"/>
+      <circle cx="-110" cy="0" r="3" fill="white"/>
       
       <!-- رقم الهاتف -->
-      <text x="0" y="6" font-family="Arial, monospace" font-size="24" font-weight="bold" 
-            text-anchor="middle" fill="url(#goldAccent)" filter="url(#glowEffect)">
+      <text x="0" y="8" font-family="Arial, monospace" font-size="26" font-weight="bold" 
+            text-anchor="middle" fill="url(#greenAccent)" filter="url(#glowEffect)">
         0553719009
       </text>
+      
+      <!-- أيقونة الهاتف -->
+      <circle cx="110" cy="0" r="20" fill="url(#greenPrimary)" filter="url(#dropShadow)"/>
+      <path d="M102,-8 Q110,-12 118,-8 L118,8 Q110,12 102,8 Z" 
+            fill="white" stroke="white" stroke-width="1"/>
     </g>
 
-    <!-- الزخارف الجانبية -->
-    <g fill="url(#goldPrimary)" opacity="0.6">
+    <!-- الزخارف الجانبية المطورة -->
+    <g fill="url(#greenPrimary)" opacity="0.7">
       <!-- زخرفة يسار -->
-      <circle cx="-200" cy="-100" r="6"/>
-      <circle cx="-200" cy="-80" r="4"/>
-      <circle cx="-200" cy="-60" r="6"/>
+      <circle cx="-210" cy="-110" r="8"/>
+      <circle cx="-210" cy="-85" r="6"/>
+      <circle cx="-210" cy="-60" r="8"/>
+      <circle cx="-190" cy="-95" r="4"/>
       
       <!-- زخرفة يمين -->
-      <circle cx="200" cy="-100" r="6"/>
-      <circle cx="200" cy="-80" r="4"/>
-      <circle cx="200" cy="-60" r="6"/>
+      <circle cx="210" cy="-110" r="8"/>
+      <circle cx="210" cy="-85" r="6"/>
+      <circle cx="210" cy="-60" r="8"/>
+      <circle cx="190" cy="-95" r="4"/>
       
       <!-- زخرفة سفلية -->
-      <circle cx="-150" cy="180" r="5"/>
-      <circle cx="150" cy="180" r="5"/>
+      <circle cx="-160" cy="190" r="7"/>
+      <circle cx="160" cy="190" r="7"/>
+      <circle cx="0" cy="200" r="5"/>
     </g>
 
-    <!-- الخطوط الزخرفية -->
-    <g stroke="url(#goldPrimary)" stroke-width="2" fill="none" opacity="0.3">
-      <path d="M-180,-150 Q-100,-140 -20,-150"/>
-      <path d="M20,-150 Q100,-140 180,-150"/>
-      <path d="M-180,160 Q-100,170 -20,160"/>
-      <path d="M20,160 Q100,170 180,160"/>
+    <!-- الخطوط الزخرفية المطورة -->
+    <g stroke="url(#greenPrimary)" stroke-width="3" fill="none" opacity="0.4">
+      <path d="M-190,-160 Q-110,-150 -30,-160"/>
+      <path d="M30,-160 Q110,-150 190,-160"/>
+      <path d="M-190,170 Q-110,180 -30,170"/>
+      <path d="M30,170 Q110,180 190,170"/>
     </g>
+
+    <!-- عناصر زخرفية إضافية -->
+    <g fill="url(#goldAccent)" opacity="0.6">
+      <!-- نجوم صغيرة -->
+      <path d="M-180,-130 L-175,-125 L-170,-130 L-175,-135 Z"/>
+      <path d="M180,-130 L185,-125 L190,-130 L185,-135 Z"/>
+      <path d="M-140,160 L-135,165 L-130,160 L-135,155 Z"/>
+      <path d="M140,160 L145,165 L150,160 L145,155 Z"/>
+    </g>
+
+    <!-- تأثير الإضاءة -->
+    <ellipse cx="0" cy="-100" rx="120" ry="20" fill="url(#greenSecondary)" opacity="0.2"/>
   </g>
+
+  <!-- حدود خارجية رفيعة -->
+  <rect x="2" y="2" width="508" height="508" fill="none" 
+        stroke="url(#greenAccent)" stroke-width="2" rx="26" opacity="0.5"/>
 </svg>
