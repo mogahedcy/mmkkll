@@ -1,83 +1,169 @@
 
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Golden gradient -->
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#FFD700;stop-opacity:1" />
+    <!-- تدرجات ذهبية احترافية -->
+    <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#DAA520;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#B8860B;stop-opacity:1" />
     </linearGradient>
     
-    <!-- Beige background -->
-    <linearGradient id="beigeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#F5F5DC;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#E6E6E6;stop-opacity:1" />
+    <linearGradient id="goldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFEF94;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
     </linearGradient>
     
-    <!-- White fill -->
-    <linearGradient id="whiteFill" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#F8F8F8;stop-opacity:1" />
+    <linearGradient id="goldDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DAA520;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#B8860B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B6914;stop-opacity:1" />
     </linearGradient>
+    
+    <!-- خلفية بيج فاتحة -->
+    <radialGradient id="beigeBackground" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" style="stop-color:#F5F5DC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E8E8E8;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- تأثير الظل -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#B8860B" flood-opacity="0.3"/>
+    </filter>
+    
+    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur stdDeviation="2" result="offset-blur"/>
+      <feFlood flood-color="#DAA520" flood-opacity="0.4"/>
+      <feComposite in2="offset-blur" operator="in"/>
+    </filter>
   </defs>
 
-  <!-- Background with beige color -->
-  <rect width="32" height="32" fill="url(#beigeGradient)"/>
+  <!-- الخلفية الرئيسية -->
+  <rect width="512" height="512" fill="url(#beigeBackground)" rx="10"/>
 
-  <!-- Main container group -->
-  <g transform="translate(16,16)">
+  <!-- المجموعة الرئيسية -->
+  <g transform="translate(256,256)">
     
-    <!-- Kaaba (central cubic structure) -->
-    <g transform="translate(0, 2)">
-      <!-- Main cube body -->
-      <rect x="-4" y="-2" width="8" height="6" fill="url(#whiteFill)" stroke="url(#goldGradient)" stroke-width="0.4"/>
-      <!-- Small windows/doors -->
-      <rect x="-2" y="0" width="1" height="1.5" fill="url(#goldGradient)" rx="0.1"/>
-      <rect x="-0.5" y="0" width="1" height="1.5" fill="url(#goldGradient)" rx="0.1"/>
-      <rect x="1" y="0" width="1" height="1.5" fill="url(#goldGradient)" rx="0.1"/>
+    <!-- المباني الخلفية (أبراج الرياض) -->
+    <g transform="translate(0,-20)" filter="url(#shadow)">
+      
+      <!-- برج المملكة (يسار) -->
+      <g transform="translate(-140,-80)">
+        <rect x="0" y="0" width="40" height="180" fill="url(#goldMain)" rx="4"/>
+        <rect x="5" y="10" width="30" height="15" fill="url(#goldLight)" rx="2"/>
+        <rect x="8" y="35" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="16" y="35" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="24" y="35" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="8" y="50" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="16" y="50" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="24" y="50" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="8" y="65" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="16" y="65" width="6" height="8" fill="#F5F5DC"/>
+        <rect x="24" y="65" width="6" height="8" fill="#F5F5DC"/>
+      </g>
+
+      <!-- أبراج وسط الرياض (وسط) -->
+      <g transform="translate(-40,-60)">
+        <rect x="0" y="0" width="25" height="150" fill="url(#goldMain)" rx="3"/>
+        <rect x="30" y="15" width="22" height="135" fill="url(#goldDark)" rx="2"/>
+        <rect x="55" y="25" width="20" height="125" fill="url(#goldLight)" rx="2"/>
+        <rect x="78" y="10" width="18" height="140" fill="url(#goldMain)" rx="2"/>
+      </g>
+
+      <!-- أبراج إضافية (يمين) -->
+      <g transform="translate(100,-50)">
+        <rect x="0" y="0" width="30" height="130" fill="url(#goldDark)" rx="3"/>
+        <rect x="35" y="20" width="25" height="110" fill="url(#goldMain)" rx="2"/>
+        <rect x="65" y="35" width="20" height="95" fill="url(#goldLight)" rx="2"/>
+      </g>
     </g>
 
-    <!-- Golden tent/awning structure above Kaaba -->
-    <g transform="translate(0, -2)">
-      <!-- Left side of tent -->
-      <path d="M-6,2 L-3,-1 L0,0 L-6,4 Z" fill="url(#goldGradient)" stroke="url(#goldGradient)" stroke-width="0.2"/>
-      <!-- Right side of tent -->
-      <path d="M6,2 L3,-1 L0,0 L6,4 Z" fill="url(#goldGradient)" stroke="url(#goldGradient)" stroke-width="0.2"/>
-      <!-- Center peak -->
-      <path d="M-3,-1 L0,-3 L3,-1 L0,0 Z" fill="url(#goldGradient)"/>
+    <!-- الكعبة المشرفة في المنتصف -->
+    <g transform="translate(0,20)" filter="url(#shadow)">
+      <!-- القاعدة -->
+      <rect x="-50" y="20" width="100" height="80" fill="url(#goldLight)" stroke="url(#goldDark)" stroke-width="3" rx="4"/>
+      
+      <!-- النوافذ والأبواب -->
+      <rect x="-35" y="35" width="15" height="25" fill="url(#goldDark)" rx="2"/>
+      <rect x="-10" y="35" width="15" height="25" fill="url(#goldDark)" rx="2"/>
+      <rect x="15" y="35" width="15" height="25" fill="url(#goldDark)" rx="2"/>
+      
+      <!-- الخطوط الذهبية الزخرفية -->
+      <rect x="-45" y="45" width="90" height="2" fill="url(#goldMain)"/>
+      <rect x="-45" y="75" width="90" height="2" fill="url(#goldMain)"/>
     </g>
 
-    <!-- Kingdom Tower (left tall building) -->
-    <g transform="translate(-8, -4)">
-      <rect x="0" y="0" width="2" height="12" fill="url(#goldGradient)"/>
-      <!-- Building details -->
-      <rect x="0.2" y="2" width="0.3" height="0.4" fill="url(#whiteFill)"/>
-      <rect x="0.2" y="3" width="0.3" height="0.4" fill="url(#whiteFill)"/>
-      <rect x="0.2" y="4" width="0.3" height="0.4" fill="url(#whiteFill)"/>
-      <rect x="1.5" y="2" width="0.3" height="0.4" fill="url(#whiteFill)"/>
-      <rect x="1.5" y="3" width="0.3" height="0.4" fill="url(#whiteFill)"/>
-      <rect x="1.5" y="4" width="0.3" height="0.4" fill="url(#whiteFill)"/>
+    <!-- القبة/الخيمة الملكية فوق الكعبة -->
+    <g transform="translate(0,-30)" filter="url(#shadow)">
+      <!-- الجانب الأيسر للخيمة -->
+      <path d="M-80,50 L-40,0 L0,15 L-80,85 Z" fill="url(#goldMain)" stroke="url(#goldDark)" stroke-width="2"/>
+      
+      <!-- الجانب الأيمن للخيمة -->
+      <path d="M80,50 L40,0 L0,15 L80,85 Z" fill="url(#goldLight)" stroke="url(#goldDark)" stroke-width="2"/>
+      
+      <!-- القمة المركزية -->
+      <path d="M-40,0 L0,-25 L40,0 L0,15 Z" fill="url(#goldMain)"/>
+      
+      <!-- الهلال في الأعلى -->
+      <circle cx="0" cy="-35" r="8" fill="url(#goldMain)"/>
+      <circle cx="3" cy="-35" r="6" fill="url(#beigeBackground)"/>
+      
+      <!-- الخطوط الزخرفية للخيمة -->
+      <path d="M-70,60 Q-35,35 0,40 Q35,35 70,60" stroke="url(#goldDark)" stroke-width="2" fill="none"/>
+      <path d="M-60,70 Q-30,50 0,55 Q30,50 60,70" stroke="url(#goldDark)" stroke-width="1.5" fill="none"/>
     </g>
 
-    <!-- Other tall buildings (right side) -->
-    <g transform="translate(6, -3)">
-      <rect x="0" y="0" width="1.5" height="10" fill="url(#goldGradient)"/>
-      <rect x="2" y="1" width="1.2" height="9" fill="url(#goldGradient)"/>
-      <rect x="3.5" y="2" width="1" height="8" fill="url(#goldGradient)"/>
+    <!-- النخلة على اليمين -->
+    <g transform="translate(160,40)" filter="url(#shadow)">
+      <!-- جذع النخلة -->
+      <rect x="-4" y="0" width="8" height="60" fill="#8B4513" rx="2"/>
+      
+      <!-- أوراق النخيل -->
+      <path d="M0,0 Q-25,-20 -40,-15 Q-30,-5 0,5" fill="url(#goldMain)"/>
+      <path d="M0,0 Q25,-20 40,-15 Q30,-5 0,5" fill="url(#goldMain)"/>
+      <path d="M0,0 Q-15,-25 -25,-30 Q-15,-15 0,0" fill="url(#goldDark)"/>
+      <path d="M0,0 Q15,-25 25,-30 Q15,-15 0,0" fill="url(#goldDark)"/>
+      <path d="M0,0 Q-35,-10 -45,-5 Q-25,5 0,10" fill="url(#goldLight)"/>
+      <path d="M0,0 Q35,-10 45,-5 Q25,5 0,10" fill="url(#goldLight)"/>
     </g>
 
-    <!-- Palm tree (right side) -->
-    <g transform="translate(10, 0)">
-      <!-- Palm tree trunk -->
-      <rect x="0" y="2" width="0.4" height="4" fill="#8B4513"/>
-      <!-- Palm fronds -->
-      <path d="M0.2,2 L-1,0 M0.2,2 L1.5,0 M0.2,2 L-0.5,-1 M0.2,2 L1,-1" stroke="url(#goldGradient)" stroke-width="0.3" fill="none"/>
-    </g>
-
-    <!-- Arabic text "الديار العالمية" -->
-    <text x="0" y="12" font-family="Arial, sans-serif" font-size="2.2" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)">الديار العالمية</text>
+    <!-- النص العربي الأول -->
+    <text x="0" y="150" font-family="Arial, 'Amiri', serif" font-size="42" font-weight="bold" 
+          text-anchor="middle" fill="url(#goldMain)" filter="url(#shadow)">
+      الديار العالمية
+    </text>
     
-    <!-- Second line of Arabic text -->
-    <text x="0" y="14.5" font-family="Arial, sans-serif" font-size="1.5" text-anchor="middle" fill="url(#goldGradient)">للمظلات والسواتر والخيام الملكية</text>
+    <!-- النص العربي الثاني -->
+    <text x="0" y="185" font-family="Arial, 'Amiri', serif" font-size="24" font-weight="600" 
+          text-anchor="middle" fill="url(#goldDark)">
+      للمظلات والسواتر والخيام الملكية
+    </text>
+
+    <!-- رقم الهاتف مع أيقونة واتساب -->
+    <g transform="translate(0,220)">
+      <!-- أيقونة واتساب -->
+      <circle cx="-80" cy="0" r="15" fill="#25D366"/>
+      <path d="M-85,-5 Q-80,-10 -75,-5 Q-70,0 -75,5 Q-80,10 -85,5 Q-90,0 -85,-5" fill="white"/>
+      
+      <!-- رقم الهاتف -->
+      <text x="0" y="5" font-family="Arial, monospace" font-size="28" font-weight="bold" 
+            text-anchor="middle" fill="url(#goldDark)">
+        0553719009
+      </text>
+    </g>
+
+    <!-- إطار زخرفي حول الأيقونة -->
+    <rect x="-240" y="-240" width="480" height="480" fill="none" 
+          stroke="url(#goldMain)" stroke-width="6" rx="15"/>
+    
+    <!-- زخارف في الزوايا -->
+    <g fill="url(#goldMain)">
+      <circle cx="-220" cy="-220" r="8"/>
+      <circle cx="220" cy="-220" r="8"/>
+      <circle cx="-220" cy="220" r="8"/>
+      <circle cx="220" cy="220" r="8"/>
+    </g>
   </g>
 </svg>

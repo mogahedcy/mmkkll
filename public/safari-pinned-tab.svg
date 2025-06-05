@@ -1,27 +1,47 @@
 
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Black background for Safari -->
-  <rect width="32" height="32" fill="#000000"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- خلفية سوداء للسفاري -->
+  <rect width="512" height="512" fill="#000000"/>
   
-  <!-- Main logo elements in white for Safari -->
-  <g transform="translate(16,16)" fill="#FFFFFF">
+  <!-- العناصر الرئيسية باللون الأبيض للسفاري -->
+  <g transform="translate(256,256)" fill="#FFFFFF">
     
-    <!-- Kaaba structure -->
-    <rect x="-4" y="0" width="8" height="6" stroke="#FFFFFF" stroke-width="0.3"/>
+    <!-- المباني الخلفية -->
+    <g transform="translate(0,-20)">
+      <!-- برج المملكة -->
+      <rect x="-140" y="-80" width="40" height="180" stroke="#FFFFFF" stroke-width="2"/>
+      
+      <!-- الأبراج الوسطى -->
+      <rect x="-40" y="-60" width="25" height="150"/>
+      <rect x="-10" y="-45" width="22" height="135"/>
+      <rect x="15" y="-35" width="20" height="125"/>
+      
+      <!-- الأبراج اليمنى -->
+      <rect x="100" y="-50" width="30" height="130"/>
+      <rect x="135" y="-30" width="25" height="110"/>
+    </g>
+
+    <!-- الكعبة -->
+    <rect x="-50" y="40" width="100" height="80" stroke="#FFFFFF" stroke-width="2"/>
     
-    <!-- Golden tent structure -->
-    <path d="M-6,0 L-3,-3 L0,-2 L3,-3 L6,0 L0,2 Z"/>
+    <!-- الخيمة الملكية -->
+    <path d="M-80,20 L-40,-30 L0,-15 L40,-30 L80,20 L0,35 Z"/>
     
-    <!-- Side buildings -->
-    <rect x="-8" y="-2" width="2" height="10"/>
-    <rect x="6" y="-1" width="1.5" height="8"/>
-    <rect x="8" y="0" width="1" height="7"/>
+    <!-- النخلة -->
+    <g transform="translate(160,60)">
+      <rect x="-4" y="0" width="8" height="60"/>
+      <path d="M0,0 L-25,-20 M0,0 L25,-20 M0,0 L-15,-25 M0,0 L15,-25"/>
+    </g>
     
-    <!-- Palm tree -->
-    <rect x="10" y="4" width="0.4" height="3"/>
-    <path d="M10.2,4 L9,2 M10.2,4 L11.5,2"/>
+    <!-- النص -->
+    <text x="0" y="150" font-family="Arial, serif" font-size="36" font-weight="bold" 
+          text-anchor="middle">الديار العالمية</text>
     
-    <!-- Company name -->
-    <text x="0" y="12" font-family="Arial, sans-serif" font-size="2" font-weight="bold" text-anchor="middle">الديار العالمية</text>
+    <text x="0" y="180" font-family="Arial, serif" font-size="20" 
+          text-anchor="middle">للمظلات والسواتر والخيام الملكية</text>
+    
+    <!-- رقم الهاتف -->
+    <text x="0" y="210" font-family="Arial, monospace" font-size="24" font-weight="bold" 
+          text-anchor="middle">0553719009</text>
   </g>
 </svg>
