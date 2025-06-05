@@ -17,13 +17,54 @@ export const metadata: Metadata = {
   keywords:
     "محترفين الديار العالمية، محترفين الديار جدة، مظلات سيارات جدة، برجولات حدائق جدة، سواتر خصوصية جدة، ساندوتش بانل جدة، ترميم ملحقات جدة، تنسيق حدائق جدة، بيوت شعر جدة، خيام ملكية جدة، مقاولات جدة، تركيب مظلات، تركيب برجولات، تركيب سواتر، أعمال معادن جدة، تنسيق مساحات خارجية",
   authors: [{ name: "محترفين الديار العالمية" }],
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
-  canonical: "https://aldeyarksa.tech",
   alternates: {
     canonical: "https://aldeyarksa.tech",
     languages: {
       "ar-SA": "https://aldeyarksa.tech",
+    },
+  },
+  openGraph: {
+    title: "محترفين الديار العالمية - خدمات شاملة في جدة",
+    description: "شركة متخصصة في المظلات، البرجولات، السواتر، وتنسيق الحدائق في جدة",
+    url: "https://aldeyarksa.tech",
+    siteName: "محترفين الديار العالمية",
+    locale: "ar_SA",
+    type: "website",
+    images: [
+      {
+        url: "https://aldeyarksa.tech/favicon.svg",
+        width: 1200,
+        height: 630,
+        alt: "محترفين الديار العالمية",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "محترفين الديار العالمية",
+    description: "خدمات شاملة في المظلات والبرجولات والسواتر في جدة",
+    images: ["https://aldeyarksa.tech/favicon.svg"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.svg",
+  },
+  manifest: "/manifest.json",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};aldeyarksa.tech",
     },
   },
   icons: {

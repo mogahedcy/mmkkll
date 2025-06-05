@@ -5,35 +5,44 @@ export async function GET() {
   const baseUrl = 'https://aldeyarksa.tech';
 
   const staticPages = [
-    '',
-    '/services/mazallat',
-    '/services/pergolas',
-    '/services/sawater',
-    '/services/sandwich-panel',
-    '/services/renovation',
-    '/services/landscaping',
-    '/services/byoot-shaar',
-    '/services/khayyam',
-    '/portfolio',
-    '/about',
-    '/articles',
-    '/contact',
-    '/quote',
-    '/faq',
+    { url: '', priority: '1.0', changefreq: 'daily' },
+    { url: '/services/mazallat', priority: '0.9', changefreq: 'weekly' },
+    { url: '/services/pergolas', priority: '0.9', changefreq: 'weekly' },
+    { url: '/services/sawater', priority: '0.9', changefreq: 'weekly' },
+    { url: '/services/sandwich-panel', priority: '0.9', changefreq: 'weekly' },
+    { url: '/services/renovation', priority: '0.9', changefreq: 'weekly' },
+    { url: '/services/landscaping', priority: '0.9', changefreq: 'weekly' },
+    { url: '/services/byoot-shaar', priority: '0.9', changefreq: 'weekly' },
+    { url: '/services/khayyam', priority: '0.9', changefreq: 'weekly' },
+    { url: '/portfolio', priority: '0.8', changefreq: 'daily' },
+    { url: '/about', priority: '0.7', changefreq: 'monthly' },
+    { url: '/articles', priority: '0.8', changefreq: 'weekly' },
+    { url: '/contact', priority: '0.7', changefreq: 'monthly' },
+    { url: '/quote', priority: '0.8', changefreq: 'monthly' },
+    { url: '/faq', priority: '0.6', changefreq: 'monthly' },
+    { url: '/privacy', priority: '0.3', changefreq: 'yearly' },
+    { url: '/terms', priority: '0.3', changefreq: 'yearly' },
   ];
 
   // جلب جميع المشاريع مع الوسائط
   const projects = await prisma.project.findMany({
     select: {
       id: true,
+      title: true,
+      description: true,
       updatedAt: true,
+      createdAt: true,
       mediaItems: {
         select: {
           src: true,
           type: true,
+          alt: true,
           updatedAt: true
         }
       }
+    },
+    orderBy: {
+      updatedAt: 'desc'
     }
   });
 
@@ -41,39 +50,46 @@ export async function GET() {
     .map(
       (page) => `
   <url>
-    <loc>${baseUrl}${page}</loc>
+    <loc>${baseUrl}${page.url}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
-    <changefreq>${page === '' ? 'daily' : 'weekly'}</changefreq>
-    <priority>${page === '' ? '1.0' : '0.8'}</priority>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
   </url>`
     )
     .join('');
 
-  // إضافة صفحات المشاريع
+  // إضافة صفحات المشاريع مع الصور والفيديوهات
   const projectsSitemap = projects
     .map(
-      (project) => `
+      (project) => {
+        const images = project.mediaItems
+          .filter(media => media.type === 'IMAGE')
+          .map(media => `
+      <image:image>
+        <image:loc>${media.src.startsWith('http') ? media.src : `${baseUrl}${media.src}`}</image:loc>
+        <image:caption>${media.alt || project.title}</image:caption>
+        <image:title>${project.title}</image:title>
+      </image:image>`)
+          .join('');
+
+        const videos = project.mediaItems
+          .filter(media => media.type === 'VIDEO')
+          .map(media => `
+      <video:video>
+        <video:content_loc>${media.src.startsWith('http') ? media.src : `${baseUrl}${media.src}`}</video:content_loc>
+        <video:title>${project.title}</video:title>
+        <video:description>${project.description || project.title}</video:description>
+      </video:video>`)
+          .join('');
+
+        return `
   <url>
     <loc>${baseUrl}/portfolio/${project.id}</loc>
     <lastmod>${project.updatedAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    ${project.mediaItems.length > 0 ? `
-    <image:image>
-      ${project.mediaItems
-        .filter(media => media.type === 'IMAGE')
-        .map(media => `
-      <image:loc>${media.src}</image:loc>`)
-        .join('')}
-    </image:image>
-    <video:video>
-      ${project.mediaItems
-        .filter(media => media.type === 'VIDEO')
-        .map(media => `
-      <video:content_loc>${media.src}</video:content_loc>`)
-        .join('')}
-    </video:video>` : ''}
-  </url>`
+    <priority>0.7</priority>${images}${videos}
+  </url>`;
+      }
     )
     .join('');
 
@@ -89,7 +105,7 @@ export async function GET() {
     status: 200,
     headers: {
       'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600', // تحديث كل ساعة
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
     },
   });
 }
