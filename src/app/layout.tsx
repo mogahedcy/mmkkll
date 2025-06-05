@@ -64,56 +64,6 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-};aldeyarksa.tech",
-    },
-  },
-  icons: {
-    icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-    other: [
-      { rel: 'mask-icon', url: '/safari-pinned-tab.svg', color: '#2563eb' },
-    ],
-  },
-  verification: {
-    google: "google-site-verification-code-here",
-  },
-  openGraph: {
-    title: "أفضل مظلات وبرجولات وساندوتش بانل في جدة | محترفين الديار العالمية",
-    description: "خبرة 15 عاماً في تركيب مظلات، برجولات، ساندوتش بانل، وترميم ملحقات في جدة",
-    type: "website",
-    locale: "ar_SA",
-    siteName: "محترفين الديار العالمية",
-    url: "https://aldeyarksa.tech",
-    images: [
-      {
-        url: "/images/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "محترفين الديار العالمية - مظلات وبرجولات جدة",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "أفضل مظلات وبرجولات وساندوتش بانل في جدة | محترفين الديار العالمية",
-    description: "خبرة 15 عاماً في تركيب مظلات، برجولات، ساندوتش بانل، وترميم ملحقات في جدة",
-    images: ["/images/og-image.jpg"],
-  },
-  manifest: "/manifest.json",
-  other: {
-    "geo.region": "SA-02",
-    "geo.placename": "جدة",
-    "geo.position": "21.485811;39.192505",
-    "ICBM": "21.485811, 39.192505",
-    "msapplication-TileColor": "#2563eb",
-    "msapplication-config": "/browserconfig.xml",
-  },
 };
 
 const structuredData = {
