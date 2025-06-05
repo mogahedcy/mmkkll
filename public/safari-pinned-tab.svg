@@ -3,45 +3,52 @@
   <!-- خلفية سوداء للسفاري -->
   <rect width="512" height="512" fill="#000000"/>
   
-  <!-- العناصر الرئيسية باللون الأبيض للسفاري -->
+  <!-- العناصر الرئيسية باللون الأبيض -->
   <g transform="translate(256,256)" fill="#FFFFFF">
     
-    <!-- المباني الخلفية -->
-    <g transform="translate(0,-20)">
-      <!-- برج المملكة -->
-      <rect x="-140" y="-80" width="40" height="180" stroke="#FFFFFF" stroke-width="2"/>
+    <!-- الخيمة الملكية المبسطة -->
+    <g transform="translate(0,-40)">
+      <!-- القاعدة -->
+      <rect x="-80" y="40" width="160" height="60" stroke="#FFFFFF" stroke-width="3" fill="none"/>
       
-      <!-- الأبراج الوسطى -->
-      <rect x="-40" y="-60" width="25" height="150"/>
-      <rect x="-10" y="-45" width="22" height="135"/>
-      <rect x="15" y="-35" width="20" height="125"/>
+      <!-- النوافذ -->
+      <rect x="-60" y="50" width="15" height="25"/>
+      <rect x="-30" y="50" width="15" height="25"/>
+      <rect x="0" y="50" width="15" height="25"/>
+      <rect x="30" y="50" width="15" height="25"/>
       
-      <!-- الأبراج اليمنى -->
-      <rect x="100" y="-50" width="30" height="130"/>
-      <rect x="135" y="-30" width="25" height="110"/>
+      <!-- الخيمة العلوية -->
+      <path d="M-100,40 L-50,-20 L0,-35 L50,-20 L100,40 L0,55 Z"/>
+      
+      <!-- الهلال -->
+      <circle cx="0" cy="-50" r="12"/>
+      <circle cx="4" cy="-50" r="9" fill="#000000"/>
     </g>
 
-    <!-- الكعبة -->
-    <rect x="-50" y="40" width="100" height="80" stroke="#FFFFFF" stroke-width="2"/>
-    
-    <!-- الخيمة الملكية -->
-    <path d="M-80,20 L-40,-30 L0,-15 L40,-30 L80,20 L0,35 Z"/>
-    
-    <!-- النخلة -->
-    <g transform="translate(160,60)">
-      <rect x="-4" y="0" width="8" height="60"/>
-      <path d="M0,0 L-25,-20 M0,0 L25,-20 M0,0 L-15,-25 M0,0 L15,-25"/>
+    <!-- المباني المبسطة -->
+    <g transform="translate(0,-20)">
+      <!-- الأبراج -->
+      <rect x="-160" y="-60" width="30" height="120"/>
+      <rect x="-60" y="-40" width="20" height="100"/>
+      <rect x="-30" y="-30" width="15" height="90"/>
+      <rect x="120" y="-45" width="25" height="105"/>
+    </g>
+
+    <!-- النخلة المبسطة -->
+    <g transform="translate(180,20)">
+      <rect x="-4" y="0" width="8" height="80"/>
+      <path d="M0,0 L-30,-20 M0,0 L30,-20 M0,0 L-15,-25 M0,0 L15,-25 M0,0 L-40,-10 M0,0 L40,-10"/>
     </g>
     
     <!-- النص -->
-    <text x="0" y="150" font-family="Arial, serif" font-size="36" font-weight="bold" 
+    <text x="0" y="140" font-family="Arial, serif" font-size="32" font-weight="bold" 
           text-anchor="middle">الديار العالمية</text>
     
-    <text x="0" y="180" font-family="Arial, serif" font-size="20" 
+    <text x="0" y="170" font-family="Arial, serif" font-size="16" 
           text-anchor="middle">للمظلات والسواتر والخيام الملكية</text>
     
     <!-- رقم الهاتف -->
-    <text x="0" y="210" font-family="Arial, monospace" font-size="24" font-weight="bold" 
+    <text x="0" y="200" font-family="Arial, monospace" font-size="20" font-weight="bold" 
           text-anchor="middle">0553719009</text>
   </g>
 </svg>

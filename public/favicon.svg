@@ -1,169 +1,187 @@
 
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- تدرجات ذهبية احترافية -->
-    <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
-      <stop offset="30%" style="stop-color:#FFA500;stop-opacity:1" />
-      <stop offset="70%" style="stop-color:#DAA520;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#B8860B;stop-opacity:1" />
+    <!-- تدرجات ذهبية محسنة -->
+    <linearGradient id="goldPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE082;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#FFD54F;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#FF8F00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E65100;stop-opacity:1" />
     </linearGradient>
     
-    <linearGradient id="goldLight" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFEF94;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#FFD700;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+    <linearGradient id="goldSecondary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF8E1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFECB3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFE082;stop-opacity:1" />
     </linearGradient>
     
-    <linearGradient id="goldDark" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#DAA520;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#B8860B;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#8B6914;stop-opacity:1" />
+    <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF8F00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E65100;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#BF360C;stop-opacity:1" />
     </linearGradient>
     
-    <!-- خلفية بيج فاتحة -->
-    <radialGradient id="beigeBackground" cx="50%" cy="50%" r="60%">
-      <stop offset="0%" style="stop-color:#F5F5DC;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#E8E8E8;stop-opacity:1" />
+    <!-- خلفية متدرجة عصرية -->
+    <radialGradient id="modernBackground" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#FAFAFA;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#F5F5F5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EEEEEE;stop-opacity:1" />
     </radialGradient>
     
-    <!-- تأثير الظل -->
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#B8860B" flood-opacity="0.3"/>
+    <!-- تأثيرات الظل المحسنة -->
+    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#E65100" flood-opacity="0.25"/>
     </filter>
     
-    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feOffset dx="0" dy="0"/>
-      <feGaussianBlur stdDeviation="2" result="offset-blur"/>
-      <feFlood flood-color="#DAA520" flood-opacity="0.4"/>
-      <feComposite in2="offset-blur" operator="in"/>
+    <filter id="glowEffect" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feFlood flood-color="#FFE082" flood-opacity="0.3"/>
+      <feComposite in2="SourceGraphic" operator="multiply"/>
     </filter>
   </defs>
 
   <!-- الخلفية الرئيسية -->
-  <rect width="512" height="512" fill="url(#beigeBackground)" rx="10"/>
+  <rect width="512" height="512" fill="url(#modernBackground)" rx="20"/>
 
-  <!-- المجموعة الرئيسية -->
+  <!-- الإطار الخارجي الذهبي -->
+  <rect x="20" y="20" width="472" height="472" fill="none" 
+        stroke="url(#goldPrimary)" stroke-width="8" rx="30" filter="url(#glowEffect)"/>
+
+  <!-- المجموعة المركزية -->
   <g transform="translate(256,256)">
     
-    <!-- المباني الخلفية (أبراج الرياض) -->
-    <g transform="translate(0,-20)" filter="url(#shadow)">
+    <!-- الشكل المركزي - الخيمة الملكية المطورة -->
+    <g transform="translate(0,-40)" filter="url(#dropShadow)">
+      <!-- القاعدة الأساسية -->
+      <rect x="-80" y="40" width="160" height="60" fill="url(#goldSecondary)" 
+            stroke="url(#goldPrimary)" stroke-width="3" rx="8"/>
       
-      <!-- برج المملكة (يسار) -->
-      <g transform="translate(-140,-80)">
-        <rect x="0" y="0" width="40" height="180" fill="url(#goldMain)" rx="4"/>
-        <rect x="5" y="10" width="30" height="15" fill="url(#goldLight)" rx="2"/>
-        <rect x="8" y="35" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="16" y="35" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="24" y="35" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="8" y="50" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="16" y="50" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="24" y="50" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="8" y="65" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="16" y="65" width="6" height="8" fill="#F5F5DC"/>
-        <rect x="24" y="65" width="6" height="8" fill="#F5F5DC"/>
-      </g>
-
-      <!-- أبراج وسط الرياض (وسط) -->
-      <g transform="translate(-40,-60)">
-        <rect x="0" y="0" width="25" height="150" fill="url(#goldMain)" rx="3"/>
-        <rect x="30" y="15" width="22" height="135" fill="url(#goldDark)" rx="2"/>
-        <rect x="55" y="25" width="20" height="125" fill="url(#goldLight)" rx="2"/>
-        <rect x="78" y="10" width="18" height="140" fill="url(#goldMain)" rx="2"/>
-      </g>
-
-      <!-- أبراج إضافية (يمين) -->
-      <g transform="translate(100,-50)">
-        <rect x="0" y="0" width="30" height="130" fill="url(#goldDark)" rx="3"/>
-        <rect x="35" y="20" width="25" height="110" fill="url(#goldMain)" rx="2"/>
-        <rect x="65" y="35" width="20" height="95" fill="url(#goldLight)" rx="2"/>
+      <!-- النوافذ الزخرفية -->
+      <rect x="-60" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
+      <rect x="-25" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
+      <rect x="10" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
+      <rect x="45" y="50" width="20" height="30" fill="url(#goldAccent)" rx="4"/>
+      
+      <!-- الخطوط الزخرفية الأفقية -->
+      <rect x="-75" y="60" width="150" height="3" fill="url(#goldPrimary)"/>
+      <rect x="-75" y="75" width="150" height="3" fill="url(#goldPrimary)"/>
+      
+      <!-- الخيمة العلوية -->
+      <path d="M-100,40 L-50,-20 L0,-35 L50,-20 L100,40 L0,55 Z" 
+            fill="url(#goldPrimary)" stroke="url(#goldAccent)" stroke-width="2"/>
+      
+      <!-- الخطوط الداخلية للخيمة -->
+      <path d="M-80,25 Q-40,0 0,10 Q40,0 80,25" 
+            stroke="url(#goldAccent)" stroke-width="2" fill="none"/>
+      <path d="M-60,35 Q-30,15 0,20 Q30,15 60,35" 
+            stroke="url(#goldAccent)" stroke-width="1.5" fill="none"/>
+      
+      <!-- الهلال المطور -->
+      <g transform="translate(0,-50)">
+        <circle cx="0" cy="0" r="12" fill="url(#goldPrimary)" filter="url(#glowEffect)"/>
+        <circle cx="4" cy="0" r="9" fill="url(#modernBackground)"/>
+        <circle cx="0" cy="0" r="3" fill="url(#goldAccent)"/>
       </g>
     </g>
 
-    <!-- الكعبة المشرفة في المنتصف -->
-    <g transform="translate(0,20)" filter="url(#shadow)">
-      <!-- القاعدة -->
-      <rect x="-50" y="20" width="100" height="80" fill="url(#goldLight)" stroke="url(#goldDark)" stroke-width="3" rx="4"/>
+    <!-- المباني الحديثة في الخلفية -->
+    <g transform="translate(0,-20)" opacity="0.8">
+      <!-- البرج الأيسر -->
+      <rect x="-160" y="-60" width="35" height="120" fill="url(#goldSecondary)" rx="4"/>
+      <rect x="-155" y="-50" width="6" height="8" fill="url(#goldAccent)"/>
+      <rect x="-145" y="-50" width="6" height="8" fill="url(#goldAccent)"/>
+      <rect x="-135" y="-50" width="6" height="8" fill="url(#goldAccent)"/>
       
-      <!-- النوافذ والأبواب -->
-      <rect x="-35" y="35" width="15" height="25" fill="url(#goldDark)" rx="2"/>
-      <rect x="-10" y="35" width="15" height="25" fill="url(#goldDark)" rx="2"/>
-      <rect x="15" y="35" width="15" height="25" fill="url(#goldDark)" rx="2"/>
+      <!-- الأبراج الوسطى -->
+      <rect x="-60" y="-40" width="25" height="100" fill="url(#goldPrimary)" rx="3"/>
+      <rect x="-30" y="-30" width="20" height="90" fill="url(#goldSecondary)" rx="2"/>
+      <rect x="-5" y="-35" width="18" height="95" fill="url(#goldAccent)" rx="2"/>
       
-      <!-- الخطوط الذهبية الزخرفية -->
-      <rect x="-45" y="45" width="90" height="2" fill="url(#goldMain)"/>
-      <rect x="-45" y="75" width="90" height="2" fill="url(#goldMain)"/>
+      <!-- البرج الأيمن -->
+      <rect x="125" y="-45" width="30" height="105" fill="url(#goldPrimary)" rx="4"/>
+      <rect x="130" y="-35" width="5" height="6" fill="url(#goldSecondary)"/>
+      <rect x="140" y="-35" width="5" height="6" fill="url(#goldSecondary)"/>
+      <rect x="150" y="-35" width="5" height="6" fill="url(#goldSecondary)"/>
     </g>
 
-    <!-- القبة/الخيمة الملكية فوق الكعبة -->
-    <g transform="translate(0,-30)" filter="url(#shadow)">
-      <!-- الجانب الأيسر للخيمة -->
-      <path d="M-80,50 L-40,0 L0,15 L-80,85 Z" fill="url(#goldMain)" stroke="url(#goldDark)" stroke-width="2"/>
-      
-      <!-- الجانب الأيمن للخيمة -->
-      <path d="M80,50 L40,0 L0,15 L80,85 Z" fill="url(#goldLight)" stroke="url(#goldDark)" stroke-width="2"/>
-      
-      <!-- القمة المركزية -->
-      <path d="M-40,0 L0,-25 L40,0 L0,15 Z" fill="url(#goldMain)"/>
-      
-      <!-- الهلال في الأعلى -->
-      <circle cx="0" cy="-35" r="8" fill="url(#goldMain)"/>
-      <circle cx="3" cy="-35" r="6" fill="url(#beigeBackground)"/>
-      
-      <!-- الخطوط الزخرفية للخيمة -->
-      <path d="M-70,60 Q-35,35 0,40 Q35,35 70,60" stroke="url(#goldDark)" stroke-width="2" fill="none"/>
-      <path d="M-60,70 Q-30,50 0,55 Q30,50 60,70" stroke="url(#goldDark)" stroke-width="1.5" fill="none"/>
-    </g>
-
-    <!-- النخلة على اليمين -->
-    <g transform="translate(160,40)" filter="url(#shadow)">
+    <!-- النخلة المطورة -->
+    <g transform="translate(180,20)" filter="url(#dropShadow)">
       <!-- جذع النخلة -->
-      <rect x="-4" y="0" width="8" height="60" fill="#8B4513" rx="2"/>
+      <rect x="-6" y="0" width="12" height="80" fill="#8D6E63" rx="3"/>
+      <rect x="-4" y="10" width="8" height="4" fill="#6D4C41"/>
+      <rect x="-4" y="25" width="8" height="4" fill="#6D4C41"/>
+      <rect x="-4" y="40" width="8" height="4" fill="#6D4C41"/>
       
-      <!-- أوراق النخيل -->
-      <path d="M0,0 Q-25,-20 -40,-15 Q-30,-5 0,5" fill="url(#goldMain)"/>
-      <path d="M0,0 Q25,-20 40,-15 Q30,-5 0,5" fill="url(#goldMain)"/>
-      <path d="M0,0 Q-15,-25 -25,-30 Q-15,-15 0,0" fill="url(#goldDark)"/>
-      <path d="M0,0 Q15,-25 25,-30 Q15,-15 0,0" fill="url(#goldDark)"/>
-      <path d="M0,0 Q-35,-10 -45,-5 Q-25,5 0,10" fill="url(#goldLight)"/>
-      <path d="M0,0 Q35,-10 45,-5 Q25,5 0,10" fill="url(#goldLight)"/>
+      <!-- أوراق النخيل المطورة -->
+      <path d="M0,0 Q-35,-25 -50,-20 Q-35,-10 -5,5" fill="url(#goldPrimary)"/>
+      <path d="M0,0 Q35,-25 50,-20 Q35,-10 5,5" fill="url(#goldPrimary)"/>
+      <path d="M0,0 Q-20,-30 -30,-35 Q-20,-20 0,0" fill="url(#goldSecondary)"/>
+      <path d="M0,0 Q20,-30 30,-35 Q20,-20 0,0" fill="url(#goldSecondary)"/>
+      <path d="M0,0 Q-45,-15 -55,-10 Q-30,10 0,15" fill="url(#goldAccent)"/>
+      <path d="M0,0 Q45,-15 55,-10 Q30,10 0,15" fill="url(#goldAccent)"/>
+      
+      <!-- التمر -->
+      <ellipse cx="-25" cy="-5" rx="3" ry="6" fill="#8D6E63"/>
+      <ellipse cx="25" cy="-5" rx="3" ry="6" fill="#8D6E63"/>
     </g>
 
-    <!-- النص العربي الأول -->
-    <text x="0" y="150" font-family="Arial, 'Amiri', serif" font-size="42" font-weight="bold" 
-          text-anchor="middle" fill="url(#goldMain)" filter="url(#shadow)">
+    <!-- النص الرئيسي المطور -->
+    <text x="0" y="140" font-family="Arial, Amiri, serif" font-size="36" font-weight="bold" 
+          text-anchor="middle" fill="url(#goldPrimary)" filter="url(#glowEffect)">
       الديار العالمية
     </text>
     
-    <!-- النص العربي الثاني -->
-    <text x="0" y="185" font-family="Arial, 'Amiri', serif" font-size="24" font-weight="600" 
-          text-anchor="middle" fill="url(#goldDark)">
+    <!-- النص الفرعي -->
+    <text x="0" y="170" font-family="Arial, Amiri, serif" font-size="18" font-weight="600" 
+          text-anchor="middle" fill="url(#goldAccent)">
       للمظلات والسواتر والخيام الملكية
     </text>
 
-    <!-- رقم الهاتف مع أيقونة واتساب -->
-    <g transform="translate(0,220)">
-      <!-- أيقونة واتساب -->
-      <circle cx="-80" cy="0" r="15" fill="#25D366"/>
-      <path d="M-85,-5 Q-80,-10 -75,-5 Q-70,0 -75,5 Q-80,10 -85,5 Q-90,0 -85,-5" fill="white"/>
+    <!-- معلومات الاتصال -->
+    <g transform="translate(0,200)">
+      <!-- أيقونة واتساب محسنة -->
+      <circle cx="-100" cy="0" r="18" fill="#25D366" filter="url(#dropShadow)"/>
+      <path d="M-107,-7 Q-100,-12 -93,-7 Q-86,-2 -93,3 Q-100,8 -107,3 Q-114,-2 -107,-7" 
+            fill="white" stroke="white" stroke-width="1"/>
       
       <!-- رقم الهاتف -->
-      <text x="0" y="5" font-family="Arial, monospace" font-size="28" font-weight="bold" 
-            text-anchor="middle" fill="url(#goldDark)">
+      <text x="0" y="6" font-family="Arial, monospace" font-size="24" font-weight="bold" 
+            text-anchor="middle" fill="url(#goldAccent)" filter="url(#glowEffect)">
         0553719009
       </text>
     </g>
 
-    <!-- إطار زخرفي حول الأيقونة -->
-    <rect x="-240" y="-240" width="480" height="480" fill="none" 
-          stroke="url(#goldMain)" stroke-width="6" rx="15"/>
-    
-    <!-- زخارف في الزوايا -->
-    <g fill="url(#goldMain)">
-      <circle cx="-220" cy="-220" r="8"/>
-      <circle cx="220" cy="-220" r="8"/>
-      <circle cx="-220" cy="220" r="8"/>
-      <circle cx="220" cy="220" r="8"/>
+    <!-- الزخارف الجانبية -->
+    <g fill="url(#goldPrimary)" opacity="0.6">
+      <!-- زخرفة يسار -->
+      <circle cx="-200" cy="-100" r="6"/>
+      <circle cx="-200" cy="-80" r="4"/>
+      <circle cx="-200" cy="-60" r="6"/>
+      
+      <!-- زخرفة يمين -->
+      <circle cx="200" cy="-100" r="6"/>
+      <circle cx="200" cy="-80" r="4"/>
+      <circle cx="200" cy="-60" r="6"/>
+      
+      <!-- زخرفة سفلية -->
+      <circle cx="-150" cy="180" r="5"/>
+      <circle cx="150" cy="180" r="5"/>
+    </g>
+
+    <!-- الخطوط الزخرفية -->
+    <g stroke="url(#goldPrimary)" stroke-width="2" fill="none" opacity="0.3">
+      <path d="M-180,-150 Q-100,-140 -20,-150"/>
+      <path d="M20,-150 Q100,-140 180,-150"/>
+      <path d="M-180,160 Q-100,170 -20,160"/>
+      <path d="M20,160 Q100,170 180,160"/>
     </g>
   </g>
 </svg>
