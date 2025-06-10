@@ -13,39 +13,40 @@ export default function HeroSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           {/* Badge */}
-          <div className="inline-flex items-center space-x-2 space-x-reverse bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-medium mb-8">
+          <div className="inline-flex items-center space-x-2 space-x-reverse bg-accent/10 text-accent px-6 py-3 rounded-full text-sm font-medium mb-8">
             <Star className="w-4 h-4 fill-current" />
-            <span>محترفين الديار العالمية - متخصصون في جميع الخدمات المعمارية والتصميمية بجدة منذ 15 عاماً</span>
+            <span>الشركة الرائدة في المملكة العربية السعودية منذ 15 عاماً</span>
             <Star className="w-4 h-4 fill-current" />
           </div>
 
           {/* Main Heading */}
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              محترفين الديار العالمية
-              <span className="block text-3xl md:text-5xl mt-2 text-primary">
-                خبرة تفوق 15 عاماً في جدة
-              </span>
-            </h2>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            محترفين الديار العالمية
+            <span className="block text-3xl md:text-5xl mt-2 text-primary">
+              رواد الخدمات المعمارية والتصميمية في جدة
+            </span>
+          </h1>
 
           {/* Subheading */}
-          <p className="text-xl mb-8 text-muted-foreground leading-relaxed max-w-2xl">
-              🏆 الشركة الرائدة في جدة لتركيب المظلات والبرجولات والسواتر وتنسيق الحدائق
-              ✅ ضمان 10 سنوات ✅ تركيب احترافي ✅ أسعار منافسة ✅ خدمة 24/7
-            </p>
+          <p className="text-xl mb-8 text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+            🏆 <strong>الشركة الرائدة</strong> في جدة لتركيب المظلات والبرجولات والسواتر وتنسيق الحدائق
+            <br />
+            ✅ ضمان شامل 10 سنوات ✅ تركيب احترافي ✅ أسعار تنافسية ✅ خدمة عملاء 24/7
+          </p>
 
           {/* Key Features */}
-          <div className="flex flex-wrap justify-center items-center gap-6 mb-10 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-2 space-x-reverse">
-              <MapPin className="w-4 h-4 text-accent" />
-              <span>8 خدمات متخصصة في جدة وضواحيها</span>
+          <div className="flex flex-wrap justify-center items-center gap-8 mb-10 text-sm text-muted-foreground">
+            <div className="flex items-center space-x-2 space-x-reverse bg-white/80 px-4 py-2 rounded-full shadow-sm">
+              <MapPin className="w-5 h-5 text-accent" />
+              <span className="font-medium">8 خدمات متخصصة في جدة وضواحيها</span>
             </div>
-            <div className="flex items-center space-x-2 space-x-reverse">
-              <Clock className="w-4 h-4 text-accent" />
-              <span>ضمان 10 سنوات على جميع الخدمات</span>
+            <div className="flex items-center space-x-2 space-x-reverse bg-white/80 px-4 py-2 rounded-full shadow-sm">
+              <Clock className="w-5 h-5 text-accent" />
+              <span className="font-medium">ضمان شامل 10 سنوات على جميع الخدمات</span>
             </div>
-            <div className="flex items-center space-x-2 space-x-reverse">
-              <Star className="w-4 h-4 text-accent" />
-              <span>أكثر من 5000 مشروع متنوع ناجح</span>
+            <div className="flex items-center space-x-2 space-x-reverse bg-white/80 px-4 py-2 rounded-full shadow-sm">
+              <Star className="w-5 h-5 text-accent" />
+              <span className="font-medium">أكثر من 5000 مشروع ناجح ومميز</span>
             </div>
           </div>
 
