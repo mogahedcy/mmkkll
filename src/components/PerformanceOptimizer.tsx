@@ -275,6 +275,17 @@ export default function PerformanceOptimizer({ children }: PerformanceOptimizerP
     // Log performance metrics after page load
     const timeout = setTimeout(() => {
       performanceMonitor.logMetrics();
+      
+      // إضافة تتبع Core Web Vitals
+      if ('web-vital' in window) {
+        import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+          getCLS(console.log);
+          getFID(console.log);
+          getFCP(console.log);
+          getLCP(console.log);
+          getTTFB(console.log);
+        });
+      }
     }, 3000);
 
     window.addEventListener('scroll', handleScroll, { passive: true });

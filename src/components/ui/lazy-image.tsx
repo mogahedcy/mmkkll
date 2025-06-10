@@ -18,6 +18,8 @@ interface LazyImageProps {
   onError?: () => void;
 }
 
+const defaultSizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw";
+
 export function LazyImage({
   src,
   alt,
@@ -120,7 +122,7 @@ export function LazyImage({
           width={fill ? undefined : width}
           height={fill ? undefined : height}
           fill={fill}
-          sizes={sizes}
+          sizes={sizes || (fill ? defaultSizes : undefined)}
           priority={priority}
           placeholder={placeholder}
           blurDataURL={blurDataURL}

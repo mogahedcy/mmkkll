@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* تحسين تحميل الخطوط */
+.font-arabic {
+  font-display: swap;
+}
+
+/* تحسين الصور */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* تحسين الأداء */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* تحسين CLS */
+.hero-section {
+  min-height: 600px;
+}
+
+/* تحسين التمرير */
+html {
+  scroll-behavior: smooth;
+}
+
 /* تحسينات عامة للأداء */
 * {
   box-sizing: border-box;

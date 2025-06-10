@@ -11,21 +11,16 @@ export default function ClientBody({ children }: { children: React.ReactNode }) 
     setMounted(true);
   }, []);
 
-  // تجنب مشكلة hydration mismatch
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-white" suppressHydrationWarning>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <PerformanceOptimizer>
-      <div suppressHydrationWarning>
-        {children}
+      <div suppressHydrationWarning className={!mounted ? 'opacity-0' : 'opacity-100 transition-opacity duration-300'}>
+        {!mounted ? (
+          <div className="min-h-screen bg-white flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </PerformanceOptimizer>
   );

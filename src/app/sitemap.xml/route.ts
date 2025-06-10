@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET() {
   const baseUrl = 'https://aldeyarksa.tech';
 
+  // الصفحات الثابتة مع أولوية SEO
   const staticPages = [
     { url: '', priority: '1.0', changefreq: 'daily' },
     { url: '/services/mazallat', priority: '0.9', changefreq: 'weekly' },

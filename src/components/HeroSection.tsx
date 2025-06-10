@@ -20,19 +20,18 @@ export default function HeroSection() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
-            محترفين الديار العالمية{' '}
-            <span className="text-accent">خدمات شاملة متكاملة</span>
-            <br />
-            لجميع احتياجاتك في جدة
-          </h1>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+              محترفين الديار العالمية
+              <span className="block text-3xl md:text-5xl mt-2 text-primary">
+                خبرة تفوق 15 عاماً في جدة
+              </span>
+            </h2>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
-            محترفين الديار - خبرة 15 عاماً في تقديم خدمات شاملة: مظلات السيارات، البرجولات الفاخرة، السواتر العالية،
-            ساندوتش بانل المتقدم، ترميم الملحقات، تنسيق الحدائق، بيوت الشعر التراثية، والخيام الملكية
-            بأعلى معايير الجودة والتميز في جدة ومختلف أنحاء المملكة العربية السعودية
-          </p>
+          <p className="text-xl mb-8 text-muted-foreground leading-relaxed max-w-2xl">
+              🏆 الشركة الرائدة في جدة لتركيب المظلات والبرجولات والسواتر وتنسيق الحدائق
+              ✅ ضمان 10 سنوات ✅ تركيب احترافي ✅ أسعار منافسة ✅ خدمة 24/7
+            </p>
 
           {/* Key Features */}
           <div className="flex flex-wrap justify-center items-center gap-6 mb-10 text-sm text-muted-foreground">

@@ -16,8 +16,11 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main>
-        {/* Hero Section - First Impression */}
+        {/* Hero Section */}
+      <section className="relative">
+        <h1 className="sr-only">محترفين الديار العالمية - أفضل شركة مظلات وبرجولات في جدة</h1>
         <HeroSection />
+      </section>
 
         {/* Services Overview - What We Offer */}
         <ServicesSection />
