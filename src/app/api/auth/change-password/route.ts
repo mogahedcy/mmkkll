@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { adminId: string };
 
     // البحث عن المستخدم
     const admin = await prisma.admin.findUnique({

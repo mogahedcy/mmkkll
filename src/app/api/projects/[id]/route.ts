@@ -137,7 +137,7 @@ export async function PUT(
         projectCost: projectCost || '',
         updatedAt: new Date(),
         mediaItems: {
-          create: mediaItems?.map((item: any, index: number) => ({
+          create: mediaItems?.map((item: { type: string; src: string; thumbnail?: string; title?: string; description?: string; duration?: number }, index: number) => ({
             type: item.type,
             src: item.src,
             thumbnail: item.thumbnail || item.src,

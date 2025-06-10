@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const skip = page ? (Number.parseInt(page) - 1) * (limit ? Number.parseInt(limit) : 12) : 0;
     const take = limit ? Number.parseInt(limit) : 12;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (category && category !== 'all') {
       where.category = category;
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     }
 
     // تحديد ترتيب المشاريع
-    let orderBy: any[] = [];
+    let orderBy: Array<Record<string, string>> = [];
     switch (sort) {
       case 'newest':
         orderBy = [{ createdAt: 'desc' }];
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
         projectDuration: projectDuration || '',
         projectCost: projectCost || '',
         mediaItems: {
-          create: mediaItems?.map((item: any, index: number) => {
+          create: mediaItems?.map((item: { type: string; src: string; thumbnail?: string; title?: string; description?: string; duration?: number }, index: number) => {
             console.log(`📁 معالجة ملف ${index + 1}:`, item);
 
             // التحقق من وجود src المطلوب
@@ -168,12 +168,12 @@ export async function POST(request: NextRequest) {
           }) || []
         },
         tags: {
-          create: tags?.map((tag: any) => ({ 
+          create: tags?.map((tag: string | { name: string }) => ({ 
             name: typeof tag === 'string' ? tag : tag.name 
           })) || []
         },
         materials: {
-          create: materials?.map((material: any) => ({ 
+          create: materials?.map((material: string | { name: string }) => ({ 
             name: typeof material === 'string' ? material : material.name 
           })) || []
         }

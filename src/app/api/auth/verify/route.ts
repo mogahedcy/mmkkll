@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // التحقق من صحة التوكن
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { adminId: string };
 
     // البحث عن المستخدم
     const admin = await prisma.admin.findUnique({

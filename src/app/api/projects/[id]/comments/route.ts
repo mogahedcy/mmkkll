@@ -7,6 +7,7 @@ interface CommentData {
   email?: string;
   message: string;
   rating: number;
+}r;
 }
 
 // دالة التحقق من صحة البيانات
