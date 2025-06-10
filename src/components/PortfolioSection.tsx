@@ -235,8 +235,23 @@ export default function PortfolioSection() {
                               loop
                               playsInline
                               autoPlay
-                              preload="metadata"
+                              preload="auto"
                               poster={mainMedia.thumbnail || undefined}
+                              onCanPlay={(e) => {
+                                // التشغيل فور إمكانية التشغيل
+                                const video = e.target as HTMLVideoElement;
+                                video.play().catch(() => {
+                                  // في حال فشل التشغيل التلقائي، محاولة أخرى بعد تأخير قصير
+                                  setTimeout(() => {
+                                    video.play().catch(() => {});
+                                  }, 100);
+                                });
+                              }}
+                              onLoadedMetadata={(e) => {
+                                const video = e.target as HTMLVideoElement;
+                                video.currentTime = 0.1; // تشغيل من نقطة قريبة للبداية
+                                video.play().catch(() => {});
+                              }}
                               onError={(e) => {
                                 console.error('خطأ في تحميل الفيديو:', mainMedia.src);
                                 const videoElement = e.target as HTMLVideoElement;
@@ -245,13 +260,26 @@ export default function PortfolioSection() {
                               onLoadedData={(e) => {
                                 console.log('تم تحميل الفيديو بنجاح:', project.title);
                                 const video = e.target as HTMLVideoElement;
-                                video.play().catch((error) => {
-                                  console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
-                                });
+                                // تشغيل فوري متعدد المحاولات
+                                const attemptPlay = () => {
+                                  video.play().catch(() => {
+                                    // إعادة المحاولة كل 50ms لمدة ثانية واحدة
+                                    setTimeout(attemptPlay, 50);
+                                  });
+                                };
+                                attemptPlay();
+                              }}
+                              onMouseEnter={(e) => {
+                                // تأكيد التشغيل عند المرور بالماوس
+                                const video = e.target as HTMLVideoElement;
+                                if (video.paused) {
+                                  video.play().catch(() => {});
+                                }
                               }}
                             >
                               <source src={mainMedia.src} type="video/mp4" />
                               <source src={mainMedia.src} type="video/webm" />
+                              <source src={mainMedia.src} type="video/mov" />
                               متصفحك لا يدعم عرض الفيديو
                             </video>
 

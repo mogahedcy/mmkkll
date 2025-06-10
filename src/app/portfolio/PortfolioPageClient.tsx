@@ -363,9 +363,39 @@ export default function PortfolioPageClient() {
                     muted
                     loop
                     playsInline
+                    autoPlay
+                    preload="auto"
                     poster={mainMedia.thumbnail}
+                    onCanPlay={(e) => {
+                      const video = e.target as HTMLVideoElement;
+                      video.play().catch(() => {
+                        setTimeout(() => {
+                          video.play().catch(() => {});
+                        }, 100);
+                      });
+                    }}
+                    onLoadedMetadata={(e) => {
+                      const video = e.target as HTMLVideoElement;
+                      video.currentTime = 0.1;
+                      video.play().catch(() => {});
+                    }}
+                    onLoadedData={(e) => {
+                      const video = e.target as HTMLVideoElement;
+                      const attemptPlay = () => {
+                        video.play().catch(() => {
+                          setTimeout(attemptPlay, 50);
+                        });
+                      };
+                      attemptPlay();
+                    }}
+                    onMouseEnter={(e) => {
+                      const video = e.target as HTMLVideoElement;
+                      if (video.paused) {
+                        video.play().catch(() => {});
+                      }
+                    }}
                   />
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 group-hover:scale-110 transition-transform duration-300">
                       <Play className="w-8 h-8 text-gray-800" />
                     </div>
