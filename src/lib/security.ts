@@ -115,7 +115,7 @@ export const generateSecureId = (): string => {
 };
 
 // Input sanitization
-export const sanitizeInput = (input: string): string => {
+export const sanitizeInput = (input: unknown): string => {
   if (typeof input !== 'string') return '';
 
   return input

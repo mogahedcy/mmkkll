@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +6,7 @@ import { CheckCircle, AlertCircle, Upload, X } from 'lucide-react';
 
 interface UploadProgressProps {
   files: File[];
-  onUploadComplete: (results: any[]) => void;
+  onUploadComplete: (results: Array<Record<string, unknown>>) => void;
   onCancel: () => void;
 }
 
@@ -30,12 +29,12 @@ export function UploadProgress({ files, onUploadComplete, onCancel }: UploadProg
     // تهيئة حالة الملفات
     const initialStatus: Record<string, 'pending'> = {};
     const initialProgress: Record<string, number> = {};
-    
+
     files.forEach(file => {
       initialStatus[file.name] = 'pending';
       initialProgress[file.name] = 0;
     });
-    
+
     setUploadStatus(initialStatus);
     setUploadProgress(initialProgress);
 
@@ -43,7 +42,7 @@ export function UploadProgress({ files, onUploadComplete, onCancel }: UploadProg
     for (const file of files) {
       try {
         setUploadStatus(prev => ({ ...prev, [file.name]: 'uploading' }));
-        
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -146,7 +145,7 @@ export function UploadProgress({ files, onUploadComplete, onCancel }: UploadProg
         {files.map((file) => (
           <div key={file.name} className="flex items-center space-x-3 space-x-reverse">
             {getStatusIcon(uploadStatus[file.name] || 'pending')}
-            
+
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900 truncate">
@@ -156,7 +155,7 @@ export function UploadProgress({ files, onUploadComplete, onCancel }: UploadProg
                   {((file.size || 0) / 1024 / 1024).toFixed(1)} MB
                 </span>
               </div>
-              
+
               <div className="flex items-center space-x-2 space-x-reverse mt-1">
                 <Progress 
                   value={uploadProgress[file.name] || 0} 
