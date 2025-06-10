@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -133,7 +132,7 @@ export default function PortfolioSection() {
           </h2>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-12 leading-relaxed">
             استكشف أحدث مشاريعنا المتميزة في جدة والمناطق المحيطة. نعرض لك أحدث عمل في كل خدمة من خدماتنا المتخصصة
-            في المظلات، برجولات، السواتر، الساندوتش بانل، تنسيق الحدائق، الخيام الملكية، بيوت الشعر،
+            في المظلات، برجولات، السواتر، الساندوتش بانل، تنسيق حدائق، الخيام الملكية، بيوت الشعر،
             والترميم بأعلى معايير الجودة والحرفية
           </p>
 
@@ -207,7 +206,8 @@ export default function PortfolioSection() {
                         {mainMedia.type === 'IMAGE' ? (
                           <Image
                             src={mainMedia.src}
-                            alt={project.title}
+                            alt={`${project.title} - محترفين الديار العالمية جدة`}
+                            title={`${project.title} - ${project.category} في ${project.location}`}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-700"
                             onError={(e) => {

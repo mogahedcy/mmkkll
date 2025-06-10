@@ -12,6 +12,18 @@ const isCloudinaryAvailable = Boolean(
   process.env.CLOUDINARY_CLOUD_NAME !== 'demo'
 );
 
+// دالة لتحسين أسماء الملفات لـ SEO
+function generateSEOFriendlyName(originalName: string): string {
+  const nameWithoutExt = originalName.replace(/\.[^/.]+$/, '');
+  return nameWithoutExt
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-') // استبدال المسافات بـ -
+    .replace(/[^\w\u0600-\u06FF-]/g, '') // الحفاظ على الأحرف العربية والإنجليزية فقط
+    .replace(/-+/g, '-') // إزالة الشرطات المتكررة
+    .replace(/^-|-$/g, '') // إزالة الشرطات من البداية والنهاية
+    .substring(0, 50) || 'aldeyar-project'; // تحديد الطول
+}
+
 // إعدادات محسنة للرفع
 const UPLOAD_CONFIG = {
   maxFileSize: isCloudinaryAvailable ? 100 * 1024 * 1024 : 50 * 1024 * 1024, // 100MB/50MB
@@ -143,16 +155,41 @@ export async function POST(request: NextRequest) {
           // رفع إلى Cloudinary مع إعدادات محسنة
           console.log('☁️ رفع إلى Cloudinary...');
           
+          // تحسين أسماء الملفات لـ SEO
+          const seoFriendlyName = generateSEOFriendlyName(file.name);
+          
           const cloudinaryOptions = {
             folder: 'portfolio/projects',
             resource_type: isVideo ? 'video' : 'image',
+            public_id: `${Date.now()}-${seoFriendlyName}`,
+            use_filename: false,
+            unique_filename: true,
+            overwrite: false,
+            // إضافة metadata للSEO
+            context: {
+              alt: `محترفين الديار العالمية - ${seoFriendlyName}`,
+              caption: `مشروع من محترفين الديار العالمية في جدة`,
+              title: seoFriendlyName
+            },
+            // تحسين خصائص الصور للويب
             transformation: isVideo ? {
               ...UPLOAD_CONFIG.compressionQuality.video,
-              format: 'mp4', // تحويل الفيديو إلى MP4 للتوافق
+              format: 'mp4',
               video_codec: 'h264',
-              audio_codec: 'aac'
+              audio_codec: 'aac',
+              // تحسين للويب
+              streaming_profile: 'hd',
+              adaptive_streaming: true
             } : {
               ...UPLOAD_CONFIG.compressionQuality.image,
+              // تحسين للويب وSEO
+              format: 'webp',
+              progressive: true,
+              // إنشاء أحجام متعددة للاستجابة
+              responsive: true,
+              width: 'auto',
+              crop: 'scale',
+              dpr: 'auto'
               format: 'webp', // تحويل الصور إلى WebP للحجم الأصغر
               flags: 'progressive'
             },

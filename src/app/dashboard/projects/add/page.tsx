@@ -15,7 +15,8 @@ import {
   Image as ImageIcon, 
   Video, 
   Trash2,
-  CheckCircle
+  CheckCircle,
+  Image
 } from 'lucide-react';
 
 interface MediaFile {
@@ -49,6 +50,7 @@ export default function AddProjectPage() {
   const [newMaterial, setNewMaterial] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const categories = [
     'مظلات',
@@ -85,6 +87,13 @@ export default function AddProjectPage() {
       ...prev,
       [field]: value
     }));
+  };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      setSelectedFiles(Array.from(files));
+    }
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,7 +173,7 @@ export default function AddProjectPage() {
 
     const data = await response.json();
     console.log('🔍 نتيجة الرفع:', data);
-    
+
     // التحقق من وجود الملفات المرفوعة
     if (!data.files || data.files.length === 0) {
       throw new Error('لم يتم إرجاع أي ملفات من الخادم');
@@ -193,19 +202,19 @@ export default function AddProjectPage() {
       // رفع الملفات أولاً
       const uploadedMedia = [];
       let failedUploads = 0;
-      
+
       for (let i = 0; i < mediaFiles.length; i++) {
         const mediaFile = mediaFiles[i];
         try {
           console.log(`📤 رفع الملف ${i + 1} من ${mediaFiles.length}: ${mediaFile.file.name}`);
-          
+
           const url = await uploadToCloudinary(mediaFile.file);
           if (!url) {
             throw new Error('لم يتم إرجاع رابط صحيح');
           }
-          
+
           console.log(`✅ تم رفع الملف بنجاح: ${mediaFile.file.name} -> ${url}`);
-          
+
           uploadedMedia.push({
             type: mediaFile.type.toUpperCase(),
             src: url,
@@ -217,18 +226,18 @@ export default function AddProjectPage() {
         } catch (uploadError) {
           failedUploads++;
           console.error(`❌ خطأ في رفع الملف ${mediaFile.file.name}:`, uploadError);
-          
+
           const errorMessage = uploadError instanceof Error ? uploadError.message : 'خطأ غير معروف';
           alert(`فشل في رفع الملف: ${mediaFile.file.name}\nالخطأ: ${errorMessage}`);
           return;
         }
       }
-      
+
       if (uploadedMedia.length === 0) {
         alert('لم يتم رفع أي ملفات بنجاح. يرجى المحاولة مرة أخرى.');
         return;
       }
-      
+
       console.log(`📊 نتيجة الرفع: ${uploadedMedia.length} ملف نجح، ${failedUploads} ملف فشل`);
 
       // إنشاء المشروع
@@ -537,24 +546,70 @@ export default function AddProjectPage() {
             <CardContent>
               <div className="space-y-6">
                 {/* Upload Area */}
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-green-500 cursor-pointer transition-colors"
-                >
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-lg font-medium text-gray-600 mb-2">انقر لرفع الملفات</p>
-                  <p className="text-sm text-gray-500">
-                    PNG, JPG, MP4, MOV حتى 10MB لكل ملف
-                  </p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    multiple
-                    accept="image/*,video/*"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                  />
-                </div>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-primary transition-colors">
+                    <div className="text-center">
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <h3 className="mt-2 text-lg font-medium text-gray-900">رفع صور وفيديوهات المشروع</h3>
+                      <p className="mt-1 text-sm text-gray-600">اسحب الملفات هنا أو اضغط للتحديد</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        الصيغ المدعومة: JPG, PNG, WebP, MP4, MOV (حد أقصى: 50MB للفيديو، 10MB للصور)
+                      </p>
+
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/jpeg,image/png,image/webp,video/mp4,video/mov,video/avi"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        id="file-upload"
+                      />
+
+                      <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
+                        <label
+                          htmlFor="file-upload"
+                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 cursor-pointer transition-colors"
+                        >
+                          <Image className="w-4 h-4 mr-2" />
+                          اختيار صور
+                        </label>
+                        <label
+                          htmlFor="file-upload"
+                          className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+                        >
+                          <Video className="w-4 h-4 mr-2" />
+                          اختيار فيديوهات
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* معاينة الملفات المختارة */}
+                    {selectedFiles.length > 0 && (
+                      <div className="mt-6 border-t pt-4">
+                        <h4 className="text-sm font-medium text-gray-900 mb-3">الملفات المختارة ({selectedFiles.length})</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {selectedFiles.map((file, index) => (
+                            <div key={index} className="relative group">
+                              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                                {file.type.startsWith('image/') ? (
+                                  <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={file.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <Video className="w-8 h-8 text-gray-400" />
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-600 mt-1 truncate">{file.name}</p>
+                              <p className="text-xs text-gray-400">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                 {/* Media Preview */}
                 {mediaFiles.length > 0 && (

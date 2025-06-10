@@ -28,33 +28,78 @@ async function getProject(id: string) {
   }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const project = await getProject(id);
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  try {
+    const project = await getProject(params.id);
 
-  if (!project) {
+    if (!project) {
+      return {
+        title: 'المشروع غير موجود | محترفين الديار العالمية',
+        description: 'المشروع المطلوب غير متوفر'
+      };
+    }
+
+    const mainImage = project.mediaItems?.find(item => item.type === 'IMAGE');
+    const seoTitle = `${project.title} في ${project.location} | محترفين الديار العالمية جدة`;
+    const seoDescription = `${project.description.substring(0, 150)}... مشروع ${project.category} في ${project.location} من محترفين الديار العالمية - أفضل شركة مظلات وسواتر في جدة`;
+
     return {
-      title: 'مشروع غير موجود - محترفين الديار العالمية',
+      title: seoTitle,
+      description: seoDescription,
+      keywords: [
+        project.category,
+        'جدة',
+        'السعودية',
+        'مظلات',
+        'سواتر',
+        'برجولات',
+        'تنسيق حدائق',
+        'محترفين الديار',
+        project.location,
+        project.title
+      ].join(', '),
+      openGraph: {
+        title: seoTitle,
+        description: seoDescription,
+        type: 'article',
+        url: `https://aldeyar-jeddah.com/portfolio/${params.id}`,
+        siteName: 'محترفين الديار العالمية',
+        locale: 'ar_SA',
+        images: project.mediaItems?.filter(item => item.type === 'IMAGE').map(item => ({
+          url: item.src,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} - محترفين الديار العالمية جدة`,
+          type: 'image/webp'
+        })) || []
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: seoTitle,
+        description: seoDescription.substring(0, 200),
+        images: mainImage ? [mainImage.src] : []
+      },
+      alternates: {
+        canonical: `https://aldeyar-jeddah.com/portfolio/${params.id}`
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+          'max-video-preview': -1
+        }
+      }
+    };
+  } catch (error) {
+    return {
+      title: 'خطأ | محترفين الديار العالمية',
+      description: 'حدث خطأ في تحميل المشروع'
     };
   }
-
-  return {
-    title: `${project.title} - محترفين الديار العالمية`,
-    description: project.description,
-    keywords: `${project.title}, محترفين الديار العالمية, ${project.category}, ${project.location}`,
-    openGraph: {
-      title: `${project.title} - محترفين الديار العالمية`,
-      description: project.description,
-      images: project.mediaItems?.filter((item: any) => item.type === 'IMAGE').map((item: any) => item.src) || [],
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${project.title} - محترفين الديار العالمية`,
-      description: project.description,
-      images: project.mediaItems?.filter((item: any) => item.type === 'IMAGE').map((item: any) => item.src) || [],
-    },
-  };
 }
 
 export function generateViewport() {
