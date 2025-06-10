@@ -235,7 +235,7 @@ export default function PortfolioSection() {
                               loop
                               playsInline
                               autoPlay
-                              preload="auto"
+                              preload="metadata"
                               poster={mainMedia.thumbnail || undefined}
                               onCanPlay={(e) => {
                                 // التشغيل فور إمكانية التشغيل

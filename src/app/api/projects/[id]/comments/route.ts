@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
@@ -62,7 +61,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: projectId } = await params;
+    const resolvedParams = await params;
+    const projectId = resolvedParams.id;
 
     // التحقق من وجود المشروع
     const project = await prisma.project.findUnique({
@@ -113,7 +113,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: projectId } = await params;
+    const resolvedParams = await params;
+    const projectId = resolvedParams.id;
     const body = await request.json();
 
     // التحقق من صحة البيانات
@@ -185,7 +186,7 @@ export async function POST(
 
     if (allComments.length > 0) {
       const averageRating = allComments.reduce((sum, comment) => sum + comment.rating, 0) / allComments.length;
-      
+
       await prisma.project.update({
         where: { id: projectId },
         data: { rating: averageRating }

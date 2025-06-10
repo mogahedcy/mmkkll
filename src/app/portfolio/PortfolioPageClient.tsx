@@ -364,7 +364,7 @@ export default function PortfolioPageClient() {
                     loop
                     playsInline
                     autoPlay
-                    preload="auto"
+                    preload="metadata"
                     poster={mainMedia.thumbnail}
                     onCanPlay={(e) => {
                       const video = e.target as HTMLVideoElement;
