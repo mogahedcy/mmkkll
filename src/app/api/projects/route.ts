@@ -1,7 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 // GET - جلب جميع المشاريع
 export async function GET(request: NextRequest) {
@@ -211,6 +209,24 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ خطأ في إضافة المشروع:', error);
+    
+    // إذا كان الخطأ من Prisma، نعرض تفاصيل أكثر
+    if (error instanceof Error) {
+      console.error('تفاصيل الخطأ:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      
+      return NextResponse.json(
+        { 
+          error: 'حدث خطأ في إضافة المشروع',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'حدث خطأ في إضافة المشروع' },
       { status: 500 }
