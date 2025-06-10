@@ -1,335 +1,311 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bookmark, BookmarkCheck, Trash2, Search, Clock, Star, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Bookmark,
+  Search,
+  X,
+  Plus,
+  Clock,
+  Star,
+  Trash2,
+  Edit2,
+  Save
+} from 'lucide-react';
 
 interface SavedSearch {
   id: string;
+  name: string;
   query: string;
-  filters: {
-    category?: string;
-    author?: string;
-    date?: string;
-    readTime?: string;
-    tags?: string[];
-    sort?: string;
-  };
-  timestamp: number;
-  resultsCount?: number;
+  filters: any;
+  createdAt: Date;
+  lastUsed: Date;
+  useCount: number;
 }
 
-interface SavedSearchesProps {
-  currentQuery?: string;
-  currentFilters?: Record<string, unknown>;
-  onLoadSearch?: (search: SavedSearch) => void;
-  className?: string;
-}
-
-export default function SavedSearches({
-  currentQuery = '',
-  currentFilters = {},
-  onLoadSearch,
-  className = ''
-}: SavedSearchesProps) {
+export default function SavedSearches() {
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [showSavedSearches, setShowSavedSearches] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
+  const [showSaveForm, setShowSaveForm] = useState(false);
+  const [searchName, setSearchName] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Load saved searches from localStorage
+  // تحميل البحثات المحفوظة من localStorage
   useEffect(() => {
     const saved = localStorage.getItem('savedSearches');
-    const history = localStorage.getItem('searchHistory');
-
     if (saved) {
       try {
-        setSavedSearches(JSON.parse(saved));
+        const searches = JSON.parse(saved).map((search: any) => ({
+          ...search,
+          createdAt: new Date(search.createdAt),
+          lastUsed: new Date(search.lastUsed)
+        }));
+        setSavedSearches(searches);
       } catch (error) {
         console.error('Error loading saved searches:', error);
       }
     }
-
-    if (history) {
-      try {
-        setSearchHistory(JSON.parse(history));
-      } catch (error) {
-        console.error('Error loading search history:', error);
-      }
-    }
   }, []);
 
-  // Save current search
-  const saveCurrentSearch = () => {
-    if (!currentQuery.trim()) return;
+  // حفظ البحثات في localStorage
+  const saveTOLocalStorage = (searches: SavedSearch[]) => {
+    localStorage.setItem('savedSearches', JSON.stringify(searches));
+  };
 
+  // حفظ بحث جديد
+  const saveCurrentSearch = () => {
+    if (!searchName.trim()) return;
+
+    const currentUrl = new URL(window.location.href);
+    const searchParams = currentUrl.searchParams;
+    
     const newSearch: SavedSearch = {
       id: Date.now().toString(),
-      query: currentQuery,
-      filters: currentFilters,
-      timestamp: Date.now()
+      name: searchName.trim(),
+      query: searchParams.get('search') || '',
+      filters: Object.fromEntries(searchParams.entries()),
+      createdAt: new Date(),
+      lastUsed: new Date(),
+      useCount: 0
     };
 
-    // Check if this search already exists
-    const existingIndex = savedSearches.findIndex(
-      search => search.query === currentQuery &&
-      JSON.stringify(search.filters) === JSON.stringify(currentFilters)
+    const updated = [newSearch, ...savedSearches.slice(0, 9)]; // حفظ أحدث 10 بحثات
+    setSavedSearches(updated);
+    saveTOLocalStorage(updated);
+    setSearchName('');
+    setShowSaveForm(false);
+  };
+
+  // تطبيق بحث محفوظ
+  const applySavedSearch = (search: SavedSearch) => {
+    const updatedSearch = {
+      ...search,
+      lastUsed: new Date(),
+      useCount: search.useCount + 1
+    };
+
+    const updated = savedSearches.map(s => 
+      s.id === search.id ? updatedSearch : s
     );
+    setSavedSearches(updated);
+    saveTOLocalStorage(updated);
 
-    let updatedSearches: SavedSearch[];
-    if (existingIndex >= 0) {
-      // Update timestamp if search exists
-      updatedSearches = [...savedSearches];
-      updatedSearches[existingIndex].timestamp = Date.now();
-    } else {
-      // Add new search (keep only last 10)
-      updatedSearches = [newSearch, ...savedSearches.slice(0, 9)];
-    }
-
-    setSavedSearches(updatedSearches);
-    localStorage.setItem('savedSearches', JSON.stringify(updatedSearches));
+    // تطبيق المعايير على URL
+    const params = new URLSearchParams(search.filters);
+    window.location.href = `/portfolio?${params.toString()}`;
   };
 
-  // Delete a saved search
+  // حذف بحث محفوظ
   const deleteSavedSearch = (id: string) => {
-    const updatedSearches = savedSearches.filter(search => search.id !== id);
-    setSavedSearches(updatedSearches);
-    localStorage.setItem('savedSearches', JSON.stringify(updatedSearches));
+    const updated = savedSearches.filter(s => s.id !== id);
+    setSavedSearches(updated);
+    saveTOLocalStorage(updated);
   };
 
-  // Clear all saved searches
-  const clearAllSearches = () => {
-    setSavedSearches([]);
-    localStorage.removeItem('savedSearches');
+  // تحرير اسم البحث
+  const updateSearchName = (id: string, newName: string) => {
+    const updated = savedSearches.map(s => 
+      s.id === id ? { ...s, name: newName } : s
+    );
+    setSavedSearches(updated);
+    saveTOLocalStorage(updated);
+    setEditingId(null);
   };
 
-  // Clear search history
-  const clearSearchHistory = () => {
-    setSearchHistory([]);
-    localStorage.removeItem('searchHistory');
+  const formatFilters = (filters: any) => {
+    const active = [];
+    if (filters.category) active.push(filters.category);
+    if (filters.location) active.push(filters.location);
+    if (filters.featured === 'true') active.push('مميز');
+    if (filters.hasVideo === 'true') active.push('فيديو');
+    return active;
   };
-
-  // Load a saved search
-  const loadSearch = (search: SavedSearch) => {
-    if (onLoadSearch) {
-      onLoadSearch(search);
-    }
-  };
-
-  // Format filter description
-  const formatFilters = (filters: SavedSearch['filters']) => {
-    const parts = [];
-    if (filters.category && filters.category !== 'الكل') parts.push(filters.category);
-    if (filters.author && filters.author !== 'الكل') parts.push(filters.author);
-    if (filters.date) parts.push(getDateLabel(filters.date));
-    if (filters.readTime) parts.push(getReadTimeLabel(filters.readTime));
-    if (filters.tags && filters.tags.length > 0) parts.push(`${filters.tags.length} كلمة مفتاحية`);
-
-    return parts.length > 0 ? parts.join(' • ') : 'بلا فلاتر';
-  };
-
-  const getDateLabel = (value: string) => {
-    const labels: { [key: string]: string } = {
-      'today': 'اليوم',
-      'week': 'هذا الأسبوع',
-      'month': 'هذا الشهر',
-      '3months': 'آخر 3 شهور',
-      'year': 'هذا العام'
-    };
-    return labels[value] || value;
-  };
-
-  const getReadTimeLabel = (value: string) => {
-    const labels: { [key: string]: string } = {
-      'short': 'أقل من 3 دقائق',
-      'medium': '3-6 دقائق',
-      'long': 'أكثر من 6 دقائق'
-    };
-    return labels[value] || value;
-  };
-
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-
-    if (diffInHours < 1) return 'منذ قليل';
-    if (diffInHours < 24) return `منذ ${Math.floor(diffInHours)} ساعة`;
-    if (diffInHours < 48) return 'أمس';
-
-    return date.toLocaleDateString('ar-SA', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  const currentSearchExists = savedSearches.some(
-    search => search.query === currentQuery &&
-    JSON.stringify(search.filters) === JSON.stringify(currentFilters)
-  );
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      {/* Save Current Search Button */}
-      {currentQuery && (
-        <div className="flex items-center justify-between bg-gradient-to-r from-accent/5 to-primary/5 border border-accent/20 rounded-lg p-4">
-          <div className="flex items-center">
-            <Search className="w-5 h-5 text-accent ml-2" />
-            <div>
-              <p className="font-medium text-gray-800">البحث الحالي</p>
-              <p className="text-sm text-muted-foreground">"{currentQuery}"</p>
-            </div>
-          </div>
-          <Button
-            onClick={saveCurrentSearch}
-            variant={currentSearchExists ? "outline" : "default"}
-            size="sm"
-            className="flex items-center"
-          >
-            {currentSearchExists ? (
-              <>
-                <BookmarkCheck className="w-4 h-4 ml-1" />
-                محفوظ
-              </>
-            ) : (
-              <>
-                <Bookmark className="w-4 h-4 ml-1" />
-                حفظ البحث
-              </>
-            )}
-          </Button>
-        </div>
-      )}
+    <div className="relative">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setShowSaved(!showSaved)}
+        className="flex items-center gap-2"
+      >
+        <Bookmark className="w-4 h-4" />
+        البحثات المحفوظة
+        {savedSearches.length > 0 && (
+          <Badge variant="secondary" className="text-xs">
+            {savedSearches.length}
+          </Badge>
+        )}
+      </Button>
 
-      {/* Saved Searches */}
-      {savedSearches.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-800 flex items-center">
-              <Bookmark className="w-5 h-5 text-accent ml-2" />
-              البحثات المحفوظة ({savedSearches.length})
-            </h3>
-            <div className="flex items-center space-x-2 space-x-reverse">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSavedSearches(!showSavedSearches)}
-              >
-                {showSavedSearches ? 'إخفاء' : 'عرض'}
-              </Button>
-              {savedSearches.length > 0 && (
+      {showSaved && (
+        <Card className="absolute top-full left-0 mt-2 w-80 z-50 shadow-lg">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">البحثات المحفوظة</CardTitle>
+              <div className="flex gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={clearAllSearches}
-                  className="text-red-600 hover:bg-red-50"
+                  onClick={() => setShowSaveForm(true)}
+                  className="text-primary"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Plus className="w-4 h-4" />
                 </Button>
-              )}
-            </div>
-          </div>
-
-          {showSavedSearches && (
-            <div className="space-y-3 max-h-60 overflow-y-auto">
-              {savedSearches.map((search) => (
-                <div
-                  key={search.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSaved(false)}
                 >
-                  <div className="flex-1 cursor-pointer" onClick={() => loadSearch(search)}>
-                    <div className="flex items-center mb-1">
-                      <h4 className="font-medium text-gray-800 text-sm">"{search.query}"</h4>
-                      <Badge variant="secondary" className="mr-2 text-xs">
-                        <Star className="w-3 h-3 ml-1" />
-                        محفوظ
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-1">
-                      {formatFilters(search.filters)}
-                    </p>
-                    <p className="text-xs text-muted-foreground flex items-center">
-                      <Clock className="w-3 h-3 ml-1" />
-                      {formatDate(search.timestamp)}
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-2 space-x-reverse">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => loadSearch(search)}
-                      className="text-accent hover:bg-accent/10"
-                    >
-                      تطبيق
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteSavedSearch(search.id)}
-                      className="text-red-600 hover:bg-red-50"
-                    >
-                      <X className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
-          )}
-        </div>
-      )}
+          </CardHeader>
 
-      {/* Recent Search History */}
-      {searchHistory.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-800 flex items-center">
-              <Clock className="w-5 h-5 text-muted-foreground ml-2" />
-              تاريخ البحث الأخير
-            </h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearSearchHistory}
-              className="text-red-600 hover:bg-red-50"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {searchHistory.slice(0, 5).map((query, index) => (
-              <button
-                key={`history-${index}-${query.slice(0,10)}`}
-                onClick={() => onLoadSearch?.({
-                  id: `history-${index}`,
-                  query,
-                  filters: {},
-                  timestamp: Date.now()
-                })}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm transition-colors"
-              >
-                {query}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+          <CardContent className="space-y-3">
+            {/* نموذج حفظ بحث جديد */}
+            {showSaveForm && (
+              <div className="p-3 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    placeholder="اسم البحث..."
+                    value={searchName}
+                    onChange={(e) => setSearchName(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && saveCurrentSearch()}
+                    className="text-sm"
+                  />
+                  <Button size="sm" onClick={saveCurrentSearch} disabled={!searchName.trim()}>
+                    <Save className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSaveForm(false)}
+                  className="text-xs text-gray-500"
+                >
+                  إلغاء
+                </Button>
+              </div>
+            )}
 
-      {/* No saved searches message */}
-      {savedSearches.length === 0 && searchHistory.length === 0 && (
-        <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-          <Bookmark className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-gray-600 mb-2">لا توجد بحثات محفوظة</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            احفظ عمليات البحث المفيدة للوصول إليها بسرعة لاحقاً
-          </p>
-          {currentQuery && (
-            <Button onClick={saveCurrentSearch} size="sm">
-              <Bookmark className="w-4 h-4 ml-1" />
-              احفظ البحث الحالي
-            </Button>
-          )}
-        </div>
+            {/* قائمة البحثات المحفوظة */}
+            {savedSearches.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <Search className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                <p className="text-sm">لا توجد بحثات محفوظة</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowSaveForm(true)}
+                  className="mt-2 text-xs"
+                >
+                  احفظ البحث الحالي
+                </Button>
+              </div>
+            ) : (
+              <div className="max-h-60 overflow-y-auto space-y-2">
+                {savedSearches
+                  .sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())
+                  .map((search) => (
+                  <div
+                    key={search.id}
+                    className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1" onClick={() => applySavedSearch(search)}>
+                        {editingId === search.id ? (
+                          <Input
+                            defaultValue={search.name}
+                            onBlur={(e) => updateSearchName(search.id, e.target.value)}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                updateSearchName(search.id, (e.target as HTMLInputElement).value);
+                              }
+                            }}
+                            className="text-sm font-medium"
+                            autoFocus
+                          />
+                        ) : (
+                          <h4 className="font-medium text-sm text-gray-900 mb-1">
+                            {search.name}
+                          </h4>
+                        )}
+                        
+                        {search.query && (
+                          <p className="text-xs text-gray-600 mb-2">
+                            البحث: "{search.query}"
+                          </p>
+                        )}
+
+                        {/* الفلاتر النشطة */}
+                        {formatFilters(search.filters).length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {formatFilters(search.filters).map((filter, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {filter}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-3 text-xs text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {search.lastUsed.toLocaleDateString('ar-SA')}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Star className="w-3 h-3" />
+                            {search.useCount}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingId(search.id);
+                          }}
+                          className="h-6 w-6 p-0"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteSavedSearch(search.id);
+                          }}
+                          className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* إحصائيات */}
+            {savedSearches.length > 0 && (
+              <div className="pt-3 border-t text-xs text-gray-500 text-center">
+                {savedSearches.length} بحث محفوظ •{' '}
+                {savedSearches.reduce((sum, s) => sum + s.useCount, 0)} استخدام
+              </div>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );

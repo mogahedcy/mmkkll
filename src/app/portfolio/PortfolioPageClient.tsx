@@ -1,27 +1,58 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import Image from 'next/image';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import AdvancedPagination from '@/components/ui/advanced-pagination';
 import AdvancedFilters from '@/components/AdvancedFilters';
+import SavedSearches from '@/components/SavedSearches';
 import {
   Search,
-  Filter,
   Grid3X3,
   List,
-  Calendar,
-  MapPin,
+  Filter,
+  SortAsc,
+  SortDesc,
   Eye,
   Heart,
-  MessageCircle,
-  ExternalLink,
+  Calendar,
+  MapPin,
+  Star,
+  Play,
+  Image as ImageIcon,
+  Video,
+  Download,
+  Share2,
+  Bookmark,
+  TrendingUp,
+  Clock,
+  Award,
+  Building,
+  Loader2,
   AlertCircle,
-  RefreshCw,
-  Star
+  CheckCircle2,
+  ArrowUpRight,
+  ChevronDown,
+  X
 } from 'lucide-react';
+
+// تعريف الواجهات
+interface MediaItem {
+  id: string;
+  type: 'IMAGE' | 'VIDEO';
+  src: string;
+  thumbnail?: string;
+  title?: string;
+  description?: string;
+  order: number;
+  duration?: number;
+}
 
 interface Project {
   id: string;
@@ -32,755 +63,740 @@ interface Project {
   completionDate: string;
   client?: string;
   featured: boolean;
+  projectDuration?: string;
+  projectCost?: string;
   views: number;
   likes: number;
   rating: number;
-  projectDuration: string;
-  projectCost: string;
-  mediaItems: Array<{
-    id: string;
-    type: 'IMAGE' | 'VIDEO';
-    src: string;
-    thumbnail?: string;
-    title?: string;
-  }>;
-  tags: Array<{ name: string }>;
-  materials: Array<{ name: string }>;
   createdAt: string;
-  updatedAt: string;
+  mediaItems: MediaItem[];
+  tags: { id: string; name: string; }[];
+  materials: { id: string; name: string; }[];
+  _count?: {
+    comments: number;
+    likes: number;
+  };
 }
 
-type ViewMode = 'grid' | 'list' | 'map';
-type SortOption = 'newest' | 'oldest' | 'mostViewed' | 'featured' | 'rating';
+interface FiltersState {
+  category: string;
+  location: string;
+  featured: boolean | null;
+  minRating: number;
+  dateRange: string;
+  hasVideo: boolean | null;
+  priceRange: string;
+}
 
+// خيارات الفلترة والترتيب
 const categories = [
-  'الكل',
-  'مظلات',
-  'برجولات',
-  'سواتر',
-  'ساندوتش بانل',
-  'تنسيق حدائق',
-  'خيام ملكية',
-  'بيوت شعر',
-  'ترميم'
+  { id: '', name: 'جميع الفئات', icon: Building },
+  { id: 'مظلات', name: 'مظلات', icon: Building },
+  { id: 'برجولات', name: 'برجولات', icon: Building },
+  { id: 'سواتر', name: 'سواتر', icon: Building },
+  { id: 'ساندوتش بانل', name: 'ساندوتش بانل', icon: Building },
+  { id: 'تنسيق حدائق', name: 'تنسيق حدائق', icon: Building },
+  { id: 'خيام ملكية', name: 'خيام ملكية', icon: Building },
+  { id: 'بيوت شعر', name: 'بيوت شعر', icon: Building },
+  { id: 'ترميم', name: 'ترميم', icon: Building }
 ];
 
 const sortOptions = [
-  { value: 'newest', label: 'الأحدث' },
-  { value: 'oldest', label: 'الأقدم' },
-  { value: 'mostViewed', label: 'الأكثر مشاهدة' },
-  { value: 'featured', label: 'المميز' },
-  { value: 'rating', label: 'الأعلى تقييماً' }
+  { value: 'newest', label: 'الأحدث', icon: Clock },
+  { value: 'oldest', label: 'الأقدم', icon: Clock },
+  { value: 'most-viewed', label: 'الأكثر مشاهدة', icon: Eye },
+  { value: 'most-liked', label: 'الأكثر إعجاباً', icon: Heart },
+  { value: 'highest-rated', label: 'الأعلى تقييماً', icon: Star },
+  { value: 'featured', label: 'المميزة', icon: Award },
+  { value: 'alphabetical', label: 'أبجدياً', icon: SortAsc }
+];
+
+const viewModes = [
+  { value: 'grid', label: 'شبكة', icon: Grid3X3 },
+  { value: 'list', label: 'قائمة', icon: List }
 ];
 
 export default function PortfolioPageClient() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // الحالات الأساسية
   const [projects, setProjects] = useState<Project[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('الكل');
-  const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [error, setError] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+
+  // حالات الفلترة والبحث
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'newest');
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalProjects, setTotalProjects] = useState(0);
-  const [retryCount, setRetryCount] = useState(0);
 
-  const projectsPerPage = 12;
+  // حالات الفلترة المتقدمة
+  const [filters, setFilters] = useState<FiltersState>({
+    category: searchParams.get('category') || '',
+    location: searchParams.get('location') || '',
+    featured: searchParams.get('featured') === 'true' ? true : searchParams.get('featured') === 'false' ? false : null,
+    minRating: Number(searchParams.get('minRating')) || 0,
+    dateRange: searchParams.get('dateRange') || '',
+    hasVideo: searchParams.get('hasVideo') === 'true' ? true : searchParams.get('hasVideo') === 'false' ? false : null,
+    priceRange: searchParams.get('priceRange') || ''
+  });
 
-  const fetchProjects = useCallback(async (retryAttempt = 0) => {
+  // حالات إضافية
+  const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
+  const [bookmarkedProjects, setBookmarkedProjects] = useState<string[]>([]);
+
+  // جلب المشاريع من API
+  const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
+      setError('');
 
       const params = new URLSearchParams({
-        category: selectedCategory === 'الكل' ? 'all' : selectedCategory,
         page: currentPage.toString(),
-        limit: projectsPerPage.toString(),
-        search: searchTerm,
-        sort: sortBy
+        limit: itemsPerPage.toString(),
+        sort: sortBy,
+        ...(searchTerm && { search: searchTerm }),
+        ...(filters.category && { category: filters.category }),
+        ...(filters.location && { location: filters.location }),
+        ...(filters.featured !== null && { featured: filters.featured.toString() }),
+        ...(filters.minRating > 0 && { minRating: filters.minRating.toString() }),
+        ...(filters.dateRange && { dateRange: filters.dateRange }),
+        ...(filters.hasVideo !== null && { hasVideo: filters.hasVideo.toString() }),
+        ...(filters.priceRange && { priceRange: filters.priceRange })
       });
 
       console.log('🔍 جلب المشاريع مع المعايير:', {
-        category: selectedCategory,
+        category: filters.category || 'الكل',
         page: currentPage,
         search: searchTerm,
         sort: sortBy
       });
 
       const response = await fetch(`/api/projects?${params}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
       const data = await response.json();
 
       console.log('📦 البيانات المستلمة من API:', data);
 
-      if (data.success) {
-        setProjects(data.projects || []);
-        setTotalProjects(data.total || 0);
-        console.log('✅ تم جلب المشاريع بنجاح:', data.projects?.length || 0);
-      } else if (data.projects) {
-        // التوافق مع التنسيق القديم
-        setProjects(data.projects || []);
-        setTotalProjects(data.pagination?.total || data.projects?.length || 0);
-        console.log('✅ تم جلب المشاريع بنجاح (تنسيق قديم):', data.projects?.length || 0);
+      if (data.success && data.projects) {
+        setProjects(data.projects);
+        setTotalCount(data.total || data.projects.length);
+        console.log('✅ تم جلب المشاريع بنجاح:', data.projects.length);
       } else {
         throw new Error(data.error || 'فشل في جلب المشاريع');
       }
-
     } catch (error) {
       console.error('❌ خطأ في جلب المشاريع:', error);
-
-      // إعادة المحاولة تلقائياً (حتى 3 مرات)
-      if (retryAttempt < 3) {
-        console.log(`🔄 إعادة المحاولة ${retryAttempt + 1}/3...`);
-        setTimeout(() => {
-          fetchProjects(retryAttempt + 1);
-        }, 1000 * (retryAttempt + 1)); // تأخير متدرج
-        return;
-      }
-
-      setError(error instanceof Error ? error.message : 'حدث خطأ غير متوقع');
+      setError('حدث خطأ في تحميل المشاريع. يرجى المحاولة مرة أخرى.');
       setProjects([]);
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, currentPage, searchTerm, sortBy]);
+  }, [currentPage, itemsPerPage, sortBy, searchTerm, filters]);
 
+  // فلترة المشاريع محلياً
+  const filteredAndSortedProjects = useMemo(() => {
+    let filtered = [...projects];
+
+    // الفلترة حسب النص
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(project =>
+        project.title.toLowerCase().includes(term) ||
+        project.description.toLowerCase().includes(term) ||
+        project.location.toLowerCase().includes(term) ||
+        project.category.toLowerCase().includes(term) ||
+        project.tags?.some(tag => tag.name.toLowerCase().includes(term)) ||
+        project.materials?.some(material => material.name.toLowerCase().includes(term))
+      );
+    }
+
+    // الترتيب
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'oldest':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'most-viewed':
+          return (b.views || 0) - (a.views || 0);
+        case 'most-liked':
+          return (b.likes || 0) - (a.likes || 0);
+        case 'highest-rated':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'featured':
+          return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+        case 'alphabetical':
+          return a.title.localeCompare(b.title, 'ar');
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [projects, searchTerm, sortBy]);
+
+  // التحديث عند تغيير المعايير
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
-  const handleRetry = () => {
-    setRetryCount(prev => prev + 1);
-    fetchProjects();
+  // تحديث URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (sortBy !== 'newest') params.set('sort', sortBy);
+    if (currentPage !== 1) params.set('page', currentPage.toString());
+    if (filters.category) params.set('category', filters.category);
+    if (filters.location) params.set('location', filters.location);
+    if (filters.featured !== null) params.set('featured', filters.featured.toString());
+    if (filters.minRating > 0) params.set('minRating', filters.minRating.toString());
+    if (filters.dateRange) params.set('dateRange', filters.dateRange);
+    if (filters.hasVideo !== null) params.set('hasVideo', filters.hasVideo.toString());
+    if (filters.priceRange) params.set('priceRange', filters.priceRange);
+
+    const newUrl = params.toString() ? `/portfolio?${params.toString()}` : '/portfolio';
+    window.history.replaceState({}, '', newUrl);
+  }, [searchTerm, sortBy, currentPage, filters]);
+
+  // تحميل العلامات المرجعية من localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('bookmarkedProjects');
+    if (saved) {
+      setBookmarkedProjects(JSON.parse(saved));
+    }
+  }, []);
+
+  // دوال المساعدة
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
   };
 
-  const filteredAndSortedProjects = useMemo(() => {
-    if (!projects.length) return [];
+  const handleFilterChange = (newFilters: Partial<FiltersState>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+    setCurrentPage(1);
+  };
 
-    let filtered = [...projects];
+  const handleSort = (value: string) => {
+    setSortBy(value);
+    setCurrentPage(1);
+  };
 
-    // تطبيق الترتيب
-    switch (sortBy) {
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        break;
-      case 'oldest':
-        filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        break;
-      case 'mostViewed':
-        filtered.sort((a, b) => b.views - a.views);
-        break;
-      case 'featured':
-        filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-        break;
-      case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
-        break;
-    }
+  const toggleBookmark = (projectId: string) => {
+    const newBookmarks = bookmarkedProjects.includes(projectId)
+      ? bookmarkedProjects.filter(id => id !== projectId)
+      : [...bookmarkedProjects, projectId];
+    
+    setBookmarkedProjects(newBookmarks);
+    localStorage.setItem('bookmarkedProjects', JSON.stringify(newBookmarks));
+  };
 
-    return filtered;
-  }, [projects, sortBy]);
+  const clearAllFilters = () => {
+    setSearchTerm('');
+    setFilters({
+      category: '',
+      location: '',
+      featured: null,
+      minRating: 0,
+      dateRange: '',
+      hasVideo: null,
+      priceRange: ''
+    });
+    setSortBy('newest');
+    setCurrentPage(1);
+  };
 
-  const totalPages = Math.ceil(totalProjects / projectsPerPage);
+  // حساب النتائج للصفحة الحالية
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProjects = filteredAndSortedProjects.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredAndSortedProjects.length / itemsPerPage);
 
-  // عرض حالة التحميل
-  if (loading && !projects.length) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">جاري تحميل المشاريع...</h3>
-          <p className="text-gray-600">يرجى الانتظار قليلاً</p>
-        </div>
-      </div>
-    );
-  }
+  // إحصائيات المشاريع
+  const stats = useMemo(() => {
+    const total = projects.length;
+    const featured = projects.filter(p => p.featured).length;
+    const totalViews = projects.reduce((sum, p) => sum + (p.views || 0), 0);
+    const avgRating = projects.length > 0 
+      ? projects.reduce((sum, p) => sum + (p.rating || 0), 0) / projects.length 
+      : 0;
 
-  // عرض حالة الخطأ
-  if (error && !projects.length) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">حدث خطأ في تحميل المشاريع</h3>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <div className="space-y-3">
-            <Button onClick={handleRetry} className="w-full">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              إعادة المحاولة
+    return { total, featured, totalViews, avgRating };
+  }, [projects]);
+
+  // مكون بطاقة المشروع
+  const ProjectCard = ({ project }: { project: Project }) => {
+    const mainImage = project.mediaItems?.find(item => item.type === 'IMAGE');
+    const mainVideo = project.mediaItems?.find(item => item.type === 'VIDEO');
+    const mainMedia = mainImage || mainVideo;
+    const hasVideo = project.mediaItems?.some(item => item.type === 'VIDEO');
+    const imageCount = project.mediaItems?.filter(item => item.type === 'IMAGE').length || 0;
+    const videoCount = project.mediaItems?.filter(item => item.type === 'VIDEO').length || 0;
+    const isBookmarked = bookmarkedProjects.includes(project.id);
+
+    const cardContent = (
+      <Card className="group relative overflow-hidden bg-white hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 rounded-2xl">
+        {/* الصورة الرئيسية */}
+        <div className="relative h-64 overflow-hidden">
+          {mainMedia ? (
+            <>
+              {mainMedia.type === 'IMAGE' ? (
+                <Image
+                  src={mainMedia.src}
+                  alt={`${project.title} - محترفين الديار العالمية`}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/uploads/mazallat-1.webp';
+                  }}
+                />
+              ) : (
+                <div className="relative w-full h-full bg-gray-900">
+                  <video
+                    src={mainMedia.src}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    muted
+                    loop
+                    playsInline
+                    poster={mainMedia.thumbnail}
+                  />
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 group-hover:scale-110 transition-transform duration-300">
+                      <Play className="w-8 h-8 text-gray-800" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <Building className="w-16 h-16 text-gray-400" />
+            </div>
+          )}
+
+          {/* التراكبات */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          
+          {/* شارات علوية */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+            <Badge className="bg-primary text-primary-foreground font-bold shadow-lg">
+              {project.category}
+            </Badge>
+            {project.featured && (
+              <Badge className="bg-yellow-500 text-white font-bold shadow-lg">
+                <Star className="w-3 h-3 mr-1" />
+                مميز
+              </Badge>
+            )}
+            {hasVideo && (
+              <Badge className="bg-red-500 text-white font-bold shadow-lg">
+                <Video className="w-3 h-3 mr-1" />
+                فيديو
+              </Badge>
+            )}
+          </div>
+
+          {/* أزرار الإجراءات */}
+          <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+            <Button
+              size="sm"
+              variant="secondary"
+              className="w-8 h-8 p-0 rounded-full bg-white/90 hover:bg-white shadow-lg"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleBookmark(project.id);
+              }}
+            >
+              <Bookmark 
+                className={`w-4 h-4 ${isBookmarked ? 'fill-current text-yellow-500' : 'text-gray-600'}`} 
+              />
             </Button>
-            <Button variant="outline" onClick={() => window.location.reload()} className="w-full">
-              تحديث الصفحة
+            <Button
+              size="sm"
+              variant="secondary"
+              className="w-8 h-8 p-0 rounded-full bg-white/90 hover:bg-white shadow-lg"
+              onClick={(e) => {
+                e.preventDefault();
+                // مشاركة المشروع
+                if (navigator.share) {
+                  navigator.share({
+                    title: project.title,
+                    text: project.description,
+                    url: `/portfolio/${project.id}`
+                  });
+                }
+              }}
+            >
+              <Share2 className="w-4 h-4 text-gray-600" />
+            </Button>
+          </div>
+
+          {/* شارة الوسائط */}
+          <div className="absolute bottom-4 left-4 z-10">
+            <div className="flex items-center gap-2">
+              {imageCount > 0 && (
+                <Badge variant="secondary" className="bg-black/50 text-white border-0 backdrop-blur-sm">
+                  <ImageIcon className="w-3 h-3 mr-1" />
+                  {imageCount}
+                </Badge>
+              )}
+              {videoCount > 0 && (
+                <Badge variant="secondary" className="bg-black/50 text-white border-0 backdrop-blur-sm">
+                  <Video className="w-3 h-3 mr-1" />
+                  {videoCount}
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          {/* تراكب المعاينة */}
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+            <Button size="lg" className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-xl">
+              <Eye className="w-5 h-5 mr-2" />
+              عرض التفاصيل
+              <ArrowUpRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         </div>
-      </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* Header */}
-      <section className="bg-gradient-to-br from-primary via-primary/90 to-accent py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            معرض أعمالنا المتميزة
-          </h1>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            استكشف مجموعة من أروع المشاريع التي نفذناها بأعلى معايير الجودة والإتقان
+        {/* محتوى البطاقة */}
+        <CardContent className="p-6">
+          {/* عنوان المشروع */}
+          <h3 className="font-bold text-lg text-primary mb-3 line-clamp-2 group-hover:text-accent transition-colors">
+            {project.title}
+          </h3>
+
+          {/* معلومات المشروع */}
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4 text-accent" />
+              <span>{project.location}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Calendar className="w-4 h-4 text-accent" />
+              <span>{new Date(project.completionDate).getFullYear()}</span>
+            </div>
+          </div>
+
+          {/* وصف المشروع */}
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-2 leading-relaxed">
+            {project.description}
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto relative">
-            <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="ابحث في المشاريع..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pr-12 py-4 text-lg bg-white/95 backdrop-blur border-0 shadow-lg"
-            />
+          {/* العلامات */}
+          {project.tags && project.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {project.tags.slice(0, 3).map((tag) => (
+                <Badge key={tag.id} variant="outline" className="text-xs">
+                  {tag.name}
+                </Badge>
+              ))}
+              {project.tags.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{project.tags.length - 3}
+                </Badge>
+              )}
+            </div>
+          )}
+
+          {/* الإحصائيات */}
+          <div className="flex items-center justify-between text-sm border-t pt-4">
+            <div className="flex items-center gap-4 text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                {project.views || 0}
+              </span>
+              <span className="flex items-center gap-1">
+                <Heart className="w-4 h-4" />
+                {project.likes || 0}
+              </span>
+              {project.rating > 0 && (
+                <span className="flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-current text-yellow-500" />
+                  {project.rating.toFixed(1)}
+                </span>
+              )}
+            </div>
+            
+            {project.projectCost && (
+              <Badge variant="outline" className="font-semibold">
+                {project.projectCost}
+              </Badge>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+
+    return (
+      <Link href={`/portfolio/${project.id}`} className="block">
+        {cardContent}
+      </Link>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30" dir="rtl">
+      {/* العنوان الرئيسي */}
+      <section className="bg-gradient-to-r from-primary to-accent text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              معرض أعمال 
+              <span className="block text-yellow-300">محترفين الديار العالمية</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-100 mb-8 max-w-4xl mx-auto">
+              اكتشف مشاريعنا المتميزة في جدة والمناطق المحيطة
+            </p>
+            
+            {/* الإحصائيات */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-yellow-300 mb-2">
+                  {stats.total}
+                </div>
+                <div className="text-sm text-gray-100">مشروع منجز</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-yellow-300 mb-2">
+                  {stats.featured}
+                </div>
+                <div className="text-sm text-gray-100">مشروع مميز</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-yellow-300 mb-2">
+                  {(stats.totalViews / 1000).toFixed(1)}K
+                </div>
+                <div className="text-sm text-gray-100">مشاهدة</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-yellow-300 mb-2">
+                  {stats.avgRating.toFixed(1)}
+                </div>
+                <div className="text-sm text-gray-100">متوسط التقييم</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Controls */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
-          {/* Categories */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => {
-                  setSelectedCategory(category);
-                  setCurrentPage(1);
-                }}
-                className="transition-all duration-200"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-
-          {/* View Options */}
-          <div className="flex items-center gap-4">
-            {/* Sort */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-            >
-              {sortOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-
-            {/* View Mode */}
-            <div className="flex border border-gray-300 rounded-md overflow-hidden">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="rounded-none"
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="rounded-none"
-              >
-                <List className="h-4 w-4" />
-              </Button>
+      {/* شريط البحث والفلاتر */}
+      <section className="bg-white border-b sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* البحث */}
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  placeholder="ابحث في المشاريع..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pr-10 py-3 text-lg border-2 focus:border-primary rounded-xl"
+                />
+                {searchTerm && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                    onClick={() => handleSearch('')}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
             </div>
 
-            {/* Filters */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              الفلاتر
-            </Button>
-          </div>
-        </div>
+            {/* أزرار التحكم */}
+            <div className="flex gap-3">
+              {/* فلاتر سريعة */}
+              <div className="flex gap-2">
+                {categories.slice(0, 4).map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={filters.category === category.id ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => handleFilterChange({ category: category.id })}
+                    className="whitespace-nowrap"
+                  >
+                    {category.name}
+                  </Button>
+                ))}
+              </div>
 
-        {/* Results Info */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="text-sm text-gray-600">
-            عرض {projects.length} من أصل {totalProjects} مشروع
-            {searchTerm && (
-              <span className="font-medium"> • البحث عن: "{searchTerm}"</span>
-            )}
+              {/* الفلاتر المتقدمة */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 ${showFilters ? 'bg-primary text-white' : ''}`}
+              >
+                <Filter className="w-4 h-4" />
+                فلاتر
+                <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+              </Button>
+
+              {/* الترتيب */}
+              <select
+                value={sortBy}
+                onChange={(e) => handleSort(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+
+              {/* وضع العرض */}
+              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+                {viewModes.map((mode) => (
+                  <Button
+                    key={mode.value}
+                    variant={viewMode === mode.value ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode(mode.value)}
+                    className="rounded-none border-0"
+                  >
+                    <mode.icon className="w-4 h-4" />
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {loading && (
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-              جاري التحديث...
+          {/* الفلاتر المتقدمة */}
+          {showFilters && (
+            <div className="mt-6 p-6 bg-gray-50 rounded-xl border">
+              <AdvancedFilters
+                filters={filters}
+                onFiltersChange={handleFilterChange}
+                categories={categories}
+              />
+              <div className="flex justify-between items-center mt-4 pt-4 border-t">
+                <Button variant="outline" onClick={clearAllFilters}>
+                  مسح جميع الفلاتر
+                </Button>
+                <Button onClick={() => setShowFilters(false)}>
+                  تطبيق الفلاتر
+                </Button>
+              </div>
             </div>
           )}
-        </div>
 
-        {/* Advanced Filters */}
-        {showFilters && (
-          <div className="mb-8">
-            <AdvancedFilters onFiltersChange={() => {}} />
-          </div>
-        )}
-
-        {/* Projects Grid/List */}
-        {projects.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-gray-400 mb-4">
-              <Search className="h-16 w-16 mx-auto" />
+          {/* معلومات النتائج */}
+          <div className="flex justify-between items-center mt-6 text-sm text-gray-600">
+            <div>
+              عرض {startIndex + 1}-{Math.min(endIndex, filteredAndSortedProjects.length)} من {filteredAndSortedProjects.length} نتيجة
+              {searchTerm && (
+                <span className="mr-2">
+                  للبحث عن: <strong>"{searchTerm}"</strong>
+                </span>
+              )}
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">لا توجد مشاريع</h3>
-            <p className="text-gray-600 mb-6">
-              {searchTerm
-                ? `لم نجد أي مشاريع تطابق البحث "${searchTerm}"`
-                : 'لا توجد مشاريع في هذه الفئة حالياً'
-              }
-            </p>
-            {searchTerm && (
-              <Button onClick={() => setSearchTerm('')} variant="outline">
-                مسح البحث
+            <SavedSearches />
+          </div>
+        </div>
+      </section>
+
+      {/* المحتوى الرئيسي */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[500px]">
+            <div className="text-center">
+              <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-lg text-muted-foreground">جاري تحميل المشاريع...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center min-h-[500px]">
+            <Card className="p-8 text-center max-w-md">
+              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">حدث خطأ</h3>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={fetchProjects}>
+                إعادة المحاولة
               </Button>
-            )}
+            </Card>
+          </div>
+        ) : filteredAndSortedProjects.length === 0 ? (
+          <div className="flex items-center justify-center min-h-[500px]">
+            <Card className="p-8 text-center max-w-md">
+              <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">لا توجد نتائج</h3>
+              <p className="text-muted-foreground mb-4">
+                لم نجد أي مشاريع تطابق معايير البحث الخاصة بك
+              </p>
+              <Button onClick={clearAllFilters}>
+                مسح جميع الفلاتر
+              </Button>
+            </Card>
           </div>
         ) : (
           <>
-            {viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredAndSortedProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {filteredAndSortedProjects.map((project) => (
-                  <ProjectListItem key={project.id} project={project} />
-                ))}
-              </div>
-            )}
+            {/* شبكة المشاريع */}
+            <div className={`
+              ${viewMode === 'grid' 
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8' 
+                : 'space-y-6'
+              }
+            `}>
+              {currentProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
 
-            {/* Pagination */}
+            {/* التنقل بين الصفحات */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-4 mt-12">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                >
-                  السابق
-                </Button>
-
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                      className="min-w-[40px]"
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </div>
-
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                >
-                  التالي
-                </Button>
+              <div className="mt-16 flex justify-center">
+                <AdvancedPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  showPageInfo={true}
+                  totalItems={filteredAndSortedProjects.length}
+                  itemsPerPage={itemsPerPage}
+                />
               </div>
             )}
           </>
         )}
-      </div>
-    </div>
-  );
-}
+      </main>
 
-// Project Card Component
-function ProjectCard({ project }: { project: Project }) {
-  const mainImage = project.mediaItems.find(item => item.type === 'IMAGE');
-  const mainVideo = project.mediaItems.find(item => item.type === 'VIDEO');
-  const mainMedia = mainImage || mainVideo;
-
-  return (
-    <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-      {/* Project Media */}
-      <div className="relative h-64 overflow-hidden bg-gray-100">
-        {mainImage ? (
-          <Image
-            src={mainImage.src}
-            alt={project.title}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
-            onError={(e) => {
-              console.error('خطأ في تحميل الصورة:', mainImage.src);
-            }}
-          />
-        ) : mainVideo ? (
-          <div className="relative w-full h-full bg-gray-900">
-            {/* صورة مصغرة كخلفية */}
-            {mainVideo.thumbnail && (
-              <Image
-                src={mainVideo.thumbnail}
-                alt={`معاينة ${project.title}`}
-                fill
-                className="object-cover"
-                priority={false}
-              />
-            )}
-
-            {/* الفيديو */}
-            <video
-              key={`video-${project.id}`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              muted
-              loop
-              playsInline
-              autoPlay
-              preload="metadata"
-              poster={mainVideo.thumbnail || undefined}
-              onError={(e) => {
-                console.error('خطأ في تحميل الفيديو:', mainVideo.src);
-                // إخفاء الفيديو عند حدوث خطأ
-                const videoElement = e.target as HTMLVideoElement;
-                videoElement.style.display = 'none';
-              }}
-              onLoadedData={(e) => {
-                console.log('تم تحميل الفيديو بنجاح:', project.title);
-                const video = e.target as HTMLVideoElement;
-                video.play().catch((error) => {
-                  console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
-                });
-              }}
-            >
-              <source src={mainVideo.src} type="video/mp4" />
-              <source src={mainVideo.src} type="video/webm" />
-              متصفحك لا يدعم عرض الفيديو
-            </video>
-
-            {/* شارة الفيديو */}
-            <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-              </svg>
-              فيديو
-            </div>
-
-            {/* أيقونة تشغيل مع تأثير hover */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-              <div className="bg-black/40 backdrop-blur-sm rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
+      {/* قسم الدعوة للعمل */}
+      <section className="bg-gradient-to-r from-primary to-accent text-white py-20 mt-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-8">
+            <TrendingUp className="w-10 h-10" />
           </div>
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <div className="text-center text-gray-400">
-              <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="text-sm">لا توجد وسائط</span>
-            </div>
-          </div>
-        )}
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-        {/* Media Type Badge */}
-        <div className="absolute top-4 right-4 flex gap-2">
-          {project.featured && (
-            <Badge className="bg-yellow-500 hover:bg-yellow-600">
-              <Star className="h-3 w-3 mr-1" />
-              مميز
-            </Badge>
-          )}
-          {mainVideo && (
-            <Badge className="bg-blue-500 hover:bg-blue-600">
-              <svg className="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-              </svg>
-              فيديو
-            </Badge>
-          )}
-        </div>
-
-        {/* Stats */}
-        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="flex items-center gap-4 text-sm">
-            <span className="flex items-center gap-1">
-              <Eye className="h-4 w-4" />
-              {project.views}
-            </span>
-            <span className="flex items-center gap-1">
-              <Heart className="h-4 w-4" />
-              {project.likes}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Project Info */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-2">
-          <Badge variant="secondary" className="text-xs">
-            {project.category}
-          </Badge>
-          <div className="flex items-center gap-1 text-sm text-yellow-500">
-            <Star className="h-4 w-4 fill-current" />
-            <span>{project.rating}</span>
-          </div>
-        </div>
-
-        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
-          {project.title}
-        </h3>
-
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {project.description}
-        </p>
-
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-          <span className="flex items-center gap-1">
-            <MapPin className="h-4 w-4" />
-            {project.location}
-          </span>
-          <span className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            {new Date(project.completionDate).toLocaleDateString('ar-SA')}
-          </span>
-        </div>
-
-        {/* Tags */}
-        {project.tags && project.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
-            {project.tags.slice(0, 3).map((tag) => (
-              <span key={tag.name} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                {tag.name}
-              </span>
-            ))}
-            {project.tags.length > 3 && (
-              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                +{project.tags.length - 3}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Action Button */}
-        <Link href={`/portfolio/${project.id}`}>
-          <Button className="w-full group-hover:bg-primary/90">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            مشاهدة التفاصيل
-          </Button>
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-// Project List Item Component
-function ProjectListItem({ project }: { project: Project }) {
-  const mainImage = project.mediaItems.find(item => item.type === 'IMAGE');
-  const mainVideo = project.mediaItems.find(item => item.type === 'VIDEO');
-
-  return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-      <div className="flex flex-col md:flex-row">
-        {/* Media */}
-        <div className="relative w-full md:w-80 h-48 md:h-auto flex-shrink-0 bg-gray-100">
-          {mainImage ? (
-            <Image
-              src={mainImage.src}
-              alt={project.title}
-              fill
-              className="object-cover"
-              onError={(e) => {
-                console.error('خطأ في تحميل الصورة:', mainImage.src);
-              }}
-            />
-          ) : mainVideo ? (
-            <div className="relative w-full h-full bg-gray-900">
-              {/* صورة مصغرة كخلفية */}
-              {mainVideo.thumbnail && (
-                <Image
-                  src={mainVideo.thumbnail}
-                  alt={`معاينة ${project.title}`}
-                  fill
-                  className="object-cover"
-                  priority={false}
-                />
-              )}
-
-              {/* الفيديو */}
-              <video
-                key={`list-video-${project.id}`}
-                className="w-full h-full object-cover"
-                muted
-                loop
-                playsInline
-                autoPlay
-                preload="metadata"
-                poster={mainVideo.thumbnail || undefined}
-                onError={(e) => {
-                  console.error('خطأ في تحميل الفيديو:', mainVideo.src);
-                  const videoElement = e.target as HTMLVideoElement;
-                  videoElement.style.display = 'none';
-                }}
-                onLoadedData={(e) => {
-                  console.log('تم تحميل الفيديو في القائمة بنجاح:', project.title);
-                  const video = e.target as HTMLVideoElement;
-                  video.play().catch((error) => {
-                    console.warn('لا يمكن تشغيل الفيديو تلقائياً:', error);
-                  });
-                }}
-              >
-                <source src={mainVideo.src} type="video/mp4" />
-                <source src={mainVideo.src} type="video/webm" />
-                متصفحك لا يدعم عرض الفيديو
-              </video>
-
-              {/* شارة الفيديو */}
-              <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                </svg>
-                فيديو
-              </div>
-
-              {/* أيقونة تشغيل */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="bg-black/40 backdrop-blur-sm rounded-full p-3">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <div className="text-center text-gray-400">
-                <svg className="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="text-xs">لا توجد وسائط</span>
-              </div>
-            </div>
-          )}
-
-          <div className="absolute top-4 right-4 flex gap-2">
-            {project.featured && (
-              <Badge className="bg-yellow-500 hover:bg-yellow-600">
-                <Star className="h-3 w-3 mr-1" />
-                مميز
-              </Badge>
-            )}
-            {mainVideo && (
-              <Badge className="bg-blue-500 hover:bg-blue-600">
-                <svg className="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                </svg>
-                فيديو
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 p-6">
-          <div className="flex items-start justify-between mb-3">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Badge variant="secondary">{project.category}</Badge>
-                <div className="flex items-center gap-1 text-sm text-yellow-500">
-                  <Star className="h-4 w-4 fill-current" />
-                  <span>{project.rating}</span>
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                {project.title}
-              </h3>
-            </div>
-          </div>
-
-          <p className="text-gray-600 mb-4 line-clamp-2">
-            {project.description}
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            هل أعجبك عملنا؟
+          </h2>
+          <p className="text-xl text-gray-100 mb-8 max-w-2xl mx-auto">
+            نحن جاهزون لتحويل أفكارك إلى واقع مذهل. احصل على استشارة مجانية وعرض سعر مخصص لمشروعك.
           </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm text-gray-600">
-            <div>
-              <span className="font-medium">الموقع:</span> {project.location}
-            </div>
-            <div>
-              <span className="font-medium">التاريخ:</span> {new Date(project.completionDate).toLocaleDateString('ar-SA')}
-            </div>
-            <div>
-              <span className="font-medium">المدة:</span> {project.projectDuration || 'غير محدد'}
-            </div>
-            <div>
-              <span className="font-medium">الوسائط:</span>
-              {project.mediaItems.filter(m => m.type === 'IMAGE').length} صور
-              {project.mediaItems.filter(m => m.type === 'VIDEO').length > 0 &&
-                `, ${project.mediaItems.filter(m => m.type === 'VIDEO').length} فيديو`
-              }
-            </div>
-          </div>
-
-          {/* Tags */}
-          {project.tags && project.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {project.tags.slice(0, 5).map((tag) => (
-                <span key={tag.name} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
-                  {tag.name}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6 text-sm text-gray-500">
-              <span className="flex items-center">
-                <Eye className="h-4 w-4" />
-                {project.views} مشاهدة
-              </span>
-              <span className="flex items-center">
-                <Heart className="h-4 w-4" />
-                {project.likes} إعجاب
-              </span>
-            </div>
-
-            <Link href={`/portfolio/${project.id}`}>
-              <Button>
-                <ExternalLink className="h-4 w-4 mr-2" />
-                مشاهدة التفاصيل
-              </Button>
-            </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-4">
+              <Link href="/quote">
+                احصل على عرض سعر
+                <ArrowUpRight className="w-5 h-5 mr-2" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-primary">
+              <Link href="/contact">
+                تواصل معنا
+              </Link>
+            </Button>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
