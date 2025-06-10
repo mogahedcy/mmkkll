@@ -1,43 +1,6 @@
 
 'use client';
 
-import { useEffect } from 'react';
-
-export default function PerformanceOptimizer() {
-  useEffect(() => {
-    // تحسين التمرير
-    const handleScroll = () => {
-      requestAnimationFrame(() => {
-        // أي منطق تمرير إضافي
-      });
-    };
-
-    // تحسين تحميل الصور
-    if ('loading' in HTMLImageElement.prototype) {
-      const images = document.querySelectorAll('img[loading="lazy"]');
-      images.forEach((img) => {
-        if (img instanceof HTMLImageElement) {
-          img.loading = 'lazy';
-        }
-      });
-    }
-
-    // تحسين الخطوط
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        document.body.classList.add('fonts-loaded');
-      });
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  return null;
-}
-
-'use client';
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -271,6 +234,30 @@ export default function PerformanceOptimizer({ children }: PerformanceOptimizerP
   const router = useRouter();
 
   useEffect(() => {
+    // تحسين التمرير
+    const handleScroll = () => {
+      requestAnimationFrame(() => {
+        // أي منطق تمرير إضافي
+      });
+    };
+
+    // تحسين تحميل الصور
+    if ('loading' in HTMLImageElement.prototype) {
+      const images = document.querySelectorAll('img[loading="lazy"]');
+      images.forEach((img) => {
+        if (img instanceof HTMLImageElement) {
+          img.loading = 'lazy';
+        }
+      });
+    }
+
+    // تحسين الخطوط
+    if ('fonts' in document) {
+      document.fonts.ready.then(() => {
+        document.body.classList.add('fonts-loaded');
+      });
+    }
+
     // Preload critical resources
     const criticalImages = [
       '/images/hero-bg.jpg',
@@ -290,8 +277,11 @@ export default function PerformanceOptimizer({ children }: PerformanceOptimizerP
       performanceMonitor.logMetrics();
     }, 3000);
 
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     // Cleanup on unmount
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       clearInterval(interval);
       clearTimeout(timeout);
       memoryManager.performCleanup();
