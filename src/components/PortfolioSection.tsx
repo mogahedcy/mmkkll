@@ -209,6 +209,7 @@ export default function PortfolioSection() {
                             alt={`${project.title} - محترفين الديار العالمية جدة`}
                             title={`${project.title} - ${project.category} في ${project.location}`}
                             fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover group-hover:scale-110 transition-transform duration-700"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=600&h=400&fit=crop';
@@ -219,8 +220,7 @@ export default function PortfolioSection() {
                             {/* صورة مصغرة كخلفية */}
                             {mainMedia.thumbnail && (
                               <Image
-                                src={mainMedia.thumbnail}
-                                alt={`معاينة ${project.title}`}
+                                src={mainMedia.thumbnail}                                alt={`معاينة ${project.title}`}
                                 fill
                                 className="object-cover"
                                 priority={false}

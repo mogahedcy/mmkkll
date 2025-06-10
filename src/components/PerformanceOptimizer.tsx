@@ -277,14 +277,20 @@ export default function PerformanceOptimizer({ children }: PerformanceOptimizerP
       performanceMonitor.logMetrics();
       
       // إضافة تتبع Core Web Vitals
-      if ('web-vital' in window) {
+      try {
         import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-          getCLS(console.log);
-          getFID(console.log);
-          getFCP(console.log);
-          getLCP(console.log);
-          getTTFB(console.log);
+          if (process.env.NODE_ENV === 'development') {
+            getCLS((metric) => console.log('CLS:', metric));
+            getFID((metric) => console.log('FID:', metric));
+            getFCP((metric) => console.log('FCP:', metric));
+            getLCP((metric) => console.log('LCP:', metric));
+            getTTFB((metric) => console.log('TTFB:', metric));
+          }
+        }).catch((error) => {
+          console.warn('Web Vitals library not available:', error);
         });
+      } catch (error) {
+        console.warn('Failed to load web-vitals:', error);
       }
     }, 3000);
 
