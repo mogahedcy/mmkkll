@@ -1,0 +1,175 @@
+[02:43:00.335] Running build in Washington, D.C., USA (East) – iad1
+[02:43:00.335] Build machine configuration: 2 cores, 8 GB
+[02:43:00.382] Cloning github.com/mogahedcy/mmkkll (Branch: main, Commit: 77601a3)
+[02:43:00.545] Previous build caches not available
+[02:43:00.781] Cloning completed: 399.000ms
+[02:43:01.258] Running "vercel build"
+[02:43:01.774] Vercel CLI 42.2.0
+[02:43:01.922] WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+[02:43:02.068] Installing dependencies...
+[02:43:05.297] npm warn deprecated q@1.5.1: You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+[02:43:05.297] npm warn deprecated
+[02:43:05.298] npm warn deprecated (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+[02:43:06.968] npm warn deprecated @types/dompurify@3.2.0: This is a stub types definition. dompurify provides its own type definitions, so you do not need this installed.
+[02:43:07.047] npm warn deprecated @types/bcryptjs@3.0.0: This is a stub types definition. bcryptjs provides its own type definitions, so you do not need this installed.
+[02:43:22.808] 
+[02:43:22.810] added 513 packages in 21s
+[02:43:22.814] 
+[02:43:22.815] 166 packages are looking for funding
+[02:43:22.816]   run `npm fund` for details
+[02:43:22.871] Detected Next.js version: 15.3.3
+[02:43:22.877] Running "npm run vercel-build"
+[02:43:23.001] 
+[02:43:23.001] > aldeyar-global-jeddah@0.1.0 vercel-build
+[02:43:23.002] > next build
+[02:43:23.002] 
+[02:43:23.620] Attention: Next.js now collects completely anonymous telemetry regarding usage.
+[02:43:23.620] This information is used to shape Next.js' roadmap and prioritize features.
+[02:43:23.620] You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+[02:43:23.620] https://nextjs.org/telemetry
+[02:43:23.620] 
+[02:43:23.682]    ▲ Next.js 15.3.3
+[02:43:23.683]    - Environments: .env.local
+[02:43:23.683] 
+[02:43:23.751]    Creating an optimized production build ...
+[02:43:49.121]  ✓ Compiled successfully in 21.0s
+[02:43:49.126]    Linting and checking validity of types ...
+[02:43:59.932] 
+[02:43:59.938] Failed to compile.
+[02:43:59.939] 
+[02:43:59.939] ./src/app/api/auth/change-password/route.ts
+[02:43:59.939] 35:87  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.940] 
+[02:43:59.940] ./src/app/api/auth/verify/route.ts
+[02:43:59.940] 19:87  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.940] 
+[02:43:59.940] ./src/app/api/projects/[id]/comments/route.ts
+[02:43:59.941] 13:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.941] 
+[02:43:59.941] ./src/app/api/projects/[id]/route.ts
+[02:43:59.941] 140:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.942] 151:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.943] 156:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.943] 
+[02:43:59.943] ./src/app/api/projects/route.ts
+[02:43:59.943] 17:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.944] 28:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.944] 151:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.944] 171:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.944] 176:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.945] 
+[02:43:59.945] ./src/app/api/reviews/route.ts
+[02:43:59.945] 15:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.945] 
+[02:43:59.945] ./src/app/dashboard/page.tsx
+[02:43:59.945] 68:6  Warning: React Hook useEffect has a missing dependency: 'checkAuthentication'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.945] 97:61  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.946] 98:61  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.946] 99:64  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.946] 100:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.946] 101:61  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.946] 102:61  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.947] 103:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.947] 104:61  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.947] 105:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.947] 151:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.947] 
+[02:43:59.947] ./src/app/dashboard/projects/[id]/edit/page.tsx
+[02:43:59.950] 106:6  Warning: React Hook useEffect has a missing dependency: 'checkAuthentication'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.950] 
+[02:43:59.950] ./src/app/dashboard/projects/[id]/page.tsx
+[02:43:59.952] 86:6  Warning: React Hook useEffect has a missing dependency: 'checkAuthentication'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.953] 
+[02:43:59.959] ./src/app/dashboard/projects/add/page.tsx
+[02:43:59.960] 67:6  Warning: React Hook useEffect has a missing dependency: 'checkAuth'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.960] 84:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.961] 
+[02:43:59.961] ./src/app/dashboard/projects/page.tsx
+[02:43:59.971] 87:6  Warning: React Hook useEffect has a missing dependency: 'checkAuthentication'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.972] 91:6  Warning: React Hook useEffect has a missing dependency: 'filterProjects'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.972] 
+[02:43:59.973] ./src/app/dashboard/settings/page.tsx
+[02:43:59.973] 23:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.973] 39:6  Warning: React Hook useEffect has a missing dependency: 'checkAuthentication'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.976] 
+[02:43:59.977] ./src/app/portfolio/[id]/ProjectDetailsClient.tsx
+[02:43:59.977] 122:36  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.977] 
+[02:43:59.977] ./src/app/portfolio/[id]/page.tsx
+[02:43:59.977] 122:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.977] 123:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.978] 142:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.978] 148:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.978] 
+[02:43:59.978] ./src/app/portfolio/reviews/ReviewsPageClient.tsx
+[02:43:59.978] 86:9  Error: 'filtered' is never reassigned. Use 'const' instead.  prefer-const
+[02:43:59.978] 
+[02:43:59.979] ./src/app/test-cloudinary/page.tsx
+[02:43:59.979] 10:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.979] 186:19  Error: Do not use an `<a>` element to navigate to `/dashboard/projects/add/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+[02:43:59.979] 191:19  Error: Do not use an `<a>` element to navigate to `/portfolio/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+[02:43:59.979] 
+[02:43:59.979] ./src/components/AdvancedFilters.tsx
+[02:43:59.980] 35:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.981] 104:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.981] 
+[02:43:59.981] ./src/components/Footer.tsx
+[02:43:59.981] 404:19  Error: Do not use an `<a>` element to navigate to `/portfolio/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+[02:43:59.982] 
+[02:43:59.982] ./src/components/HeroSection.tsx
+[02:43:59.982] 46:6  Warning: React Hook useEffect has an unnecessary dependency: 'slides.length'. Either exclude it or remove the dependency array. Outer scope values like 'slides.length' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+[02:43:59.982] 
+[02:43:59.983] ./src/components/LoginTestPage.tsx
+[02:43:59.984] 9:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.984] 
+[02:43:59.985] ./src/components/PerformanceOptimizer.tsx
+[02:43:59.985] 107:26  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.985] 108:61  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.985] 116:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.985] 160:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.985] 208:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.986] 
+[02:43:59.986] ./src/components/ProjectCommentsSection.tsx
+[02:43:59.986] 65:6  Warning: React Hook useEffect has a missing dependency: 'fetchComments'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.986] 179:9  Error: 'sortedComments' is never reassigned. Use 'const' instead.  prefer-const
+[02:43:59.986] 
+[02:43:59.986] ./src/components/SavedSearches.tsx
+[02:43:59.987] 25:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.987] 43:57  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.987] 120:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.987] 
+[02:43:59.988] ./src/components/ui/upload-progress.tsx
+[02:43:59.988] 16:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.989] 23:6  Warning: React Hook useEffect has missing dependencies: 'isUploading' and 'startUpload'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+[02:43:59.989] 27:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.989] 
+[02:43:59.989] ./src/lib/cloudinary.ts
+[02:43:59.989] 49:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.989] 185:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.989] 
+[02:43:59.990] ./src/lib/security.ts
+[02:43:59.991] 68:40  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.991] 91:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.991] 306:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.991] 348:72  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.991] 384:1  Warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+[02:43:59.991] 
+[02:43:59.992] ./src/lib/validation.ts
+[02:43:59.992] 8:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.992] 17:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.992] 67:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.992] 119:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.993] 203:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.993] 211:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.998] 281:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.999] 284:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.999] 316:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.999] 320:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:43:59.999] 324:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:44:00.000] 328:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+[02:44:00.000] 418:1  Warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+[02:44:00.000] 
+[02:44:00.000] info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+[02:44:00.008] Error: Command "npm run vercel-build" exited with 1
+[02:44:00.263] 
+[02:44:04.680] Exiting build container
