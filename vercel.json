@@ -7,14 +7,9 @@
       "use": "@vercel/next"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/"
-    }
-  ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXTAUTH_URL": "https://your-domain.vercel.app"
   },
   "functions": {
     "src/app/api/**/*.ts": {

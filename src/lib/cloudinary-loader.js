@@ -1,19 +1,15 @@
 
-'use client';
-
 export default function cloudinaryLoader({ src, width, quality }) {
-  // التحقق من أنواع الملفات المختلفة
-  if (src.includes('.mp4') || src.includes('.webm') || src.includes('.mov')) {
-    // للفيديو، نرجع الرابط كما هو
+  // إذا كان الرابط يحتوي على cloudinary بالفعل، استخدمه كما هو
+  if (src.includes('cloudinary.com')) {
     return src;
   }
-  
-  // للصور، نستخدم التحسين
-  const params = [`w_${width}`, `q_${quality || 'auto'}`, 'f_auto'];
-  
-  if (src.startsWith('https://res.cloudinary.com')) {
-    return src.replace('/upload/', `/upload/${params.join(',')}/`);
+
+  // إذا كان رابط محلي، استخدمه كما هو
+  if (src.startsWith('/') || src.startsWith('./')) {
+    return src;
   }
-  
+
+  // للروابط الخارجية، استخدمها كما هي
   return src;
 }
