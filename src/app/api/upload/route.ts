@@ -54,16 +54,18 @@ export async function POST(request: NextRequest) {
       singleFile: !!singleFile,
       singleFileName: singleFile?.name,
       singleFileType: singleFile?.type,
+      singleFileSize: singleFile?.size,
       multipleFiles: files.length,
       cloudinaryAvailable: isCloudinaryAvailable
     });
 
     let filesToProcess: File[] = [];
 
-    if (singleFile) {
+    if (singleFile && singleFile.size > 0) {
       filesToProcess = [singleFile];
     } else if (files && files.length > 0) {
-      filesToProcess = files;
+      // تصفية الملفات الفارغة
+      filesToProcess = files.filter(file => file && file.size > 0);
     }
 
     if (filesToProcess.length === 0) {

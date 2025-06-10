@@ -16,11 +16,11 @@ if (isCloudinaryConfigured) {
   });
   console.log('✅ Cloudinary configured successfully with cloud:', process.env.CLOUDINARY_CLOUD_NAME);
 } else {
-  console.log('⚠️ Cloudinary not configured. Using fallback mode.');
-  console.log('Environment variables:', {
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY ? '***set***' : 'missing',
-    api_secret: process.env.CLOUDINARY_API_SECRET ? '***set***' : 'missing'
+  console.log('⚠️ Cloudinary not configured. Using local fallback mode.');
+  console.log('📋 Environment variables status:', {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'missing',
+    api_key: process.env.CLOUDINARY_API_KEY ? 'configured' : 'missing',
+    api_secret: process.env.CLOUDINARY_API_SECRET ? 'configured' : 'missing'
   });
 }
 
