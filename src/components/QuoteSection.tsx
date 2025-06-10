@@ -200,9 +200,25 @@ export default function QuoteSection() {
             <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-3xl p-8">
               <div className="text-center">
                 <div className="flex justify-center mb-4">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <Star key={`quote-star-${i + 1}`} className="w-6 h-6 text-yellow-400 fill-current" />
-                  ))}
+                  {[
+            { icon: '🏢', title: 'مشاريع تجارية', id: 'commercial-1' },
+            { icon: '🏢', title: 'مشاريع تجارية', id: 'commercial-2' },
+            { icon: '🏢', title: 'مشاريع تجارية', id: 'commercial-3' },
+            { icon: '🏠', title: 'مشاريع سكنية', id: 'residential-1' },
+            { icon: '🏠', title: 'مشاريع سكنية', id: 'residential-2' },
+            { icon: '🏠', title: 'مشاريع سكنية', id: 'residential-3' },
+            { icon: '🌳', title: 'تنسيق حدائق', id: 'landscaping-1' },
+            { icon: '🌳', title: 'تنسيق حدائق', id: 'landscaping-2' },
+            { icon: '🌳', title: 'تنسيق حدائق', id: 'landscaping-3' },
+            { icon: '⭐', title: 'تقييم ممتاز', id: 'rating-1' },
+            { icon: '⭐', title: 'تقييم ممتاز', id: 'rating-2' },
+            { icon: '⭐', title: 'تقييم ممتاز', id: 'rating-3' }
+          ].map((item) => (
+            <div key={item.id} className="bg-primary/5 rounded-lg p-4 text-center">
+              <div className="text-2xl mb-2">{item.icon}</div>
+              <div className="text-sm font-medium text-primary">{item.title}</div>
+            </div>
+          ))}
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
                   تقييم العملاء 5/5

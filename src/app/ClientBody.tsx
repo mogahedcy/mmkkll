@@ -1,17 +1,24 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect, useState } from 'react';
 
-export default function ClientBody({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // Remove any extension-added classes during hydration
+export default function ClientBody({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    // This runs only on the client after hydration
-    document.body.className = "antialiased";
+    setMounted(true);
   }, []);
 
-  return <div className="antialiased">{children}</div>;
+  // تجنب مشكلة hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return <div suppressHydrationWarning>{children}</div>;
 }
