@@ -12,6 +12,24 @@ const isCloudinaryAvailable = Boolean(
   process.env.CLOUDINARY_CLOUD_NAME !== 'demo'
 );
 
+// إعدادات محسنة للرفع
+const UPLOAD_CONFIG = {
+  maxFileSize: isCloudinaryAvailable ? 100 * 1024 * 1024 : 50 * 1024 * 1024, // 100MB/50MB
+  maxFiles: 20, // حد أقصى 20 ملف في المرة الواحدة
+  allowedImageTypes: [
+    'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 
+    'image/gif', 'image/bmp', 'image/tiff'
+  ],
+  allowedVideoTypes: [
+    'video/mp4', 'video/mov', 'video/avi', 'video/webm', 
+    'video/quicktime', 'video/x-msvideo', 'video/mkv'
+  ],
+  compressionQuality: {
+    image: { quality: 85, width: 1920, height: 1080 },
+    video: { quality: 'auto', width: 1280, height: 720 }
+  }
+};
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -68,21 +86,53 @@ export async function POST(request: NextRequest) {
         size: file.size
       });
 
-      // التحقق من نوع الملف
-      const allowedTypes = [
-        'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif',
-        'video/mp4', 'video/mov', 'video/avi', 'video/webm', 'video/quicktime', 'video/x-msvideo'
-      ];
-
-      if (!allowedTypes.includes(file.type)) {
+      // التحقق من نوع الملف مع دعم أفضل
+      const isImage = UPLOAD_CONFIG.allowedImageTypes.includes(file.type);
+      const isVideo = UPLOAD_CONFIG.allowedVideoTypes.includes(file.type);
+      
+      if (!isImage && !isVideo) {
         console.log('❌ نوع ملف غير مدعوم:', file.type);
+        uploadedFiles.push({
+          originalName: file.name,
+          error: `نوع الملف ${file.type} غير مدعوم`,
+          type: 'ERROR'
+        });
         continue;
       }
 
-      // التحقق من حجم الملف
-      const maxSize = isCloudinaryAvailable ? 100 * 1024 * 1024 : 50 * 1024 * 1024; // 100MB for Cloudinary, 50MB for local
-      if (file.size > maxSize) {
-        console.log('❌ ملف كبير جداً:', file.size);
+      // التحقق من حجم الملف مع رسائل مفصلة
+      if (file.size > UPLOAD_CONFIG.maxFileSize) {
+        const maxSizeMB = (UPLOAD_CONFIG.maxFileSize / 1024 / 1024).toFixed(0);
+        const fileSizeMB = (file.size / 1024 / 1024).toFixed(1);
+        console.log(`❌ ملف كبير جداً: ${fileSizeMB}MB > ${maxSizeMB}MB`);
+        uploadedFiles.push({
+          originalName: file.name,
+          error: `حجم الملف ${fileSizeMB}MB يتجاوز الحد الأقصى ${maxSizeMB}MB`,
+          type: 'ERROR'
+        });
+        continue;
+      }
+
+      // التحقق من امتداد الملف للأمان
+      const fileExtension = path.extname(file.name).toLowerCase();
+      const validImageExts = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff'];
+      const validVideoExts = ['.mp4', '.mov', '.avi', '.webm', '.mkv'];
+      
+      if (isImage && !validImageExts.includes(fileExtension)) {
+        uploadedFiles.push({
+          originalName: file.name,
+          error: `امتداد الملف ${fileExtension} لا يتطابق مع نوع الصورة`,
+          type: 'ERROR'
+        });
+        continue;
+      }
+      
+      if (isVideo && !validVideoExts.includes(fileExtension)) {
+        uploadedFiles.push({
+          originalName: file.name,
+          error: `امتداد الملف ${fileExtension} لا يتطابق مع نوع الفيديو`,
+          type: 'ERROR'
+        });
         continue;
       }
 
@@ -90,22 +140,30 @@ export async function POST(request: NextRequest) {
         let uploadedFile;
 
         if (isCloudinaryAvailable) {
-          // رفع إلى Cloudinary
+          // رفع إلى Cloudinary مع إعدادات محسنة
           console.log('☁️ رفع إلى Cloudinary...');
-          const result = await uploadToCloudinary(file, {
+          
+          const cloudinaryOptions = {
             folder: 'portfolio/projects',
-            transformation: file.type.startsWith('video/') ? {
-              quality: 'auto',
-              fetch_format: 'auto',
+            resource_type: isVideo ? 'video' : 'image',
+            transformation: isVideo ? {
+              ...UPLOAD_CONFIG.compressionQuality.video,
+              format: 'mp4', // تحويل الفيديو إلى MP4 للتوافق
+              video_codec: 'h264',
+              audio_codec: 'aac'
             } : {
-              quality: 'auto',
-              fetch_format: 'auto',
-              flags: 'progressive',
-              width: 1200,
-              height: 800,
-              crop: 'limit'
-            }
-          });
+              ...UPLOAD_CONFIG.compressionQuality.image,
+              format: 'webp', // تحويل الصور إلى WebP للحجم الأصغر
+              flags: 'progressive'
+            },
+            // إعدادات إضافية للأمان والأداء
+            invalidate: true,
+            overwrite: true,
+            unique_filename: true,
+            use_filename: false
+          };
+
+          const result = await uploadToCloudinary(file, cloudinaryOptions);
 
           console.log('✅ تم رفع الملف إلى Cloudinary:', result.secure_url);
 

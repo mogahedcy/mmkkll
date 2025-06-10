@@ -55,13 +55,31 @@ export async function uploadToCloudinary(
   }
 
   try {
-    // تحويل File إلى Buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // التحقق من صحة الملف أولاً
+    if (!file || file.size === 0) {
+      throw new Error('الملف فارغ أو غير صالح');
+    }
 
-    // تحديد نوع الملف
+    // تحويل File إلى Buffer مع معالجة الأخطاء
+    let buffer: Buffer;
+    try {
+      const bytes = await file.arrayBuffer();
+      buffer = Buffer.from(bytes);
+      
+      if (buffer.length === 0) {
+        throw new Error('فشل في قراءة محتوى الملف');
+      }
+    } catch (error) {
+      throw new Error(`فشل في معالجة الملف: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`);
+    }
+
+    // تحديد نوع الملف مع فحص أعمق
     const isVideo = file.type.startsWith('video/');
     const isImage = file.type.startsWith('image/');
+    
+    if (!isVideo && !isImage) {
+      throw new Error(`نوع الملف غير مدعوم: ${file.type}`);
+    }
 
     const defaultOptions = {
       folder: options.folder || 'portfolio',
@@ -248,6 +266,65 @@ export function getVideoThumbnail(
     start_offset: options.start_offset || '0',
     ...options
   });
+}
+
+/**
+ * تحسين الصورة تلقائياً حسب الاستخدام
+ */
+export function getResponsiveImageUrl(
+  publicId: string,
+  usage: 'thumbnail' | 'card' | 'hero' | 'gallery' = 'card'
+): string {
+  const configs = {
+    thumbnail: { width: 150, height: 150, crop: 'thumb', gravity: 'face' },
+    card: { width: 400, height: 300, crop: 'fill' },
+    hero: { width: 1200, height: 600, crop: 'fill' },
+    gallery: { width: 800, height: 600, crop: 'fill' }
+  };
+
+  const config = configs[usage];
+  
+  return cloudinary.url(publicId, {
+    ...config,
+    quality: 'auto',
+    fetch_format: 'auto',
+    flags: 'progressive',
+    dpr: 'auto'
+  });
+}
+
+/**
+ * إنشاء مجموعة من الصور بأحجام مختلفة (responsive images)
+ */
+export function getImageSrcSet(publicId: string): string {
+  const sizes = [320, 640, 768, 1024, 1280, 1920];
+  
+  return sizes.map(size => {
+    const url = cloudinary.url(publicId, {
+      width: size,
+      quality: 'auto',
+      fetch_format: 'auto',
+      flags: 'progressive'
+    });
+    return `${url} ${size}w`;
+  }).join(', ');
+}
+
+/**
+ * تحقق من صحة رابط Cloudinary
+ */
+export function isCloudinaryUrl(url: string): boolean {
+  return url.includes('cloudinary.com') || url.includes('res.cloudinary.com');
+}
+
+/**
+ * استخراج معرف العام من رابط Cloudinary
+ */
+export function extractPublicIdFromUrl(url: string): string | null {
+  if (!isCloudinaryUrl(url)) return null;
+  
+  const matches = url.match(/\/(?:image|video)\/upload\/(?:v\d+\/)?(.+?)(?:\.|$)/);
+  return matches ? matches[1].split('.')[0] : null;
 }
 
 export default cloudinary;
