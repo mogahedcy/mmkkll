@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       authenticated: true
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('خطأ في التحقق من التوثيق:', error);
     return NextResponse.json(
       { error: 'توكن غير صالح' },

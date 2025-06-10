@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       message: 'تم تغيير كلمة المرور بنجاح'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('خطأ في تغيير كلمة المرور:', error);
     return NextResponse.json(
       { error: 'حدث خطأ في تغيير كلمة المرور' },

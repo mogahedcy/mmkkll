@@ -182,7 +182,7 @@ export async function PUT(
       message: 'تم تحديث المشروع بنجاح'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('❌ خطأ في تحديث المشروع:', error);
     return NextResponse.json(
       { error: 'حدث خطأ في تحديث المشروع' },
@@ -257,7 +257,7 @@ export async function DELETE(
       message: 'تم حذف المشروع بنجاح'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('❌ خطأ في حذف المشروع:', error);
     return NextResponse.json(
       { error: 'حدث خطأ في حذف المشروع' },

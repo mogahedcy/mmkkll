@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('❌ خطأ في جلب المشاريع:', error);
     return NextResponse.json(
       { error: 'حدث خطأ في جلب المشاريع' },
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
       await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/sitemap/refresh`, {
         method: 'POST'
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.warn('تعذر إشعار جوجل بالمحتوى الجديد:', error);
     }
 
@@ -207,9 +207,9 @@ export async function POST(request: NextRequest) {
       message: 'تم إضافة المشروع بنجاح'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('❌ خطأ في إضافة المشروع:', error);
-    
+
     // إذا كان الخطأ من Prisma، نعرض تفاصيل أكثر
     if (error instanceof Error) {
       console.error('تفاصيل الخطأ:', {
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
         stack: error.stack,
         name: error.name
       });
-      
+
       return NextResponse.json(
         { 
           error: 'حدث خطأ في إضافة المشروع',
@@ -226,7 +226,7 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'حدث خطأ في إضافة المشروع' },
       { status: 500 }

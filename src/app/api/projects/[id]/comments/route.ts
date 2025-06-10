@@ -98,7 +98,7 @@ export async function GET(
       }))
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('خطأ في جلب التعليقات:', error);
     return NextResponse.json(
       { error: 'حدث خطأ في جلب التعليقات' },
