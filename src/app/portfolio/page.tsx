@@ -1,8 +1,9 @@
-
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import PortfolioPageClient from './PortfolioPageClient';
 import StructuredDataScript from '@/components/StructuredDataScript';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'معرض أعمال محترفين الديار العالمية | مشاريع مظلات وبرجولات في جدة',
@@ -81,6 +82,7 @@ export default function PortfolioPage() {
   return (
     <>
       <StructuredDataScript data={portfolioStructuredData} />
+      <Navbar />
       <Suspense fallback={
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
@@ -91,6 +93,7 @@ export default function PortfolioPage() {
       }>
         <PortfolioPageClient />
       </Suspense>
+      <Footer />
     </>
   );
 }

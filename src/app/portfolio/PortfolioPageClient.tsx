@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -292,7 +291,7 @@ export default function PortfolioPageClient() {
     const newBookmarks = bookmarkedProjects.includes(projectId)
       ? bookmarkedProjects.filter(id => id !== projectId)
       : [...bookmarkedProjects, projectId];
-    
+
     setBookmarkedProjects(newBookmarks);
     localStorage.setItem('bookmarkedProjects', JSON.stringify(newBookmarks));
   };
@@ -382,7 +381,7 @@ export default function PortfolioPageClient() {
 
           {/* التراكبات */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-          
+
           {/* شارات علوية */}
           <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
             <Badge className="bg-primary text-primary-foreground font-bold shadow-lg">
@@ -523,7 +522,7 @@ export default function PortfolioPageClient() {
                 </span>
               )}
             </div>
-            
+
             {project.projectCost && (
               <Badge variant="outline" className="font-semibold">
                 {project.projectCost}
@@ -554,7 +553,7 @@ export default function PortfolioPageClient() {
             <p className="text-xl md:text-2xl text-gray-100 mb-8 max-w-4xl mx-auto">
               اكتشف مشاريعنا المتميزة في جدة والمناطق المحيطة
             </p>
-            
+
             {/* الإحصائيات */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               <div className="text-center">
@@ -791,7 +790,7 @@ export default function PortfolioPageClient() {
             </Button>
             <Button asChild size="lg" variant="outline" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-primary">
               <Link href="/contact">
-                تواصل معنا
+                                تواصل معنا
               </Link>
             </Button>
           </div>
