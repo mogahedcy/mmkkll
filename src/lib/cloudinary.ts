@@ -65,7 +65,7 @@ export async function uploadToCloudinary(
     try {
       const bytes = await file.arrayBuffer();
       buffer = Buffer.from(bytes);
-      
+
       if (buffer.length === 0) {
         throw new Error('فشل في قراءة محتوى الملف');
       }
@@ -76,7 +76,7 @@ export async function uploadToCloudinary(
     // تحديد نوع الملف مع فحص أعمق
     const isVideo = file.type.startsWith('video/');
     const isImage = file.type.startsWith('image/');
-    
+
     if (!isVideo && !isImage) {
       throw new Error(`نوع الملف غير مدعوم: ${file.type}`);
     }
@@ -85,14 +85,14 @@ export async function uploadToCloudinary(
       folder: options.folder || 'portfolio',
       resource_type: options.resource_type || (isVideo ? 'video' : isImage ? 'image' : 'auto'),
       public_id: options.public_id,
+      // تحسينات مخصصة حسب نوع الملف
       transformation: options.transformation || (isVideo ? {
-        // تحسينات للفيديو
+        // إعدادات أساسية للفيديو
         quality: 'auto',
-        fetch_format: 'auto',
         width: 1280,
         height: 720,
-        crop: 'limit', // لا يقطع، فقط يقلل إذا كان أكبر
-        bit_rate: '1m', // 1 Mbps للحجم المعقول
+        crop: 'limit',
+        bit_rate: '1m'
       } : {
         // تحسينات للصور
         quality: 'auto',
@@ -134,13 +134,13 @@ export async function uploadToCloudinary(
               resource_type: result.resource_type,
               bytes: result.bytes
             });
-            
+
             // التحقق من صحة النتيجة
             if (!result.secure_url) {
               reject(new Error('لم يتم إرجاع رابط آمن من Cloudinary'));
               return;
             }
-            
+
             resolve(result as CloudinaryUploadResult);
           } else {
             reject(new Error('لم يتم إرجاع نتيجة من Cloudinary'));
@@ -283,7 +283,7 @@ export function getResponsiveImageUrl(
   };
 
   const config = configs[usage];
-  
+
   return cloudinary.url(publicId, {
     ...config,
     quality: 'auto',
@@ -298,7 +298,7 @@ export function getResponsiveImageUrl(
  */
 export function getImageSrcSet(publicId: string): string {
   const sizes = [320, 640, 768, 1024, 1280, 1920];
-  
+
   return sizes.map(size => {
     const url = cloudinary.url(publicId, {
       width: size,
@@ -322,7 +322,7 @@ export function isCloudinaryUrl(url: string): boolean {
  */
 export function extractPublicIdFromUrl(url: string): string | null {
   if (!isCloudinaryUrl(url)) return null;
-  
+
   const matches = url.match(/\/(?:image|video)\/upload\/(?:v\d+\/)?(.+?)(?:\.|$)/);
   return matches ? matches[1].split('.')[0] : null;
 }

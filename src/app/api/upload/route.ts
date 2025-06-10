@@ -173,22 +173,17 @@ export async function POST(request: NextRequest) {
               caption: `مشروع من محترفين الديار العالمية في جدة`,
               title: seoFriendlyName
             },
-            // تحسين خصائص الصور للويب
+            // تحسين خصائص الملفات للويب
             transformation: isVideo ? {
-              ...UPLOAD_CONFIG.compressionQuality.video,
-              format: 'mp4',
-              video_codec: 'h264',
-              audio_codec: 'aac',
-              // تحسين للويب
-              streaming_profile: 'hd',
-              adaptive_streaming: true
+              // إعدادات أساسية للفيديو فقط
+              quality: 'auto',
+              width: 1280,
+              height: 720,
+              crop: 'limit'
             } : {
-              ...UPLOAD_CONFIG.compressionQuality.image,
-              // تحسين للويب وSEO
+              // تحسين للصور
+              quality: 'auto',
               format: 'webp',
-              progressive: true,
-              // إنشاء أحجام متعددة للاستجابة
-              responsive: true,
               width: 'auto',
               crop: 'scale',
               dpr: 'auto',
