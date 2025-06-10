@@ -191,8 +191,7 @@ export async function POST(request: NextRequest) {
               responsive: true,
               width: 'auto',
               crop: 'scale',
-              dpr: 'auto'
-              format: 'webp', // تحويل الصور إلى WebP للحجم الأصغر
+              dpr: 'auto',
               flags: 'progressive'
             },
             // إعدادات إضافية للأمان والأداء
