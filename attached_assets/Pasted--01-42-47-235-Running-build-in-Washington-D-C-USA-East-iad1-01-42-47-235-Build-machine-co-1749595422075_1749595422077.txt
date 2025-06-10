@@ -1,0 +1,30 @@
+[01:42:47.235] Running build in Washington, D.C., USA (East) – iad1
+[01:42:47.235] Build machine configuration: 2 cores, 8 GB
+[01:42:47.260] Cloning github.com/mogahedcy/2026 (Branch: main, Commit: 1a604b0)
+[01:42:47.431] Previous build caches not available
+[01:42:47.756] Cloning completed: 494.000ms
+[01:42:48.098] Running "vercel build"
+[01:42:48.673] Vercel CLI 42.2.0
+[01:42:49.152] Running "install" command: `npm install`...
+[01:42:52.681] npm warn deprecated q@1.5.1: You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+[01:42:52.681] npm warn deprecated
+[01:42:52.682] npm warn deprecated (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+[01:42:54.333] npm warn deprecated @types/bcryptjs@3.0.0: This is a stub types definition. bcryptjs provides its own type definitions, so you do not need this installed.
+[01:42:54.804] npm warn deprecated @types/dompurify@3.2.0: This is a stub types definition. dompurify provides its own type definitions, so you do not need this installed.
+[01:43:09.077] 
+[01:43:09.077] added 512 packages, and audited 513 packages in 19s
+[01:43:09.077] 
+[01:43:09.077] 165 packages are looking for funding
+[01:43:09.078]   run `npm fund` for details
+[01:43:09.079] 
+[01:43:09.079] found 0 vulnerabilities
+[01:43:09.323] Detected Next.js version: 15.3.3
+[01:43:09.324] Running "npm run vercel-build"
+[01:43:09.587] npm error Missing script: "vercel-build"
+[01:43:09.588] npm error
+[01:43:09.588] npm error To see a list of scripts, run:
+[01:43:09.588] npm error   npm run
+[01:43:09.589] npm error A complete log of this run can be found in: /vercel/.npm/_logs/2025-06-10T22_43_09_385Z-debug-0.log
+[01:43:09.591] Error: Command "npm run vercel-build" exited with 1
+[01:43:10.016] 
+[01:43:13.124] Exiting build container
