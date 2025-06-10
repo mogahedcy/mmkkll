@@ -91,7 +91,6 @@ export default function ProjectDetailsClient({ project }: Props) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [videoError, setVideoError] = useState<string | null>(null);
   const [videoLoading, setVideoLoading] = useState(false);
 
@@ -100,7 +99,7 @@ export default function ProjectDetailsClient({ project }: Props) {
   const toggleVideoMute = () => setIsVideoMuted(!isVideoMuted);
 
   const category = categories.find(c => c.id === project.category);
-  const currentMedia = project.mediaItems?.[currentMediaIndex] || project.mediaItems?.[0];
+  const currentMedia = project.mediaItems?.[selectedMediaIndex] || project.mediaItems?.[0];
 
   // دالة للتحقق من نوع الفيديو
   const getVideoType = (src: string): string => {
@@ -127,15 +126,13 @@ export default function ProjectDetailsClient({ project }: Props) {
   };
 
   const handlePrevMedia = () => {
-    setSelectedMediaIndex((prev) =>
-      prev === 0 ? project.mediaItems.length - 1 : prev - 1
-    );
+    const newIndex = selectedMediaIndex === 0 ? project.mediaItems.length - 1 : selectedMediaIndex - 1;
+    setSelectedMediaIndex(newIndex);
   };
 
   const handleNextMedia = () => {
-    setSelectedMediaIndex((prev) =>
-      prev === project.mediaItems.length - 1 ? 0 : prev + 1
-    );
+    const newIndex = selectedMediaIndex === project.mediaItems.length - 1 ? 0 : selectedMediaIndex + 1;
+    setSelectedMediaIndex(newIndex);
   };
 
   const handleShare = async () => {
@@ -197,11 +194,13 @@ export default function ProjectDetailsClient({ project }: Props) {
                     <>
                       {currentMedia.type === 'IMAGE' ? (
                         <Image
+                          key={`image-${selectedMediaIndex}`}
                           src={currentMedia.src}
                           alt={currentMedia.title || project.title}
                           fill
-                          className="object-cover cursor-pointer"
+                          className="object-cover cursor-pointer transition-opacity duration-300"
                           onClick={() => setIsLightboxOpen(true)}
+                          priority={selectedMediaIndex === 0}
                         />
                       ) : (
                         <div className="relative w-full h-full">
@@ -228,7 +227,7 @@ export default function ProjectDetailsClient({ project }: Props) {
                           ) : (
                             <>
                               <video
-                                key={`${currentMedia.src}-${currentMediaIndex}`}
+                                key={`video-${selectedMediaIndex}-${currentMedia.src}`}
                                 controls
                                 preload="metadata"
                                 className="w-full h-full object-cover"
@@ -591,6 +590,7 @@ export default function ProjectDetailsClient({ project }: Props) {
 
               {currentMedia.type === 'IMAGE' ? (
                 <Image
+                  key={`lightbox-image-${selectedMediaIndex}`}
                   src={currentMedia.src}
                   alt={currentMedia.title || project.title}
                   width={1200}
@@ -600,6 +600,7 @@ export default function ProjectDetailsClient({ project }: Props) {
                 />
               ) : (
                 <video
+                  key={`lightbox-video-${selectedMediaIndex}`}
                   src={currentMedia.src}
                   className="max-w-full max-h-[90vh] object-contain"
                   controls
