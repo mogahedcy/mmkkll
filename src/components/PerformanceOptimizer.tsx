@@ -260,9 +260,9 @@ export default function PerformanceOptimizer({ children }: PerformanceOptimizerP
 
     // Preload critical resources
     const criticalImages = [
-      '/images/hero-bg.jpg',
-      '/images/logo.png',
-      '/favicon.ico'
+      '/favicon.svg',
+      '/favicon-16x16.png',
+      '/favicon-32x32.png'
     ];
 
     preloadCriticalResources(criticalImages);
@@ -296,9 +296,6 @@ export default function PerformanceOptimizer({ children }: PerformanceOptimizerP
         memoryManager.performCleanup();
       }, 1000);
     };
-
-    // Note: Next.js App Router doesn't have router events like Pages Router
-    // This is a placeholder for future optimization
 
     return () => {
       memoryManager.performCleanup();

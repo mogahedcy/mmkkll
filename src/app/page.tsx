@@ -8,12 +8,9 @@ import ServiceAreasSection from '@/components/ServiceAreasSection';
 import FAQSection from '@/components/FAQSection';
 import QuoteSection from '@/components/QuoteSection';
 import Footer from '@/components/Footer';
-import PerformanceOptimizer from '@/components/PerformanceOptimizer';
-
 export default function HomePage() {
   return (
     <>
-      <PerformanceOptimizer />
       {/* Navigation */}
       <Navbar />
 
