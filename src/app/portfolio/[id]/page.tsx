@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
         title: seoTitle,
         description: seoDescription,
         type: 'article',
-        url: `https://aldeyar-jeddah.com/portfolio/${params.id}`,
+        url: `https://aldeyarksa.tech/portfolio/${params.id}`,
         siteName: 'محترفين الديار العالمية',
         locale: 'ar_SA',
         images: project.mediaItems?.filter(item => item.type === 'IMAGE').map(item => ({
@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
         images: mainImage ? [mainImage.src] : []
       },
       alternates: {
-        canonical: `https://aldeyar-jeddah.com/portfolio/${params.id}`
+        canonical: `https://aldeyarksa.tech/portfolio/${params.id}`
       },
       robots: {
         index: true,

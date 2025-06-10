@@ -1,4 +1,3 @@
-
 import { Project } from '@prisma/client';
 
 interface SchemaMarkupProps {

@@ -51,6 +51,12 @@
   force = true
 
 [[redirects]]
+  from = "https://aldeyar-jeddah.com/*"
+  to = "https://aldeyarksa.tech/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "https://www.aldeyarksa.tech/*"
   to = "https://aldeyarksa.tech/:splat"
   status = 301

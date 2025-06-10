@@ -1,4 +1,3 @@
-
 export default function StructuredDataScript() {
   const organizationData = {
     "@context": "https://schema.org",
