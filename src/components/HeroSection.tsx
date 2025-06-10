@@ -1,7 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Phone, MessageCircle, ArrowLeft, Star, MapPin, Clock } from 'lucide-react';
-'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
