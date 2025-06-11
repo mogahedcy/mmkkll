@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// نموذج التحقق من بيانات التعليق - بدون zod مؤقتاً
-interface CommentData {
+// نموذج التحقق من بيانات التعليق
+interface CommentRequest {
   name: string;
   email?: string;
   message: string;
   rating: number;
-}r;
 }
 
 // دالة التحقق من صحة البيانات

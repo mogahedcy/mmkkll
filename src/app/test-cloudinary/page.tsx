@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 export default function TestCloudinaryPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadResult, setUploadResult] = useState<any>(null);
+  const [uploadResult, setUploadResult<any>] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -25,7 +26,7 @@ export default function TestCloudinaryPage() {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!selectedFile) return;
 
     setIsUploading(true);
@@ -183,14 +184,14 @@ export default function TestCloudinaryPage() {
                   </a>
                 </div>
                 <div>
-                  <a href="/dashboard/projects/add" className="text-blue-600 hover:underline">
-                    ➕ إضافة مشروع جديد
-                  </a>
+                  <Link href="/dashboard/projects/add/" className="text-blue-600 hover:underline">
+                    إضافة مشروع جديد
+                  </Link>
                 </div>
                 <div>
-                  <a href="/portfolio" className="text-blue-600 hover:underline">
+                  <Link href="/portfolio/" className="text-blue-600 hover:underline">
                     🖼️ معرض الأعمال
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <a href="https://console.cloudinary.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">

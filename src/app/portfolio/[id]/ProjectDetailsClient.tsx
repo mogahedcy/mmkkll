@@ -119,7 +119,8 @@ export default function ProjectDetailsClient({ project }: Props) {
   };
 
   // دالة لمعالجة أخطاء الفيديو
-  const handleVideoError = (error: any) => {
+  const handleVideoError = (err: any) => {
+    const error = err as Error;
     console.error('خطأ في تشغيل الفيديو:', error);
     setVideoError('لا يمكن تشغيل هذا الفيديو. يرجى المحاولة لاحقاً.');
     setVideoLoading(false);

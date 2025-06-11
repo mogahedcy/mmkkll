@@ -47,7 +47,7 @@ export function UploadProgress({ files, onUploadComplete, onCancel }: UploadProg
         formData.append('file', file);
 
         // محاكاة تقدم الرفع
-        const progressInterval = setInterval(() => {
+        const interval: NodeJS.Timeout = setInterval(() => {
           setUploadProgress(prev => {
             const current = prev[file.name] || 0;
             if (current < 90) {
@@ -62,7 +62,7 @@ export function UploadProgress({ files, onUploadComplete, onCancel }: UploadProg
           body: formData,
         });
 
-        clearInterval(progressInterval);
+        clearInterval(interval);
         setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
 
         const result = await response.json();

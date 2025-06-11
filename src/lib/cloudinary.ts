@@ -120,7 +120,7 @@ export async function uploadToCloudinary(
     });
 
     // رفع الملف
-    const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
+    const result: { secure_url: string; public_id: string } = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         defaultOptions,
         (error, result) => {
@@ -204,13 +204,7 @@ export async function deleteFromCloudinary(
  */
 export function getOptimizedImageUrl(
   publicId: string,
-  options: {
-    width?: number;
-    height?: number;
-    crop?: string;
-    quality?: string | number;
-    format?: string;
-  } = {}
+  options: Record<string, unknown> = {}
 ): string {
   return cloudinary.url(publicId, {
     quality: options.quality || 'auto',
@@ -228,12 +222,7 @@ export function getOptimizedImageUrl(
  */
 export function getOptimizedVideoUrl(
   publicId: string,
-  options: {
-    width?: number;
-    height?: number;
-    quality?: string | number;
-    format?: string;
-  } = {}
+  options: Record<string, unknown> = {}
 ): string {
   return cloudinary.url(publicId, {
     resource_type: 'video',
@@ -250,11 +239,7 @@ export function getOptimizedVideoUrl(
  */
 export function getVideoThumbnail(
   publicId: string,
-  options: {
-    width?: number;
-    height?: number;
-    start_offset?: string;
-  } = {}
+  options: Record<string, unknown> = {}
 ): string {
   return cloudinary.url(publicId, {
     resource_type: 'video',

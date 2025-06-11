@@ -5,8 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, LogOut, Settings, User, Clock, CheckCircle } from 'lucide-react';
 
+interface SessionInfo {
+  newSession: {
+    username: string;
+    loginTime: number;
+    expiresAt: number;
+  } | null;
+  oldLogin: string | null;
+  oldTime: string | null;
+  currentTime: number;
+  error?: string;
+}
+
 export default function LoginTestPage() {
-  const [sessionData, setSessionData] = useState<any>(null);
+  const [sessionData, setSessionData] = useState<SessionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,7 +33,7 @@ export default function LoginTestPage() {
       const oldLogin = localStorage.getItem('isAdminLoggedIn');
       const oldTime = localStorage.getItem('adminLoginTime');
 
-      const sessionInfo = {
+      const sessionInfo: SessionInfo = {
         newSession: adminSession ? JSON.parse(adminSession) : null,
         oldLogin,
         oldTime,
@@ -29,9 +41,9 @@ export default function LoginTestPage() {
       };
 
       setSessionData(sessionInfo);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error checking session:', error);
-      setSessionData({ error: error.message });
+      setSessionData({ error: error.message, newSession: null, oldLogin: null, oldTime: null, currentTime: Date.now() });
     }
 
     setIsLoading(false);

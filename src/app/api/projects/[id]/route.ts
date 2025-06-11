@@ -148,12 +148,12 @@ export async function PUT(
           })) || []
         },
         tags: {
-          create: tags?.map((tag: any) => ({ 
+          create: tags?.map((tag: string | { name: string }) => ({ 
             name: typeof tag === 'string' ? tag : tag.name 
           })) || []
         },
         materials: {
-          create: materials?.map((material: any) => ({ 
+          create: materials?.map((material: string | { name: string }) => ({ 
             name: typeof material === 'string' ? material : material.name 
           })) || []
         }

@@ -176,18 +176,18 @@ export default function ProjectCommentsSection({
   };
 
   const handleSortComments = (sortBy: 'newest' | 'oldest' | 'rating') => {
-    let sortedComments = [...comments];
-    switch (sortBy) {
-      case 'newest':
-        sortedComments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        break;
-      case 'oldest':
-        sortedComments.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        break;
-      case 'rating':
-        sortedComments.sort((a, b) => b.rating - a.rating);
-        break;
-    }
+    const sortedComments = [...comments].sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'oldest':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'rating':
+          return b.rating - a.rating;
+        default:
+          return 0;
+      }
+    });
     setComments(sortedComments);
   };
 

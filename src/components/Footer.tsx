@@ -395,13 +395,17 @@ export default function Footer() {
           <div className="internal-links">
             <h3>روابط ذات صلة</h3>
             <ul>
-              <li><a href="/services/mazallat">أفضل مظلات سيارات في جدة</a></li>
-              <li><a href="/services/pergolas">برجولات خشبية وحديدية جدة</a></li>
-              <li><a href="/services/sawater">سواتر خصوصية للحدائق والفلل</a></li>
-              <li><a href="/services/sandwich-panel">ساندوتش بانل عازل حراري</a></li>
-              <li><a href="/services/renovation">ترميم وتجديد الملحقات</a></li>
-              <li><a href="/services/landscaping">تنسيق حدائق فلل ومنازل</a></li>
-              <li><a href="/portfolio">معرض أعمال محترفين الديار العالمية</a></li>
+              <li><Link href="/services/mazallat">أفضل مظلات سيارات في جدة</Link></li>
+              <li><Link href="/services/pergolas">برجولات خشبية وحديدية جدة</Link></li>
+              <li><Link href="/services/sawater">سواتر خصوصية للحدائق والفلل</Link></li>
+              <li><Link href="/services/sandwich-panel">ساندوتش بانل عازل حراري</Link></li>
+              <li><Link href="/services/renovation">ترميم وتجديد الملحقات</Link></li>
+              <li><Link href="/services/landscaping">تنسيق حدائق فلل ومنازل</Link></li>
+              <li>
+                <Link href="/portfolio" className="text-white/80 hover:text-white transition-colors">
+                  معرض الأعمال
+                </Link>
+              </li>
               <li><Link href="/articles">مقالات تخصصية في المظلات والبرجولات</Link></li>
             </ul>
           </div>

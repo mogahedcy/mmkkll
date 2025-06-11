@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -53,10 +52,10 @@ export default function ReviewsPageClient() {
 
   const calculateOverallStats = () => {
     if (reviews.length === 0) return { average: 0, distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } };
-    
+
     const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
     const average = (sum / reviews.length).toFixed(1);
-    
+
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     reviews.forEach(review => {
       distribution[review.rating as keyof typeof distribution]++;
@@ -83,7 +82,7 @@ export default function ReviewsPageClient() {
   };
 
   const filteredAndSortedReviews = () => {
-    let filtered = reviews.filter(review => 
+    const filtered = reviews.filter(review => 
       filterRating ? review.rating === filterRating : true
     );
 
@@ -200,7 +199,7 @@ export default function ReviewsPageClient() {
               <Filter className="w-5 h-5 text-gray-600" />
               <span className="font-medium text-gray-900">تصفية وترتيب:</span>
             </div>
-            
+
             <div className="flex items-center gap-4">
               {/* تصفية حسب التقييم */}
               <select
@@ -278,7 +277,7 @@ export default function ReviewsPageClient() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Badge variant="outline" className="text-xs">
                     {review.projectTitle}
                   </Badge>

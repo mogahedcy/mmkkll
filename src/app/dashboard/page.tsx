@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -89,10 +88,10 @@ export default function DashboardPage() {
       // جلب المشاريع مع الإحصائيات
       const response = await fetch('/api/projects?limit=100');
       const data = await response.json();
-      
+
       if (data.projects) {
         const projects = data.projects;
-        
+
         // حساب الإحصائيات
         const totalViews = projects.reduce((sum: number, p: any) => sum + (p.views || 0), 0);
         const totalLikes = projects.reduce((sum: number, p: any) => sum + (p.likes || 0), 0);
@@ -119,7 +118,8 @@ export default function DashboardPage() {
         // أحدث 5 مشاريع
         setRecentProjects(projects.slice(0, 5));
       }
-    } catch (error) {
+    } catch (err) {
+      const error = err as Error;
       console.error('Error loading dashboard data:', error);
     }
   };

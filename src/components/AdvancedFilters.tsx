@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -359,7 +358,7 @@ export default function AdvancedFilters({ filters, onFiltersChange, categories }
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onFiltersChange({
+                onClick={(e: React.MouseEvent) => onFiltersChange({
                   category: '',
                   location: '',
                   featured: null,

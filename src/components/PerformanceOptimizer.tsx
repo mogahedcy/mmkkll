@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface PerformanceOptimizerProps {
@@ -275,7 +274,7 @@ export default function PerformanceOptimizer({ children }: PerformanceOptimizerP
     // Log performance metrics after page load
     const timeout = setTimeout(() => {
       performanceMonitor.logMetrics();
-      
+
       // إضافة تتبع Core Web Vitals
       try {
         import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {

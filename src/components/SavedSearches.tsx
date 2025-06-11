@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -29,7 +28,7 @@ interface SavedSearch {
 }
 
 export default function SavedSearches() {
-  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [savedSearches, setSavedSearches] = useState<Array<{ id: string; name: string; query: string; date: string }>>([]);
   const [showSaved, setShowSaved] = useState(false);
   const [showSaveForm, setShowSaveForm] = useState(false);
   const [searchName, setSearchName] = useState('');
@@ -58,12 +57,12 @@ export default function SavedSearches() {
   };
 
   // حفظ بحث جديد
-  const saveCurrentSearch = () => {
+  const saveCurrentSearch = (searchData: { query: string; filters?: Record<string, unknown> }) => {
     if (!searchName.trim()) return;
 
     const currentUrl = new URL(window.location.href);
     const searchParams = currentUrl.searchParams;
-    
+
     const newSearch: SavedSearch = {
       id: Date.now().toString(),
       name: searchName.trim(),
@@ -126,6 +125,11 @@ export default function SavedSearches() {
     return active;
   };
 
+  const executeSearch = (searchData: { query: string; filters?: Record<string, unknown> }) => {
+    // Implement your search execution logic here
+    console.log('Executing search with data:', searchData);
+  };
+
   return (
     <div className="relative">
       <Button
@@ -177,10 +181,10 @@ export default function SavedSearches() {
                     placeholder="اسم البحث..."
                     value={searchName}
                     onChange={(e) => setSearchName(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && saveCurrentSearch()}
+                    onKeyPress={(e) => e.key === 'Enter' && saveCurrentSearch({ query: searchName })}
                     className="text-sm"
                   />
-                  <Button size="sm" onClick={saveCurrentSearch} disabled={!searchName.trim()}>
+                  <Button size="sm" onClick={() => saveCurrentSearch({ query: searchName })} disabled={!searchName.trim()}>
                     <Save className="w-4 h-4" />
                   </Button>
                 </div>
@@ -237,7 +241,7 @@ export default function SavedSearches() {
                             {search.name}
                           </h4>
                         )}
-                        
+
                         {search.query && (
                           <p className="text-xs text-gray-600 mb-2">
                             البحث: "{search.query}"

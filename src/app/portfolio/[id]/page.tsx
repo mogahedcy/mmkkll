@@ -22,8 +22,20 @@ async function getProject(id: string) {
 
     const project = await response.json();
     return project; // إرجاع المشروع مباشرة
-  } catch (error) {
+  } catch (err) {
+    const error = err as { message?: string; status?: number };
     console.error('خطأ في جلب المشروع:', error);
+
+    // في حالة 404
+    if (error?.message?.includes('404') || error?.status === 404) {
+      notFound();
+    }
+
+    // في حالة خطأ آخر
+    if (error?.message?.includes('500') || error?.status >= 500) {
+      return null;
+    }
+
     return null;
   }
 }
